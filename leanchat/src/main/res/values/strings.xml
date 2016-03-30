@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="invitation_action">com.avoscloud.chat.INVITATION_ACTION</string>
-
-
     <string name="app_name">LeanChat</string>
 
 
@@ -16,7 +12,6 @@
 
     <string name="setting_preference_voice">语音</string>
 
-    <string name="update_service_failedToGetData">获取数据失败</string>
     <string name="entry_register_activity_password">密码</string>
     <string name="login">登录</string>
     <string name="conversation_messages">会话</string>
@@ -74,9 +69,6 @@
     <string name="conversation_quit_group_tip">确定要退出该群组？</string>
     
     <string name="utils_kilometres">公里</string>
-    <string name="refreshable_view_pull_to_refresh">下拉可以刷新</string>
-    <string name="refreshable_view_release_to_refresh">释放立即刷新</string>
-    <string name="refreshable_view_refreshing">正在刷新…</string>
     <string name="profile_fragment_checkUpdate">检查更新</string>
     <string name="discover_fragment_sort">排序</string>
     <string name="discover_fragment_loginTime">登录时间</string>
@@ -88,14 +80,29 @@
 
     <string name="chat_location_activity_send">发送</string>
     <string name="chat_getGeoInfoFailed">获取地理位置信息失败!</string>
-    <string name="chat_geoIsSame">获取坐标相同</string>
     <string name="chat_location_mapKeyErrorTips">key 验证出错! 请在 AndroidManifest.xml 文件中检查 key 设置</string>
-    <string name="chat_reverseGeoCodeResultIs">反编码得到的地址：</string>
     <string name="chat_cannotGetYourAddressInfo">无法获取到您的位置信息！</string>
 
-    <string name="chat_xlistview_footer_hint_normal">查看更多</string>
-    <string name="chat_xlistview_footer_hint_ready">松开载入更多</string>
     <string name="push_add_request">您有新的好友申请</string>
     <string name="message_when_agree_request">我们已经是好友了，来聊天吧</string>
 
+    <string name="chat_base_list_view_listEmptyHint">无数据</string>
+    <string name="chat_utils_tips">提示</string>
+    <string name="chat_utils_please_choose">请选择</string>
+    <string name="chat_utils_share">分享</string>
+    <string name="chat_utils_right">好的</string>
+    <string name="chat_utils_hardLoading">努力加载中...</string>
+    <string name="chat_common_cancel">取消</string>
+    <string name="chat_common_emptyStr" />
+    <string name="chat_position">位置</string>
+    <string name="chat_common_avatar">头像</string>
+    <string name="chat_common_username">用户名</string>
+    <string name="chat_common_nickname">昵称</string>
+    <string name="chat_common_please_input_hint">请输入{0}</string>
+    <string name="chat_common_change_title">{0}</string>
+    <string name="chat_newMessage">新的消息</string>
+    <string name="chat_cannotFindResult">抱歉，未能找到结果</string>
+    <string name="chat_pleaseCheckNetwork">请检查网络</string>
+    <string name="load_more_footer_hint_normal">查看更多</string>
+    <string name="login_null_name_tip">请输入用户名</string>
 </resources>

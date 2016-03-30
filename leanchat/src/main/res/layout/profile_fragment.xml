@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
                 android:orientation="vertical">
-                <View style="@style/DividerLine.Horizontal"/>
+                <View style="@style/LCIMDividerLine.Horizontal"/>
 
                 <LinearLayout
                     android:id="@+id/profile_avatar_layout"
@@ -48,7 +48,7 @@
                         android:drawableRight="@drawable/common_view_right_arrow_pic"/>
                 </LinearLayout>
 
-                <View style="@style/DividerLine.Horizontal"/>
+                <View style="@style/LCIMDividerLine.Horizontal"/>
 
                 <TextView
                     android:id="@+id/profile_notifysetting_view"
@@ -61,7 +61,7 @@
                     android:paddingRight="@dimen/common_horizontal_margin"
                     android:drawableRight="@drawable/common_view_right_arrow_pic"/>
 
-                <View style="@style/DividerLine.Horizontal"/>
+                <View style="@style/LCIMDividerLine.Horizontal"/>
 
                 <TextView
                     android:id="@+id/profile_checkupdate_view"
@@ -74,7 +74,7 @@
                     android:paddingRight="@dimen/common_horizontal_margin"
                     android:drawableRight="@drawable/common_view_right_arrow_pic"/>
 
-                <View style="@style/DividerLine.Horizontal"/>
+                <View style="@style/LCIMDividerLine.Horizontal"/>
             </LinearLayout>
 
             <TextView
