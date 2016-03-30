@@ -3,9 +3,7 @@ package com.avoscloud.chat.adapter;
 import android.view.ViewGroup;
 
 import com.avoscloud.chat.viewholder.MemeberCheckableItemHolder;
-import com.avoscloud.leanchatlib.adapter.CommonListAdapter;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,10 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import cn.leanclud.imkit.adapter.LCIMCommonListAdapter;
+import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
+
 /**
  * Created by wli on 15/12/2.
  */
-public class MemeberAddAdapter extends CommonListAdapter<LeanchatUser> {
+public class MemeberAddAdapter extends LCIMCommonListAdapter<LeanchatUser> {
   private Map<Integer, Boolean> checkStatusMap = new HashMap<>();
 
   public MemeberAddAdapter() {
@@ -24,7 +25,7 @@ public class MemeberAddAdapter extends CommonListAdapter<LeanchatUser> {
   }
 
   @Override
-  public CommonViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  public LCIMCommonViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final MemeberCheckableItemHolder itemHolder = (MemeberCheckableItemHolder) super.onCreateViewHolder(parent, viewType);
     itemHolder.setOnCheckedChangeListener(new MemeberCheckableItemHolder.OnItemHolderCheckedChangeListener() {
       @Override
@@ -36,7 +37,7 @@ public class MemeberAddAdapter extends CommonListAdapter<LeanchatUser> {
   }
 
   @Override
-  public void onBindViewHolder(CommonViewHolder holder, int position) {
+  public void onBindViewHolder(LCIMCommonViewHolder holder, int position) {
     super.onBindViewHolder(holder, position);
     ((MemeberCheckableItemHolder)holder).setChecked(checkStatusMap.containsKey(position) ? checkStatusMap.get(position) : false);
   }

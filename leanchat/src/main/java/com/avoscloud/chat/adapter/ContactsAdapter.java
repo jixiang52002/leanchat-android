@@ -2,8 +2,8 @@ package com.avoscloud.chat.adapter;
 
 import android.text.TextUtils;
 
+import com.avoscloud.chat.model.ContactItem;
 import com.avoscloud.chat.viewholder.ContactItemHolder;
-import com.avoscloud.leanchatlib.adapter.HeaderListAdapter;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Created by wli on 15/11/24.
  */
-public class ContactsAdapter extends HeaderListAdapter<ContactsAdapter.ContactItem> {
+public class ContactsAdapter extends HeaderListAdapter<ContactItem> {
 
   /**
    * 在有序 memberList 中 MemberItem.sortContent 第一次出现时的字母与位置的 map
@@ -116,11 +116,5 @@ public class ContactsAdapter extends HeaderListAdapter<ContactsAdapter.ContactIt
       }
       return 0;
     }
-  }
-
-  public static class ContactItem {
-    public LeanchatUser user;
-    public String sortContent;
-    public boolean initialVisible;
   }
 }
