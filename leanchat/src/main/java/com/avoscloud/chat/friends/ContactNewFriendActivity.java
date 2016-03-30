@@ -16,16 +16,15 @@ import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.chat.R;
+import com.avoscloud.chat.activity.AVBaseActivity;
+import com.avoscloud.chat.adapter.HeaderListAdapter;
 import com.avoscloud.chat.event.NewFriendItemClickEvent;
-import com.avoscloud.leanchatlib.controller.ChatManager;
+import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.service.PreferenceMap;
 import com.avoscloud.chat.event.ContactRefreshEvent;
+import com.avoscloud.chat.util.ConversationUtils;
+import com.avoscloud.chat.view.RefreshableRecyclerView;
 import com.avoscloud.chat.viewholder.NewFriendItemHolder;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
-import com.avoscloud.leanchatlib.adapter.HeaderListAdapter;
-import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.model.ConversationType;
-import com.avoscloud.leanchatlib.view.RefreshableRecyclerView;
 
 import de.greenrobot.event.EventBus;
 
@@ -111,7 +110,7 @@ public class ContactNewFriendActivity extends AVBaseActivity {
   }
 
   public void sendWelcomeMessage(String toUserId) {
-    ChatManager.getInstance().createSingleConversation(toUserId, new AVIMConversationCreatedCallback() {
+    ConversationUtils.createSingleConversation(toUserId, new AVIMConversationCreatedCallback() {
       @Override
       public void done(AVIMConversation avimConversation, AVIMException e) {
         if (e == null) {

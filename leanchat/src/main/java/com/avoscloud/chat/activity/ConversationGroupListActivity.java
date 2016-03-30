@@ -6,20 +6,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
+import cn.leanclud.imkit.adapter.LCIMCommonListAdapter;
+import cn.leanclud.imkit.utils.LCIMConstants;
 
 import com.avos.avoscloud.im.v2.AVIMConversation;
+import com.avos.avoscloud.im.v2.AVIMConversationQuery;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationQueryCallback;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.App;
 import com.avoscloud.chat.event.GroupItemClickEvent;
-import com.avoscloud.leanchatlib.utils.ConversationManager;
+import com.avoscloud.chat.model.ConversationType;
+import com.avoscloud.chat.util.Constants;
+import com.avoscloud.chat.util.ConversationUtils;
 import com.avoscloud.chat.viewholder.GroupItemHolder;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
-import com.avoscloud.leanchatlib.adapter.CommonListAdapter;
-import com.avoscloud.leanchatlib.utils.Constants;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,9 +34,8 @@ public class ConversationGroupListActivity extends AVBaseActivity {
   protected RecyclerView recyclerView;
 
   LinearLayoutManager layoutManager;
-  private CommonListAdapter<AVIMConversation> itemAdapter;
+  private LCIMCommonListAdapter<AVIMConversation> itemAdapter;
 
-  private ConversationManager conversationManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -41,21 +43,19 @@ public class ConversationGroupListActivity extends AVBaseActivity {
     setContentView(R.layout.group_list_activity);
     initView();
 
-    conversationManager = ConversationManager.getInstance();
     setTitle(App.ctx.getString(R.string.conversation_group));
-
     refreshGroupList();
   }
 
   private void initView() {
     layoutManager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(layoutManager);
-    itemAdapter = new CommonListAdapter<>(GroupItemHolder.class);
+    itemAdapter = new LCIMCommonListAdapter<>(GroupItemHolder.class);
     recyclerView.setAdapter(itemAdapter);
   }
 
   private void refreshGroupList() {
-    conversationManager.findGroupConversationsIncludeMe(new AVIMConversationQueryCallback() {
+    ConversationUtils.findGroupConversationsIncludeMe(new AVIMConversationQueryCallback() {
       @Override
       public void done(List<AVIMConversation> conversations, AVIMException e) {
         if (filterException(e)) {
@@ -68,7 +68,7 @@ public class ConversationGroupListActivity extends AVBaseActivity {
 
   public void onEvent(GroupItemClickEvent event) {
     Intent intent = new Intent(ConversationGroupListActivity.this, ChatRoomActivity.class);
-    intent.putExtra(Constants.CONVERSATION_ID, event.conversationId);
+    intent.putExtra(LCIMConstants.CONVERSATION_ID, event.conversationId);
     startActivity(intent);
   }
 }

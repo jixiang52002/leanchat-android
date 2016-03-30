@@ -16,8 +16,8 @@ import com.avoscloud.chat.R;
 import com.avoscloud.chat.App;
 import com.avoscloud.chat.util.Utils;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
-import com.avoscloud.leanchatlib.controller.ChatManager;
+
+import cn.leanclud.imkit.LCIMKit;
 
 public class EntryRegisterActivity extends AVBaseActivity {
   View registerButton;
@@ -79,7 +79,7 @@ public class EntryRegisterActivity extends AVBaseActivity {
   }
 
   private void imLogin() {
-    ChatManager.getInstance().openClient(this, LeanchatUser.getCurrentUserId(), new AVIMClientCallback() {
+    LCIMKit.getInstance().open(LeanchatUser.getCurrentUserId(), new AVIMClientCallback() {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
         if (filterException(e)) {

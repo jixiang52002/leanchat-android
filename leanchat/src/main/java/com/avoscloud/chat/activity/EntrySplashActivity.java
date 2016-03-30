@@ -10,8 +10,8 @@ import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
-import com.avoscloud.leanchatlib.controller.ChatManager;
+
+import cn.leanclud.imkit.LCIMKit;
 
 public class EntrySplashActivity extends AVBaseActivity {
   public static final int SPLASH_DURATION = 2000;
@@ -48,7 +48,7 @@ public class EntrySplashActivity extends AVBaseActivity {
   }
 
   private void imLogin() {
-    ChatManager.getInstance().openClient(this, LeanchatUser.getCurrentUserId(), new AVIMClientCallback() {
+    LCIMKit.getInstance().open(LeanchatUser.getCurrentUserId(), new AVIMClientCallback() {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
         if (filterException(e)) {

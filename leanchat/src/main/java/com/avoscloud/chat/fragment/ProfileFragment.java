@@ -15,19 +15,21 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.leanclud.imkit.LCIMKit;
+
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
+import com.avos.avoscloud.okhttp.internal.Util;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.activity.ProfileNotifySettingActivity;
 import com.avoscloud.chat.service.PushManager;
 import com.avoscloud.chat.service.UpdateService;
 import com.avoscloud.chat.activity.EntryLoginActivity;
 import com.avoscloud.chat.util.PathUtils;
-import com.avoscloud.leanchatlib.controller.ChatManager;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.PhotoUtils;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.avoscloud.chat.util.Utils;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
@@ -44,7 +46,6 @@ public class ProfileFragment extends BaseFragment {
   @Bind(R.id.profile_username_view)
   TextView userNameView;
 
-  ChatManager chatManager;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +58,6 @@ public class ProfileFragment extends BaseFragment {
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     headerLayout.showTitle(R.string.profile_title);
-    chatManager = ChatManager.getInstance();
   }
 
   @Override
@@ -69,7 +69,7 @@ public class ProfileFragment extends BaseFragment {
   private void refresh() {
     LeanchatUser curUser = LeanchatUser.getCurrentUser();
     userNameView.setText(curUser.getUsername());
-    ImageLoader.getInstance().displayImage(curUser.getAvatarUrl(), avatarView, com.avoscloud.leanchatlib.utils.PhotoUtils.avatarImageOptions);
+    Picasso.with(getContext()).load(curUser.getAvatarUrl()).into(avatarView);
   }
 
   @OnClick(R.id.profile_checkupdate_view)
@@ -86,7 +86,7 @@ public class ProfileFragment extends BaseFragment {
 
   @OnClick(R.id.profile_logout_btn)
   public void onLogoutClick() {
-    chatManager.closeWithCallback(new AVIMClientCallback() {
+    LCIMKit.getInstance().close(new AVIMClientCallback() {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
       }
@@ -120,10 +120,8 @@ public class ProfileFragment extends BaseFragment {
     }
   }
 
-  public Uri startImageCrop(Uri uri, int outputX, int outputY,
-                            int requestCode) {
-    Intent intent = null;
-    intent = new Intent("com.android.camera.action.CROP");
+  public Uri startImageCrop(Uri uri, int outputX, int outputY, int requestCode) {
+    Intent intent = new Intent("com.android.camera.action.CROP");
     intent.setDataAndType(uri, "image/*");
     intent.putExtra("crop", "true");
     intent.putExtra("aspectX", 1);
@@ -147,9 +145,8 @@ public class ProfileFragment extends BaseFragment {
     if (extras != null) {
       Bitmap bitmap = extras.getParcelable("data");
       if (bitmap != null) {
-        bitmap = PhotoUtils.toRoundCorner(bitmap, 10);
         path = PathUtils.getAvatarCropPath();
-        PhotoUtils.saveBitmap(path, bitmap);
+        Utils.saveBitmap(path, bitmap);
         if (bitmap != null && bitmap.isRecycled() == false) {
           bitmap.recycle();
         }
