@@ -6,19 +6,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVCallback;
+import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.im.v2.AVIMConversation;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.event.GroupItemClickEvent;
-import com.avoscloud.leanchatlib.utils.ConversationManager;
-import com.avoscloud.leanchatlib.controller.ConversationHelper;
-import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
+import com.avoscloud.chat.util.ConversationUtils;
 
+import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by wli on 15/11/27.
  */
-public class GroupItemHolder extends CommonViewHolder<AVIMConversation> {
+public class GroupItemHolder extends LCIMCommonViewHolder<AVIMConversation> {
 
   private ImageView iconView;
   private TextView nameView;
@@ -43,8 +44,17 @@ public class GroupItemHolder extends CommonViewHolder<AVIMConversation> {
   @Override
   public void bindData(AVIMConversation conversation) {
     this.conversation = conversation;
-    nameView.setText(ConversationHelper.titleOfConversation(conversation));
-    iconView.setImageBitmap(ConversationManager.getConversationIcon(conversation));
+    iconView.setImageResource(cn.leanclud.imkit.R.drawable.lcim_group_icon);
+    if (null != conversation) {
+      ConversationUtils.getConversationName(conversation, new AVCallback<String>() {
+        @Override
+        protected void internalDone0(String s, AVException e) {
+          nameView.setText(s);
+        }
+      });
+    } else {
+      nameView.setText("");
+    }
   }
 
   public static ViewHolderCreator HOLDER_CREATOR = new ViewHolderCreator<GroupItemHolder>() {

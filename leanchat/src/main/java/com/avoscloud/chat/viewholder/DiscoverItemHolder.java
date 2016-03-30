@@ -12,30 +12,28 @@ import com.avoscloud.chat.App;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.friends.ContactPersonInfoActivity;
 import com.avoscloud.chat.service.PreferenceMap;
+import com.avoscloud.chat.util.Constants;
 import com.avoscloud.chat.util.Utils;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.Constants;
-import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
-import com.nostra13.universalimageloader.core.ImageLoader;
-
+import com.squareup.picasso.Picasso;
 import org.ocpsoft.prettytime.PrettyTime;
-
 import java.util.Date;
+import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
 
 /**
  * Created by wli on 15/11/24.
  */
-public class DiscoverItemHolder extends CommonViewHolder<LeanchatUser> {
+public class DiscoverItemHolder extends LCIMCommonViewHolder<LeanchatUser> {
 
   private static final double EARTH_RADIUS = 6378137;
-  PrettyTime prettyTime;
-  AVGeoPoint location;
+  private PrettyTime prettyTime;
+  private AVGeoPoint location;
 
-  TextView nameView;
-  TextView distanceView;
-  TextView loginTimeView;
-  ImageView avatarView;
-  LeanchatUser leanchatUser;
+  private TextView nameView;
+  private TextView distanceView;
+  private TextView loginTimeView;
+  private ImageView avatarView;
+  private LeanchatUser leanchatUser;
 
   public DiscoverItemHolder(Context context, ViewGroup root) {
     super(context, root, R.layout.discover_near_people_item);
@@ -69,7 +67,7 @@ public class DiscoverItemHolder extends CommonViewHolder<LeanchatUser> {
   public void bindData(LeanchatUser user) {
     leanchatUser = user;
     if (null != user) {
-      ImageLoader.getInstance().displayImage(user.getAvatarUrl(), avatarView, com.avoscloud.leanchatlib.utils.PhotoUtils.avatarImageOptions);
+      Picasso.with(getContext()).load(user.getAvatarUrl()).into(avatarView);
       AVGeoPoint geoPoint = user.getAVGeoPoint(LeanchatUser.LOCATION);
       String currentLat = String.valueOf(location.getLatitude());
       String currentLong = String.valueOf(location.getLongitude());
@@ -102,8 +100,7 @@ public class DiscoverItemHolder extends CommonViewHolder<LeanchatUser> {
    * @param lng2
    * @return 距离：单位为米
    */
-  public static double DistanceOfTwoPoints(double lat1, double lng1,
-                                           double lat2, double lng2) {
+  public static double DistanceOfTwoPoints(double lat1, double lng1, double lat2, double lng2) {
     double radLat1 = rad(lat1);
     double radLat2 = rad(lat2);
     double a = radLat1 - radLat2;

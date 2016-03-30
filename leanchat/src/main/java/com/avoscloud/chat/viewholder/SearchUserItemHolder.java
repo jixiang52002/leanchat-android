@@ -10,16 +10,16 @@ import android.widget.TextView;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.friends.ContactPersonInfoActivity;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.Constants;
-import com.avoscloud.leanchatlib.utils.PhotoUtils;
-import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.avoscloud.chat.util.Constants;
+import com.squareup.picasso.Picasso;
+
+import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
 
 
 /**
  * Created by wli on 15/12/3.
  */
-public class SearchUserItemHolder extends CommonViewHolder<LeanchatUser> {
+public class SearchUserItemHolder extends LCIMCommonViewHolder<LeanchatUser> {
 
   private TextView nameView;
   private ImageView avatarView;
@@ -44,7 +44,7 @@ public class SearchUserItemHolder extends CommonViewHolder<LeanchatUser> {
   @Override
   public void bindData(final LeanchatUser leanchatUser) {
     this.leanchatUser = leanchatUser;
-    ImageLoader.getInstance().displayImage(leanchatUser.getAvatarUrl(), avatarView, PhotoUtils.avatarImageOptions);
+    Picasso.with(getContext()).load(leanchatUser.getAvatarUrl()).into(avatarView);
     nameView.setText(leanchatUser.getUsername());
   }
 

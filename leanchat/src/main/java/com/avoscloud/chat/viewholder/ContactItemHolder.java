@@ -7,24 +7,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.avoscloud.chat.R;
-import com.avoscloud.chat.adapter.ContactsAdapter;
 import com.avoscloud.chat.event.ContactItemClickEvent;
 import com.avoscloud.chat.event.ContactItemLongClickEvent;
-import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.avoscloud.chat.model.ContactItem;
+import com.squareup.picasso.Picasso;
 
+import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by wli on 15/11/24.
  */
-public class ContactItemHolder extends CommonViewHolder<ContactsAdapter.ContactItem> {
+public class ContactItemHolder extends LCIMCommonViewHolder<ContactItem> {
 
   TextView alpha;
   TextView nameView;
   ImageView avatarView;
 
-  public ContactsAdapter.ContactItem contactItem;
+  public ContactItem contactItem;
 
   public ContactItemHolder(Context context, ViewGroup root) {
     super(context, root, R.layout.common_user_item);
@@ -53,12 +53,11 @@ public class ContactItemHolder extends CommonViewHolder<ContactsAdapter.ContactI
   }
 
   @Override
-  public void bindData(ContactsAdapter.ContactItem memberItem) {
+  public void bindData(ContactItem memberItem) {
     contactItem = memberItem;
     alpha.setVisibility(memberItem.initialVisible ? View.VISIBLE : View.GONE);
     alpha.setText(String.valueOf(Character.toUpperCase(memberItem.sortContent.charAt(0))));
-    ImageLoader.getInstance().displayImage(memberItem.user.getAvatarUrl(),
-      avatarView, com.avoscloud.leanchatlib.utils.PhotoUtils.avatarImageOptions);
+    Picasso.with(getContext()).load(memberItem.user.getAvatarUrl()).into(avatarView);
     nameView.setText(memberItem.user.getUsername());
   }
 
