@@ -1,26 +1,19 @@
 package com.avoscloud.chat;
 
 import android.app.Application;
-import android.content.Context;
 import android.os.StrictMode;
-import android.text.TextUtils;
 
 import com.avos.avoscloud.AVAnalytics;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVObject;
 import com.avoscloud.chat.friends.AddRequest;
+import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.model.UpdateInfo;
 import com.avoscloud.chat.service.PushManager;
 import com.avoscloud.chat.util.LeanchatUserProvider;
-import com.avoscloud.leanchatlib.controller.ConversationEventHandler;
 import com.avoscloud.chat.util.Utils;
-import com.avoscloud.leanchatlib.controller.ChatManager;
-import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
 import com.baidu.mapapi.SDKInitializer;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import cn.leanclud.imkit.LCIMKit;
 
 
 /**
@@ -43,23 +36,19 @@ public class App extends Application {
     AVObject.registerSubclass(AddRequest.class);
     AVObject.registerSubclass(UpdateInfo.class);
 
-    AVOSCloud.initialize(this, appId, appKey);
-
     // 节省流量
     AVOSCloud.setLastModifyEnabled(true);
+
+    LCIMKit.getInstance().setProfileProvider(new LeanchatUserProvider());
+    LCIMKit.getInstance().init(this, appId, appKey);
 
     PushManager.getInstance().init(ctx);
     AVOSCloud.setDebugLogEnabled(debug);
     AVAnalytics.enableCrashReport(this, !debug);
-    initImageLoader(ctx);
     initBaiduMap();
     if (App.debug) {
       openStrictMode();
     }
-
-    ThirdPartUserUtils.setThirdPartUserProvider(new LeanchatUserProvider());
-    ChatManager.getInstance().init(this);
-    ChatManager.getInstance().setDebugEnabled(App.debug);
   }
 
   public void openStrictMode() {
@@ -75,20 +64,6 @@ public class App extends Application {
         .penaltyLog()
             //.penaltyDeath()
         .build());
-  }
-
-  /**
-   * 初始化ImageLoader
-   */
-  public static void initImageLoader(Context context) {
-    ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-        context)
-        .threadPoolSize(3).threadPriority(Thread.NORM_PRIORITY - 2)
-            //.memoryCache(new WeakMemoryCache())
-        .denyCacheImageMultipleSizesInMemory()
-        .tasksProcessingOrder(QueueProcessingType.LIFO)
-        .build();
-    ImageLoader.getInstance().init(config);
   }
 
   private void initBaiduMap() {

@@ -7,8 +7,10 @@ import android.content.Intent;
 import com.avoscloud.chat.activity.ChatRoomActivity;
 import com.avoscloud.chat.friends.ContactNewFriendActivity;
 import com.avoscloud.chat.activity.EntrySplashActivity;
-import com.avoscloud.leanchatlib.controller.ChatManager;
-import com.avoscloud.leanchatlib.utils.Constants;
+import com.avoscloud.chat.util.Constants;
+
+import cn.leanclud.imkit.LCIMKit;
+import cn.leanclud.imkit.utils.LCIMConstants;
 
 /**
  * Created by wli on 15/9/8.
@@ -20,7 +22,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
-    if (!ChatManager.getInstance().isLogin()) {
+    if (null == LCIMKit.getInstance().getClient()) {
       gotoLoginActivity(context);
     } else {
       String tag = intent.getStringExtra(Constants.NOTOFICATION_TAG);
@@ -53,10 +55,10 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
   private void gotoChatActivity(Context context, Intent intent) {
     Intent startActivityIntent = new Intent(context, ChatRoomActivity.class);
     startActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    if (intent.hasExtra(Constants.MEMBER_ID)) {
-      startActivityIntent.putExtra(Constants.MEMBER_ID, intent.getStringExtra(Constants.MEMBER_ID));
+    if (intent.hasExtra(LCIMConstants.PEER_ID)) {
+      startActivityIntent.putExtra(LCIMConstants.PEER_ID, intent.getStringExtra(LCIMConstants.PEER_ID));
     } else {
-      startActivityIntent.putExtra(Constants.CONVERSATION_ID, intent.getStringExtra(Constants.CONVERSATION_ID));
+      startActivityIntent.putExtra(LCIMConstants.CONVERSATION_ID, intent.getStringExtra(LCIMConstants.CONVERSATION_ID));
     }
     context.startActivity(startActivityIntent);
   }
