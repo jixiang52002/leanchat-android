@@ -11,10 +11,11 @@ import com.avos.avoscloud.SaveCallback;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.App;
 import com.avoscloud.chat.service.PushManager;
+import com.avoscloud.chat.util.Constants;
+import com.avoscloud.chat.util.LogUtils;
 import com.avoscloud.chat.util.SimpleNetTask;
 import com.avoscloud.chat.util.Utils;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.LogUtils;
 
 import java.util.List;
 
@@ -173,7 +174,7 @@ class AddRequestManager {
       @Override
       protected void onSucceed() {
         PushManager.getInstance().pushMessage(user.getObjectId(), ctx.getString(R.string.push_add_request),
-          ctx.getString(R.string.invitation_action));
+          Constants.INVITATION_ACTION);
         Utils.toast(R.string.contact_sendRequestSucceed);
       }
     }.execute();

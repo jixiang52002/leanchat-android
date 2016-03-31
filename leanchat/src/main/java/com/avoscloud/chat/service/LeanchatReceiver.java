@@ -6,14 +6,13 @@ import android.content.Intent;
 import android.text.TextUtils;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.event.InvitationEvent;
-
-import com.avoscloud.leanchatlib.utils.Constants;
-import com.avoscloud.leanchatlib.utils.LogUtils;
-import com.avoscloud.leanchatlib.utils.NotificationUtils;
+import com.avoscloud.chat.util.Constants;
+import com.avoscloud.chat.util.LogUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cn.leanclud.imkit.utils.LCIMNotificationUtils;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -28,7 +27,7 @@ public class LeanchatReceiver extends BroadcastReceiver {
   public void onReceive(Context context, Intent intent) {
     String action = intent.getAction();
     if (!TextUtils.isEmpty(action)) {
-      if (action.equals(context.getString(R.string.invitation_action))) {
+      if (action.equals(Constants.INVITATION_ACTION)) {
         String avosData = intent.getStringExtra(AVOS_DATA);
         if (!TextUtils.isEmpty(avosData)) {
           try {
@@ -38,7 +37,7 @@ public class LeanchatReceiver extends BroadcastReceiver {
 
               Intent notificationIntent = new Intent(context, NotificationBroadcastReceiver.class);
               notificationIntent.putExtra(Constants.NOTOFICATION_TAG, Constants.NOTIFICATION_SYSTEM);
-              NotificationUtils.showNotification(context, "LeanChat", alertStr, notificationIntent);
+              LCIMNotificationUtils.showNotification(context, "LeanChat", alertStr, notificationIntent);
             }
           } catch (JSONException e) {
             LogUtils.logException(e);
