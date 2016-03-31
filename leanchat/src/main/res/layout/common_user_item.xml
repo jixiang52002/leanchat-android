@@ -24,7 +24,7 @@
             style="@style/My.ImageView.Photo_Avatar"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/chat_default_user_avatar" />
+            android:src="@drawable/lcim_default_avatar_icon" />
 
         <TextView
             android:id="@+id/tv_friend_name"

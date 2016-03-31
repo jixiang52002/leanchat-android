@@ -105,4 +105,7 @@
     <string name="chat_pleaseCheckNetwork">请检查网络</string>
     <string name="load_more_footer_hint_normal">查看更多</string>
     <string name="login_null_name_tip">请输入用户名</string>
+
+    <string name="chat_geoIsSame">获取坐标相同</string>
+    <string name="chat_reverseGeoCodeResultIs">反编码得到的地址：</string>
 </resources>

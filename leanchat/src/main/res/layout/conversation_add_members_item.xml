@@ -18,7 +18,7 @@
         <ImageView
             android:id="@+id/avatar"
             style="@style/LCIMAvatar"
-            android:src="@drawable/chat_default_user_avatar" />
+            android:src="@drawable/lcim_default_avatar_icon" />
 
         <TextView
             android:id="@+id/username"

@@ -37,7 +37,7 @@
                         android:id="@+id/profile_avatar_view"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:src="@drawable/chat_default_user_avatar" />
+                        android:src="@drawable/lcim_default_avatar_icon" />
 
                     <TextView
                         android:id="@+id/profile_username_view"
