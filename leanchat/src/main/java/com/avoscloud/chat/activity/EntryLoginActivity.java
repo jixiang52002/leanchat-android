@@ -83,8 +83,7 @@ public class EntryLoginActivity extends AVBaseActivity {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
         if (filterException(e)) {
-          System.out.println("-----RP_INITED--------->>login");
-          new RequestTask(getApplicationContext(), LeanchatUser.getCurrentUserId()).execute();
+           new RequestTask(getApplicationContext(), LeanchatUser.getCurrentUserId()).execute();
           Intent intent = new Intent(EntryLoginActivity.this, MainActivity.class);
           startActivity(intent);
           finish();
