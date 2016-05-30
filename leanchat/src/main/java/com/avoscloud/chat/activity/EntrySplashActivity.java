@@ -53,8 +53,7 @@ public class EntrySplashActivity extends AVBaseActivity {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
         if (filterException(e)) {
-          System.out.println("-----RP_INITED--------->>welcome");
-           new RequestTask(getApplicationContext(), LeanchatUser.getCurrentUserId()).execute();
+            new RequestTask(getApplicationContext(), LeanchatUser.getCurrentUserId()).execute();
 
           Intent intent = new Intent(EntrySplashActivity.this, MainActivity.class);
           startActivity(intent);
