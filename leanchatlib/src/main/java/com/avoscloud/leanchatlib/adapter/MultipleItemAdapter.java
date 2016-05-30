@@ -6,19 +6,24 @@ import android.view.ViewGroup;
 import com.avos.avoscloud.im.v2.AVIMMessage;
 import com.avos.avoscloud.im.v2.AVIMReservedMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
+import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.controller.ChatManager;
 import com.avoscloud.leanchatlib.viewholder.ChatItemAudioHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemImageHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemLocationHolder;
+import com.avoscloud.leanchatlib.viewholder.ChatItemRPNotifyHolder;
+import com.avoscloud.leanchatlib.viewholder.ChatItemRedpacketHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemTextHolder;
 import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
+import com.easemob.redpacketsdk.constant.RPConstant;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wli on 15/8/13.
@@ -26,141 +31,166 @@ import java.util.List;
  */
 public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-  private final int ITEM_LEFT = 100;
-  private final int ITEM_LEFT_TEXT = 101;
-  private final int ITEM_LEFT_IMAGE = 102;
-  private final int ITEM_LEFT_AUDIO = 103;
-  private final int ITEM_LEFT_LOCATION = 104;
+    private final int ITEM_LEFT = 100;
+    private final int ITEM_LEFT_TEXT = 101;
+    private final int ITEM_LEFT_IMAGE = 102;
+    private final int ITEM_LEFT_AUDIO = 103;
+    private final int ITEM_LEFT_LOCATION = 104;
+    private final int ITEM_LEFT_TEXT_REDPACKET = 105;
+    private final int ITEM_RIGHT = 200;
+    private final int ITEM_RIGHT_TEXT = 201;
+    private final int ITEM_RIGHT_IMAGE = 202;
+    private final int ITEM_RIGHT_AUDIO = 203;
+    private final int ITEM_RIGHT_LOCATION = 204;
+    private final int ITEM_RIGHT_TEXT_REDPACKET = 205;
+    private final int ITEM_TEXT_REDPACKET_NOTIFY = 300;
+    // 时间间隔最小为十分钟
+    private final static long TIME_INTERVAL = 1000 * 60 * 3;
+    private boolean isShowUserName = true;
 
-  private final int ITEM_RIGHT = 200;
-  private final int ITEM_RIGHT_TEXT = 201;
-  private final int ITEM_RIGHT_IMAGE = 202;
-  private final int ITEM_RIGHT_AUDIO = 203;
-  private final int ITEM_RIGHT_LOCATION = 204;
+    private List<AVIMMessage> messageList = new ArrayList<AVIMMessage>();
+    private static PrettyTime prettyTime = new PrettyTime();
 
-  // 时间间隔最小为十分钟
-  private final static long TIME_INTERVAL = 1000 * 60 * 3;
-  private boolean isShowUserName = true;
-
-  private List<AVIMMessage> messageList = new ArrayList<AVIMMessage>();
-  private static PrettyTime prettyTime = new PrettyTime();
-
-  public MultipleItemAdapter() {
-  }
-
-  public void setMessageList(List<AVIMMessage> messages) {
-    messageList.clear();
-    if (null != messages) {
-      messageList.addAll(messages);
+    public MultipleItemAdapter() {
     }
-  }
 
-  public void addMessageList(List<AVIMMessage> messages) {
-    messageList.addAll(0, messages);
-  }
-
-  public void addMessage(AVIMMessage message) {
-    messageList.addAll(Arrays.asList(message));
-  }
-
-  public AVIMMessage getFirstMessage() {
-    if (null != messageList && messageList.size() > 0) {
-      return messageList.get(0);
-    } else {
-      return null;
+    public void setMessageList(List<AVIMMessage> messages) {
+        messageList.clear();
+        if (null != messages) {
+            messageList.addAll(messages);
+        }
     }
-  }
 
-  @Override
-  public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    switch (viewType) {
-      case ITEM_LEFT_TEXT:
-        return new ChatItemTextHolder(parent.getContext(), parent, true);
-      case ITEM_LEFT_IMAGE:
-        return new ChatItemImageHolder(parent.getContext(), parent, true);
-      case ITEM_LEFT_AUDIO:
-        return new ChatItemAudioHolder(parent.getContext(), parent, true);
-      case ITEM_LEFT_LOCATION:
-        return new ChatItemLocationHolder(parent.getContext(), parent, true);
-      case ITEM_RIGHT_TEXT:
-        return new ChatItemTextHolder(parent.getContext(), parent, false);
-      case ITEM_RIGHT_IMAGE:
-        return new ChatItemImageHolder(parent.getContext(), parent, false);
-      case ITEM_RIGHT_AUDIO:
-        return new ChatItemAudioHolder(parent.getContext(), parent, false);
-      case ITEM_RIGHT_LOCATION:
-        return new ChatItemLocationHolder(parent.getContext(), parent, false);
-      default:
-        //TODO 此处还要判断左右
-        return new ChatItemTextHolder(parent.getContext(), parent, true);
+
+    public void addMessageList(List<AVIMMessage> messages) {
+        messageList.addAll(0, messages);
     }
-  }
 
-  @Override
-  public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-    ((CommonViewHolder)holder).bindData(messageList.get(position));
-    if (holder instanceof ChatItemHolder) {
-      ((ChatItemHolder)holder).showTimeView(shouldShowTime(position));
-      ((ChatItemHolder)holder).showUserName(isShowUserName);
+    public void addMessage(AVIMMessage message) {
+        messageList.addAll(Arrays.asList(message));
     }
-  }
 
-  @Override
-  public int getItemViewType(int position) {
-    //TODO 如果是自定义的数据类型该如何
-    AVIMMessage message = messageList.get(position);
-    if (null != message && message instanceof AVIMTypedMessage) {
-      AVIMTypedMessage typedMessage = (AVIMTypedMessage) message;
-      boolean isMe = fromMe(typedMessage);
-      if (typedMessage.getMessageType() == AVIMReservedMessageType.TextMessageType.getType()) {
-        return isMe ? ITEM_RIGHT_TEXT : ITEM_LEFT_TEXT;
-      } else if (typedMessage.getMessageType() == AVIMReservedMessageType.AudioMessageType.getType()) {
-        return isMe ? ITEM_RIGHT_AUDIO : ITEM_LEFT_AUDIO;
-      } else if (typedMessage.getMessageType() == AVIMReservedMessageType.ImageMessageType.getType()) {
-        return isMe ? ITEM_RIGHT_IMAGE : ITEM_LEFT_IMAGE;
-      } else if (typedMessage.getMessageType() == AVIMReservedMessageType.LocationMessageType.getType()) {
-        return isMe ? ITEM_RIGHT_LOCATION : ITEM_LEFT_LOCATION;
-      } else {
-        return isMe ? ITEM_RIGHT : ITEM_LEFT;
-      }
+    public AVIMMessage getFirstMessage() {
+        if (null != messageList && messageList.size() > 0) {
+            return messageList.get(0);
+        } else {
+            return null;
+        }
     }
-    return 8888;
-  }
 
-  @Override
-  public int getItemCount() {
-    return messageList.size();
-  }
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType) {
+            case ITEM_LEFT_TEXT:
+                return new ChatItemTextHolder(parent.getContext(), parent, true);
+            case ITEM_LEFT_IMAGE:
+                return new ChatItemImageHolder(parent.getContext(), parent, true);
+            case ITEM_LEFT_AUDIO:
+                return new ChatItemAudioHolder(parent.getContext(), parent, true);
+            case ITEM_LEFT_LOCATION:
+                return new ChatItemLocationHolder(parent.getContext(), parent, true);
+            case ITEM_RIGHT_TEXT:
+                return new ChatItemTextHolder(parent.getContext(), parent, false);
+            case ITEM_RIGHT_IMAGE:
+                return new ChatItemImageHolder(parent.getContext(), parent, false);
+            case ITEM_RIGHT_AUDIO:
+                return new ChatItemAudioHolder(parent.getContext(), parent, false);
+            case ITEM_RIGHT_LOCATION:
+                return new ChatItemLocationHolder(parent.getContext(), parent, false);
+            case ITEM_LEFT_TEXT_REDPACKET:
+                return new ChatItemRedpacketHolder(parent.getContext(), parent, true);
+            case ITEM_RIGHT_TEXT_REDPACKET:
+                return new ChatItemRedpacketHolder(parent.getContext(), parent, false);
+            case ITEM_TEXT_REDPACKET_NOTIFY:
+                return new ChatItemRPNotifyHolder(parent.getContext(), parent, false);
 
-  private boolean shouldShowTime(int position) {
-    if (position == 0) {
-      return true;
+
+            default:
+                //TODO 此处还要判断左右
+                return new ChatItemTextHolder(parent.getContext(), parent, true);
+        }
     }
-    long lastTime = messageList.get(position - 1).getTimestamp();
-    long curTime = messageList.get(position).getTimestamp();
-    return curTime - lastTime > TIME_INTERVAL;
-  }
 
-  public void showUserName(boolean isShow) {
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ((CommonViewHolder) holder).bindData(messageList.get(position));
+        if (holder instanceof ChatItemHolder) {
+            ((ChatItemHolder) holder).showTimeView(shouldShowTime(position));
+            ((ChatItemHolder) holder).showUserName(isShowUserName);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        //TODO 如果是自定义的数据类型该如何
+        AVIMMessage message = messageList.get(position);
+        if (null != message && message instanceof AVIMTypedMessage) {
+            AVIMTypedMessage typedMessage = (AVIMTypedMessage) message;
+            boolean isMe = fromMe(typedMessage);
+            if (typedMessage.getMessageType() == AVIMReservedMessageType.TextMessageType.getType()) {
+                Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
+                if (attrs != null &&  attrs.get(RPConstant.MESSAGE_ATTR_IS_MONEY_MESSAGE)!=null&&(boolean)attrs.get(RPConstant.MESSAGE_ATTR_IS_MONEY_MESSAGE)) {
+                     //收發紅包
+                     return isMe ? ITEM_RIGHT_TEXT_REDPACKET : ITEM_LEFT_TEXT_REDPACKET;
+                } else if(attrs != null &&  attrs.get(RPConstant.MESSAGE_ATTR_IS_OPEN_MONEY_MESSAGE)!=null&&(boolean)attrs.get(RPConstant.MESSAGE_ATTR_IS_OPEN_MONEY_MESSAGE)) {
+                     //收取紅包通知
+                    return ITEM_TEXT_REDPACKET_NOTIFY;
+                }else{
+                    return isMe ? ITEM_RIGHT_TEXT : ITEM_LEFT_TEXT;
+                }
+
+
+            } else if (typedMessage.getMessageType() == AVIMReservedMessageType.AudioMessageType.getType()) {
+                return isMe ? ITEM_RIGHT_AUDIO : ITEM_LEFT_AUDIO;
+            } else if (typedMessage.getMessageType() == AVIMReservedMessageType.ImageMessageType.getType()) {
+                return isMe ? ITEM_RIGHT_IMAGE : ITEM_LEFT_IMAGE;
+            } else if (typedMessage.getMessageType() == AVIMReservedMessageType.LocationMessageType.getType()) {
+                return isMe ? ITEM_RIGHT_LOCATION : ITEM_LEFT_LOCATION;
+            } else {
+                return isMe ? ITEM_RIGHT : ITEM_LEFT;
+            }
+        }
+        return 8888;
+    }
+
+    @Override
+    public int getItemCount() {
+        return messageList.size();
+    }
+
+    private boolean shouldShowTime(int position) {
+        if (position == 0) {
+            return true;
+        }
+        long lastTime = messageList.get(position - 1).getTimestamp();
+        long curTime = messageList.get(position).getTimestamp();
+        return curTime - lastTime > TIME_INTERVAL;
+    }
+
+    public void showUserName(boolean isShow) {
     isShowUserName = isShow;
   }
 
 
-  /**
-   * 因为 RecyclerView 中的 item 缓存默认最大为 5，造成会重复的 create item 而卡顿
-   * 所以这里根据不同的类型设置不同的缓存值，经验值，不同 app 可以根据自己的场景进行更改
-   */
-  public void resetRecycledViewPoolSize(RecyclerView recyclerView) {
-    recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_TEXT, 25);
-    recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_IMAGE, 10);
-    recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_AUDIO, 15);
-    recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_LOCATION, 10);
+    /**
+     * 因为 RecyclerView 中的 item 缓存默认最大为 5，造成会重复的 create item 而卡顿
+     * 所以这里根据不同的类型设置不同的缓存值，经验值，不同 app 可以根据自己的场景进行更改
+     */
+    public void resetRecycledViewPoolSize(RecyclerView recyclerView) {
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_TEXT, 25);
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_IMAGE, 10);
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_AUDIO, 15);
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_LOCATION, 10);
+         recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_TEXT_REDPACKET, 25);
 
-    recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_TEXT, 25);
-    recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_IMAGE, 10);
-    recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_AUDIO, 15);
-    recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_LOCATION, 10);
-  }
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_TEXT, 25);
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_IMAGE, 10);
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_AUDIO, 15);
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_LOCATION, 10);
+       recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_TEXT_REDPACKET, 25);
+
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_TEXT_REDPACKET_NOTIFY, 10);
+    }
 
   private boolean fromMe(AVIMTypedMessage msg) {
     ChatManager chatManager = ChatManager.getInstance();

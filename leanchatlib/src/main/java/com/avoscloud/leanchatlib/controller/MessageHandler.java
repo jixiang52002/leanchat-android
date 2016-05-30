@@ -16,6 +16,9 @@ import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
 import com.avoscloud.leanchatlib.utils.Constants;
 import com.avoscloud.leanchatlib.utils.LogUtils;
 import com.avoscloud.leanchatlib.utils.NotificationUtils;
+import com.easemob.redpacketsdk.constant.RPConstant;
+
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 
@@ -85,7 +88,15 @@ public class MessageHandler extends AVIMTypedMessageHandler<AVIMTypedMessage> {
     if (null != conversation && null != message) {
       String notificationContent = message instanceof AVIMTextMessage ?
         ((AVIMTextMessage) message).getText() : context.getString(R.string.unspport_message_type);
+        if(message instanceof AVIMTextMessage){
 
+          if(((AVIMTextMessage) message).getAttrs()!=null){
+            Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
+            if(attrs.get(RPConstant.MESSAGE_ATTR_IS_OPEN_MONEY_MESSAGE)!=null&&(boolean)attrs.get(RPConstant.MESSAGE_ATTR_IS_OPEN_MONEY_MESSAGE)){
+               return;
+            }
+          }
+        }
       String userName = ThirdPartUserUtils.getInstance().getUserName(message.getFrom());
       String title = (TextUtils.isEmpty(userName) ? "" : userName);
 
