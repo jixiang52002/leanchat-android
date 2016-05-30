@@ -40,7 +40,7 @@ import de.greenrobot.event.EventBus;
  * 当点击相关按钮时发送 InputBottomBarEvent，需要的 View 可以自己去订阅相关消息
  */
 public class InputBottomBar extends LinearLayout {
-
+//
   /**
    * 加号 Button
    */
