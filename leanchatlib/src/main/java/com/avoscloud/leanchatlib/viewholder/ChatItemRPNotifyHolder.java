@@ -44,6 +44,7 @@ public class ChatItemRPNotifyHolder extends ChatItemHolder {
 
     public ChatItemRPNotifyHolder(Context context, ViewGroup root, boolean isLeft) {
         super(context, root, isLeft);
+
     }
 
     @Override
@@ -60,6 +61,7 @@ public class ChatItemRPNotifyHolder extends ChatItemHolder {
     @Override
     public void bindData(Object o) {
         super.bindData(o);
+        nameView.setText("");
         AVIMMessage message = (AVIMMessage) o;
         if (message instanceof AVIMTextMessage) {
             final AVIMTextMessage textMessage = (AVIMTextMessage) message;
@@ -133,6 +135,8 @@ public class ChatItemRPNotifyHolder extends ChatItemHolder {
             }
 
         }
+
+
     }
 
 
