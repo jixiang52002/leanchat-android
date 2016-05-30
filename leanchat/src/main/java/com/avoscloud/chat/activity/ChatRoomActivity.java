@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.avos.avoscloud.AVGeoPoint;
 import com.avos.avoscloud.im.v2.messages.AVIMLocationMessage;
 import com.avoscloud.chat.R;
+import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.leanchatlib.activity.AVChatActivity;
 import com.avoscloud.leanchatlib.event.InputBottomBarLocationClickEvent;
 import com.avoscloud.leanchatlib.event.LocationItemClickEvent;
@@ -26,6 +27,13 @@ public class ChatRoomActivity extends AVChatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+
+    LeanchatUser curUser = LeanchatUser.getCurrentUser();
+    if (curUser != null) {
+      chatFragment.fromAvatarUrl = TextUtils.isEmpty(curUser.getAvatarUrl()) ? "none" : curUser.getAvatarUrl();
+      chatFragment. fromNickname =  curUser.getUsername() ;
+    }
   }
 
   @Override
@@ -88,7 +96,7 @@ public class ChatRoomActivity extends AVChatActivity {
     if (null != event && null != event.message && event.message instanceof AVIMLocationMessage) {
       AVIMLocationMessage locationMessage = (AVIMLocationMessage) event.message;
       LocationActivity.startToSeeLocationDetail(this, locationMessage.getLocation().getLatitude(),
-        locationMessage.getLocation().getLongitude());
+              locationMessage.getLocation().getLongitude());
     }
   }
 }

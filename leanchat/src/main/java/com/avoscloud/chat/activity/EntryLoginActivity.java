@@ -12,6 +12,7 @@ import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.avoscloud.chat.R;
+import com.avoscloud.chat.RequestTask;
 import com.avoscloud.chat.util.Utils;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.leanchatlib.activity.AVBaseActivity;
@@ -82,6 +83,8 @@ public class EntryLoginActivity extends AVBaseActivity {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
         if (filterException(e)) {
+          System.out.println("-----RP_INITED--------->>login");
+          new RequestTask(getApplicationContext(), LeanchatUser.getCurrentUserId()).execute();
           Intent intent = new Intent(EntryLoginActivity.this, MainActivity.class);
           startActivity(intent);
           finish();

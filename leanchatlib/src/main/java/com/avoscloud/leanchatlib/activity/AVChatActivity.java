@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class AVChatActivity extends AVBaseActivity {
 
-  protected ChatFragment chatFragment;
+  public ChatFragment chatFragment;
   protected AVIMConversation conversation;
 
   @Override

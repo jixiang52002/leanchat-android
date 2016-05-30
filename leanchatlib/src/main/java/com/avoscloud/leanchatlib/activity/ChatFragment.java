@@ -21,24 +21,32 @@ import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.AVIMMessage;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
+import com.avos.avoscloud.im.v2.callback.AVIMConversationMemberCountCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMMessagesQueryCallback;
 import com.avos.avoscloud.im.v2.messages.AVIMAudioMessage;
 import com.avos.avoscloud.im.v2.messages.AVIMImageMessage;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.R;
 import com.avoscloud.leanchatlib.adapter.MultipleItemAdapter;
+import com.avoscloud.leanchatlib.controller.ConversationHelper;
 import com.avoscloud.leanchatlib.event.ImTypeMessageEvent;
 import com.avoscloud.leanchatlib.event.ImTypeMessageResendEvent;
 import com.avoscloud.leanchatlib.event.InputBottomBarEvent;
 import com.avoscloud.leanchatlib.event.InputBottomBarRecordEvent;
 import com.avoscloud.leanchatlib.event.InputBottomBarTextEvent;
+import com.avoscloud.leanchatlib.model.ConversationType;
 import com.avoscloud.leanchatlib.utils.NotificationUtils;
 import com.avoscloud.leanchatlib.utils.PathUtils;
 import com.avoscloud.leanchatlib.utils.ProviderPathUtils;
+import com.easemob.redpacketsdk.bean.RedPacketInfo;
+import com.easemob.redpacketsdk.constant.RPConstant;
+import com.easemob.redpacketui.ui.activity.RPRedPacketActivity;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 
@@ -48,24 +56,29 @@ import de.greenrobot.event.EventBus;
  */
 public class ChatFragment extends android.support.v4.app.Fragment {
 
-  private static final int TAKE_CAMERA_REQUEST = 2;
-  private static final int GALLERY_REQUEST = 0;
-  private static final int GALLERY_KITKAT_REQUEST = 3;
+    private static final int TAKE_CAMERA_REQUEST = 2;
+    private static final int GALLERY_REQUEST = 0;
+    private static final int GALLERY_KITKAT_REQUEST = 3;
+    private static final int REQUEST_CODE_SEND_MONEY = 4;
 
-  protected AVIMConversation imConversation;
+    protected AVIMConversation imConversation;
 
-  protected MultipleItemAdapter itemAdapter;
-  protected RecyclerView recyclerView;
-  protected LinearLayoutManager layoutManager;
-  protected SwipeRefreshLayout refreshLayout;
-  protected InputBottomBar inputBottomBar;
+    protected MultipleItemAdapter itemAdapter;
+    protected RecyclerView recyclerView;
+    protected LinearLayoutManager layoutManager;
+    protected SwipeRefreshLayout refreshLayout;
+    protected InputBottomBar inputBottomBar;
 
-  protected String localCameraPath;
+    protected String localCameraPath;
+    //发送者头像url
+    public String fromAvatarUrl;
+    //发送者昵称 设置了昵称就传昵称 否则传id
+    public String fromNickname;
 
-  @Nullable
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_chat, container, false);
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
     localCameraPath = PathUtils.getPicturePathByCurrentTime(getContext());
 
@@ -163,17 +176,17 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     });
   }
 
-  /**
-   * 输入事件处理，接收后构造成 AVIMTextMessage 然后发送
-   * 因为不排除某些特殊情况会受到其他页面过来的无效消息，所以此处加了 tag 判断
-   */
-  public void onEvent(InputBottomBarTextEvent textEvent) {
-    if (null != imConversation && null != textEvent) {
-      if (!TextUtils.isEmpty(textEvent.sendContent) && imConversation.getConversationId().equals(textEvent.tag)) {
-        sendText(textEvent.sendContent);
-      }
+    /**
+     * 输入事件处理，接收后构造成 AVIMTextMessage 然后发送
+     * 因为不排除某些特殊情况会受到其他页面过来的无效消息，所以此处加了 tag 判断
+     */
+    public void onEvent(InputBottomBarTextEvent textEvent) {
+        if (null != imConversation && null != textEvent) {
+            if (!TextUtils.isEmpty(textEvent.sendContent) && imConversation.getConversationId().equals(textEvent.tag)) {
+                sendText(textEvent.sendContent, false, null);
+            }
+        }
     }
-  }
 
   /**
    * 处理推送过来的消息
@@ -233,18 +246,21 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 //    }
 //  }
 
-  public void onEvent(InputBottomBarEvent event) {
-    if (null != imConversation && null != event && imConversation.getConversationId().equals(event.tag)) {
-      switch (event.eventAction) {
-        case InputBottomBarEvent.INPUTBOTTOMBAR_IMAGE_ACTION:
-          selectImageFromLocal();
-          break;
-        case InputBottomBarEvent.INPUTBOTTOMBAR_CAMERA_ACTION:
-          selectImageFromCamera();
-          break;
-      }
+    public void onEvent(InputBottomBarEvent event) {
+        if (null != imConversation && null != event && imConversation.getConversationId().equals(event.tag)) {
+            switch (event.eventAction) {
+                case InputBottomBarEvent.INPUTBOTTOMBAR_IMAGE_ACTION:
+                    selectImageFromLocal();
+                    break;
+                case InputBottomBarEvent.INPUTBOTTOMBAR_CAMERA_ACTION:
+                    selectImageFromCamera();
+                case InputBottomBarEvent.INPUTBOTTOMBAR_REDPACKET_ACTION:
+                    selectRedpacket();
+                   
+                    break;
+            }
+        }
     }
-  }
 
   public void onEvent(InputBottomBarRecordEvent recordEvent) {
     if (null != imConversation && null != recordEvent &&
@@ -278,9 +294,42 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     }
   }
 
-  private void scrollToBottom() {
-    layoutManager.scrollToPositionWithOffset(itemAdapter.getItemCount() - 1, 0);
-  }
+    public void selectRedpacket() {
+        final Intent intent = new Intent(getActivity(), RPRedPacketActivity.class);
+        final RedPacketInfo moneyInfo = new RedPacketInfo();
+        moneyInfo.fromAvatarUrl = fromAvatarUrl;
+        moneyInfo.fromNickName = fromNickname;
+        //接收者Id或者接收的群Id
+        if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
+            //向adapter传入聊天类型---1为单聊，2为群聊
+
+            moneyInfo.toUserId = ConversationHelper.otherIdOfConversation(imConversation);
+            moneyInfo.chatType = RPConstant.CHATTYPE_SINGLE;
+            intent.putExtra(RPConstant.EXTRA_MONEY_INFO, moneyInfo);
+            startActivityForResult(intent, REQUEST_CODE_SEND_MONEY);
+        } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
+
+            moneyInfo.toGroupId = imConversation.getConversationId();
+
+            imConversation.getMemberCount(new AVIMConversationMemberCountCallback() {
+
+                @Override
+                public void done(Integer integer, AVIMException e) {
+                    moneyInfo.groupMemberCount = integer;
+                    moneyInfo.chatType = RPConstant.CHATTYPE_GROUP;
+                    intent.putExtra(RPConstant.EXTRA_MONEY_INFO, moneyInfo);
+                    startActivityForResult(intent, REQUEST_CODE_SEND_MONEY);
+                }
+            });
+
+        }
+
+
+    }
+
+    private void scrollToBottom() {
+        layoutManager.scrollToPositionWithOffset(itemAdapter.getItemCount() - 1, 0);
+    }
 
   protected boolean filterException(Exception e) {
     if (e != null) {
@@ -326,15 +375,43 @@ public class ChatFragment extends android.support.v4.app.Fragment {
           inputBottomBar.hideMoreLayout();
           sendImage(localCameraPath);
           break;
-      }
-    }
-  }
+                case REQUEST_CODE_SEND_MONEY:
+                    if (data != null) {
+                        String greetings = data.getStringExtra(RPConstant.EXTRA_MONEY_GREETING);
+                        String moneyID = data.getStringExtra(RPConstant.EXTRA_CHECK_MONEY_ID);
 
-  private void sendText(String content) {
-    AVIMTextMessage message = new AVIMTextMessage();
-    message.setText(content);
-    sendMessage(message);
-  }
+                        String content = "[" + getResources().getString(R.string.leancloud_luckymoney) + "]" + greetings;
+                        Map<String, Object> attrs = new HashMap<String, Object>();
+                        attrs.put(RPConstant.MESSAGE_ATTR_IS_MONEY_MESSAGE, true);
+                        attrs.put(RPConstant.EXTRA_SPONSOR_NAME, getResources().getString(R.string.leancloud_luckymoney));
+                        attrs.put(RPConstant.EXTRA_MONEY_GREETING, greetings);
+                        attrs.put(RPConstant.EXTRA_CHECK_MONEY_ID, moneyID);
+
+                        if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
+                            //传入聊天类型---1为单聊，2为群聊
+                            attrs.put("chatType", 1);
+
+                        } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
+                            attrs.put("chatType", 2);
+                        }
+
+
+                        sendText(content, true, attrs);
+                    }
+                    break;
+            }
+        }
+    }
+
+    public void sendText(String content, boolean isRP, Map<String, Object> attrs) {
+        AVIMTextMessage message = new AVIMTextMessage();
+        message.setText(content);
+        if (isRP) {
+            message.setAttrs(attrs);
+
+        }
+        sendMessage(message);
+    }
 
   private void sendImage(String imagePath) {
     AVIMImageMessage imageMsg = null;
