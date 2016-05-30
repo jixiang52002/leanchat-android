@@ -32,7 +32,7 @@ public class ChatRoomActivity extends AVChatActivity {
     LeanchatUser curUser = LeanchatUser.getCurrentUser();
     if (curUser != null) {
       chatFragment.fromAvatarUrl = TextUtils.isEmpty(curUser.getAvatarUrl()) ? "none" : curUser.getAvatarUrl();
-      chatFragment. fromNickname =  curUser.getUsername() ;
+      chatFragment. fromNickname =  curUser.getUsername();
     }
   }
 
