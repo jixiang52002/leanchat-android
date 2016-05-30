@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bubble"
+    android:layout_width="210dp"
+    android:layout_height="90dp"
+    android:layout_below="@+id/tv_userid"
+    android:layout_marginLeft="5dp"
+    android:background="@drawable/money_chatfrom_bg">
+
+    <ImageView
+        android:id="@+id/iv_money_icon"
+        style="@style/MoneyIconStyle"
+        android:src="@drawable/money_icon" />
+
+    <TextView
+        android:id="@+id/tv_money_greeting"
+        style="@style/MoneyGreetingStyle"
+        android:text="恭喜发财，大吉大利！" />
+
+    <TextView
+        style="@style/MoneyCheckStyle"
+        android:text="查看红包" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:id="@+id/tv_sponsor_name"
+            style="@style/MoneySponsorStyle" />
+
+        <ImageView style="@style/MoneySponsorIconStyle" />
+    </RelativeLayout>
+</RelativeLayout>
