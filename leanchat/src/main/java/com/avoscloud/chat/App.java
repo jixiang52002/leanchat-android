@@ -18,6 +18,7 @@ import com.avoscloud.leanchatlib.controller.ChatManager;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
 import com.baidu.mapapi.SDKInitializer;
+import com.easemob.redpacketsdk.RedPacket;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
@@ -60,6 +61,7 @@ public class App extends Application {
     ThirdPartUserUtils.setThirdPartUserProvider(new LeanchatUserProvider());
     ChatManager.getInstance().init(this);
     ChatManager.getInstance().setDebugEnabled(App.debug);
+    RedPacket.getInstance().initContext(ctx);
   }
 
   public void openStrictMode() {
