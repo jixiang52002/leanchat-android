@@ -22,7 +22,8 @@ public class RedPacketUtils {
     public static final String EXTRA_RED_PACKET_GREETING = "money_greeting";
     public static final String EXTRA_RED_PACKET_ID = "ID";
     public static final String CHAT_TYPE = "chatType";
-
+    public static final String MESSAGE_DIRECT_SEND = "SEND";
+    public static final String MESSAGE_DIRECT_RECEIVE = "RECEIVE";
     /**
      * 设置发消息红包的附加字段的attrs
      **/
@@ -33,8 +34,8 @@ public class RedPacketUtils {
         attrs.put(EXTRA_RED_PACKET_GREETING, money_greeting);
         attrs.put(EXTRA_RED_PACKET_ID, moneyID);
         attrs.put(CHAT_TYPE, chatType);
+         return attrs;
 
-        return attrs;
     }
 
     /**

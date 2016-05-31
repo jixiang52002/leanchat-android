@@ -69,7 +69,7 @@ public class ChatItemRPNotifyHolder extends ChatItemHolder {
              //获取附加字段
             final Map<String, Object> attrs = textMessage.getAttrs();
             //防止崩潰，先檢查數據
-            if (RedPacketUtils.checkReceivedRPData(attrs)) return;
+            if (!RedPacketUtils.checkReceivedRPData(attrs)) return;
 
             String fromUser= (String) attrs.get(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME);//红包发送者
             String toUser= (String) attrs.get(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);//红包接收者

@@ -78,7 +78,7 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
             //获取附加字段
             final Map<String, Object> attrs = textMessage.getAttrs();
             //检查数据，防止解析崩溃
-            if (RedPacketUtils.checkSendRPData(attrs)) return;
+            if (!RedPacketUtils.checkSendRPData(attrs)) return;
             /**
              *
              *
@@ -146,10 +146,10 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
         String moneyMsgDirect = "";
         //判断发送还是接收
         if (fromMe(textMessage)) {
-            moneyMsgDirect = RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME;
+            moneyMsgDirect = RedPacketUtils.MESSAGE_DIRECT_SEND;
 
         } else {
-            moneyMsgDirect = RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME;
+            moneyMsgDirect = RedPacketUtils.MESSAGE_DIRECT_RECEIVE;
 
         }
         return moneyMsgDirect;
