@@ -1,10 +1,7 @@
 package com.avoscloud.leanchatlib.viewholder;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,17 +15,10 @@ import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.R;
 import com.avoscloud.leanchatlib.activity.AVChatActivity;
 import com.avoscloud.leanchatlib.controller.ChatManager;
-import com.avoscloud.leanchatlib.controller.ConversationHelper;
-import com.avoscloud.leanchatlib.controller.EmotionHelper;
-import com.avoscloud.leanchatlib.model.ConversationType;
-import com.avoscloud.leanchatlib.utils.PhotoUtils;
 import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
-import com.easemob.redpacketsdk.RedPacket;
 import com.easemob.redpacketsdk.bean.RedPacketInfo;
 import com.easemob.redpacketsdk.constant.RPConstant;
-import com.easemob.redpacketsdk.utils.RPPreferenceManager;
 import com.easemob.redpacketui.utils.RPOpenPacketUtil;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +26,7 @@ import java.util.Map;
 /**
  * Created by wli on 15/9/17.
  */
-public class ChatItemRedpacketHolder extends ChatItemHolder {
+public class ChatItemRedPacketHolder extends ChatItemHolder {
 
     protected TextView mTvGreeting;
     protected TextView mTvSponsorName;
@@ -44,7 +34,7 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
     protected Context context;
 
 
-    public ChatItemRedpacketHolder(Context context, ViewGroup root, boolean isLeft) {
+    public ChatItemRedPacketHolder(Context context, ViewGroup root, boolean isLeft) {
         super(context, root, isLeft);
 
 
@@ -77,12 +67,12 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
             final Map<String, Object> attrs = textMessage.getAttrs();
 
             //防止崩潰，先檢查數據
-            if(!attrs.containsKey(RPConstant.EXTRA_SPONSOR_NAME)
-                    ||!attrs.containsKey(RPConstant.EXTRA_MONEY_GREETING)
-                    ||!attrs.containsKey(RPConstant.EXTRA_CHECK_MONEY_ID)
-                    ||!attrs.containsKey("chatType")
+            if (!attrs.containsKey(RPConstant.EXTRA_SPONSOR_NAME)
+                    || !attrs.containsKey(RPConstant.EXTRA_MONEY_GREETING)
+                    || !attrs.containsKey(RPConstant.EXTRA_CHECK_MONEY_ID)
+                    || !attrs.containsKey("chatType")
 
-                    ){
+                    ) {
 
                 return;
             }
@@ -90,15 +80,15 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
             String sponsorName = (String) attrs.get(RPConstant.EXTRA_SPONSOR_NAME);
             String greetings = (String) attrs.get(RPConstant.EXTRA_MONEY_GREETING);
             //获取红包id
-           final   String moneyId = (String) attrs.get(RPConstant.EXTRA_CHECK_MONEY_ID);
+            final String moneyId = (String) attrs.get(RPConstant.EXTRA_CHECK_MONEY_ID);
             //获取聊天类型-----1单聊，2群聊--从附加字段里获取
-            int chatType_temp = 1;
+            int chatType_temp;
             try {
                 chatType_temp = (int) attrs.get("chatType");
             } catch (Exception e) {
                 chatType_temp = 1;
             }
-            final int chatType=chatType_temp;
+            final int chatType = chatType_temp;
             //获取本地用户的昵称和头像
             //先获取ID
             ChatManager chatManager = ChatManager.getInstance();
@@ -109,10 +99,7 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
             //获取头像
             String avatarUrl = ThirdPartUserUtils.getInstance().getUserAvatar(selfId);
             final String fromAvatarUrl = TextUtils.isEmpty(avatarUrl) ? "none" : avatarUrl;
-
-
-
-           //设置红包信息
+            //设置红包信息
             mTvGreeting.setText(greetings);
             mTvSponsorName.setText(sponsorName);
             //红包点击
@@ -121,7 +108,7 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
 
                 @Override
                 public void onClick(View view) {
-                    final ProgressDialog progressDialog = new ProgressDialog( getContext());
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext());
                     progressDialog.setCanceledOnTouchOutside(false);
 
                     RedPacketInfo redPacketInfo = new RedPacketInfo();
@@ -135,10 +122,10 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
 
                     }
 
-                    if(chatType==1){
+                    if (chatType == 1) {
                         redPacketInfo.chatType = RPConstant.CHATTYPE_SINGLE;
 
-                    }else{
+                    } else {
                         redPacketInfo.chatType = RPConstant.CHATTYPE_GROUP;
 
                     }
@@ -162,12 +149,12 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
                             attrs_temp.put(RPConstant.EXTRA_LUCKY_MONEY_SENDER_ID, senderId);
                             attrs_temp.put("chatType", chatType);
                             ((AVChatActivity) getContext()).chatFragment.sendText(content, true, attrs_temp);
-                         }
+                        }
 
                         @Override
                         public void showLoading() {
                             progressDialog.show();
-                         }
+                        }
 
                         @Override
                         public void hideLoading() {
@@ -178,7 +165,7 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
                         @Override
                         public void onError(String code, String message) {
                             //错误处理
-                            Toast.makeText( getContext(), message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

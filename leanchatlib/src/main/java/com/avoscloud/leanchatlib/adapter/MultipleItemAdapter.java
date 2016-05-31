@@ -13,7 +13,7 @@ import com.avoscloud.leanchatlib.viewholder.ChatItemHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemImageHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemLocationHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemRPNotifyHolder;
-import com.avoscloud.leanchatlib.viewholder.ChatItemRedpacketHolder;
+import com.avoscloud.leanchatlib.viewholder.ChatItemRedPacketHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemTextHolder;
 import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
 import com.easemob.redpacketsdk.constant.RPConstant;
@@ -98,9 +98,9 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ITEM_RIGHT_LOCATION:
                 return new ChatItemLocationHolder(parent.getContext(), parent, false);
             case ITEM_LEFT_TEXT_REDPACKET:
-                return new ChatItemRedpacketHolder(parent.getContext(), parent, true);
+                return new ChatItemRedPacketHolder(parent.getContext(), parent, true);
             case ITEM_RIGHT_TEXT_REDPACKET:
-                return new ChatItemRedpacketHolder(parent.getContext(), parent, false);
+                return new ChatItemRedPacketHolder(parent.getContext(), parent, false);
             case ITEM_TEXT_REDPACKET_NOTIFY:
                 return new ChatItemRPNotifyHolder(parent.getContext(), parent, false);
 
