@@ -22,6 +22,9 @@ public class RedPacketUtils {
     public static final String EXTRA_RED_PACKET_GREETING = "money_greeting";
     public static final String EXTRA_RED_PACKET_ID = "ID";
     public static final String CHAT_TYPE = "chatType";
+    /**
+     * 设置发消息红包的附加字段的attrs
+     **/
     public static Map<String, Object>  initSendRedPacketAttrs(boolean isRedpacketMsg,String money_sponsor_name,String money_greeting,String moneyID,int chatType) {
         Map<String, Object> attrs = new HashMap<String, Object>();
         attrs.put(MESSAGE_ATTR_IS_RED_PACKET_MESSAGE, isRedpacketMsg);
