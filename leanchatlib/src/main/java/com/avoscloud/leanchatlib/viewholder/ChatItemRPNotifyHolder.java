@@ -75,12 +75,12 @@ public class ChatItemRPNotifyHolder extends ChatItemHolder {
             String toUser= (String) attrs.get(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);//红包接收者
             String senderId =(String) attrs.get(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID);
 
-            //获取聊天类型-----1单聊，2群聊--从附加字段里获取
-            int chatType = 1;
+            //获取聊天类型-----1或者RPConstant.CHATTYPE_SINGLE单聊，2或者RPConstant.CHATTYPE_GROUP群聊--从附加字段里获取
+            int chatType = RPConstant.CHATTYPE_SINGLE;
             try {
                 chatType = (int) attrs.get(RedPacketUtils.CHAT_TYPE);
             } catch (Exception e) {
-                chatType = 1;
+                chatType =RPConstant.CHATTYPE_SINGLE;
             }
 
             //获取本地用户的昵称和头像
@@ -89,7 +89,7 @@ public class ChatItemRPNotifyHolder extends ChatItemHolder {
             String selfId = chatManager.getSelfId();
 
             if (fromMe(textMessage)) {
-                if (chatType==2) {
+                if (chatType==RPConstant.CHATTYPE_GROUP) {
 
                     if (senderId.equals(selfId)) {
                         contentView.setText(R.string.money_msg_take_money);
