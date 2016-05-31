@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import utils.RedPacketUtils;
+
 /**
  * Created by wli on 15/8/13.
  * 聊天的 Adapter，此处还有可优化的地方，稍后考虑一下提取出公共的 adapter
@@ -129,10 +131,10 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             boolean isMe = fromMe(typedMessage);
             if (typedMessage.getMessageType() == AVIMReservedMessageType.TextMessageType.getType()) {
                 Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
-                if (attrs != null &&  attrs.get(RPConstant.MESSAGE_ATTR_IS_MONEY_MESSAGE)!=null&&(boolean)attrs.get(RPConstant.MESSAGE_ATTR_IS_MONEY_MESSAGE)) {
+                if (attrs != null &&  attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_MESSAGE)!=null&&(boolean)attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_MESSAGE)) {
                      //收發紅包
                      return isMe ? ITEM_RIGHT_TEXT_REDPACKET : ITEM_LEFT_TEXT_REDPACKET;
-                } else if(attrs != null &&  attrs.get(RPConstant.MESSAGE_ATTR_IS_OPEN_MONEY_MESSAGE)!=null&&(boolean)attrs.get(RPConstant.MESSAGE_ATTR_IS_OPEN_MONEY_MESSAGE)) {
+                } else if(attrs != null &&  attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)!=null&&(boolean)attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)) {
                      //收取紅包通知
                     return ITEM_TEXT_REDPACKET_NOTIFY;
                 }else{

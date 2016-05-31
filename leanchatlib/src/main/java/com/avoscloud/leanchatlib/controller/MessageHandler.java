@@ -21,6 +21,7 @@ import com.easemob.redpacketsdk.constant.RPConstant;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
+import utils.RedPacketUtils;
 
 /**
  * Created by zhangxiaobo on 15/4/20.
@@ -92,7 +93,7 @@ public class MessageHandler extends AVIMTypedMessageHandler<AVIMTypedMessage> {
 
           if(((AVIMTextMessage) message).getAttrs()!=null){
             Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
-            if(attrs.get(RPConstant.MESSAGE_ATTR_IS_OPEN_MONEY_MESSAGE)!=null&&(boolean)attrs.get(RPConstant.MESSAGE_ATTR_IS_OPEN_MONEY_MESSAGE)){
+            if(attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)!=null&&(boolean)attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)){
                return;
             }
           }

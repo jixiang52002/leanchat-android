@@ -41,15 +41,14 @@ import com.avoscloud.leanchatlib.utils.ProviderPathUtils;
 import com.easemob.redpacketsdk.bean.RedPacketInfo;
 import com.easemob.redpacketsdk.constant.RPConstant;
 import com.easemob.redpacketui.ui.activity.RPRedPacketActivity;
-import com.easemob.redpacketui.utils.RPOpenPacketUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
+import utils.RedPacketUtils;
 
 /**
  * Created by wli on 15/8/27.
@@ -115,7 +114,6 @@ public class ChatFragment extends android.support.v4.app.Fragment {
                                 if (null != list && list.size() > 0) {
                                     itemAdapter.addMessageList(list);
                                     itemAdapter.notifyDataSetChanged();
-
                                     layoutManager.scrollToPositionWithOffset(list.size() - 1, 0);
                                 }
                             }
@@ -296,24 +294,19 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
     public void selectRedPacket() {
         final Intent intent = new Intent(getActivity(), RPRedPacketActivity.class);
-        final RedPacketInfo redPacketInfo = new RedPacketInfo();
-        redPacketInfo.fromAvatarUrl = fromAvatarUrl;
-        redPacketInfo.fromNickName = fromNickname;
+        final String toUserId = ConversationHelper.otherIdOfConversation(imConversation);
         //接收者Id或者接收的群Id
         if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
-            //向adapter传入聊天类型---1为单聊，2为群聊
-            redPacketInfo.toUserId = ConversationHelper.otherIdOfConversation(imConversation);
-            redPacketInfo.chatType = RPConstant.CHATTYPE_SINGLE;
-            intent.putExtra(RPConstant.EXTRA_MONEY_INFO, redPacketInfo);
+            RedPacketInfo redpacketInfo = RedPacketUtils.initRedPacketInfo_single(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_SINGLE);
+            intent.putExtra(RPConstant.EXTRA_MONEY_INFO, redpacketInfo);
             startActivityForResult(intent, REQUEST_CODE_SEND_MONEY);
         } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
-            redPacketInfo.toGroupId = imConversation.getConversationId();
             imConversation.getMemberCount(new AVIMConversationMemberCountCallback() {
                 @Override
                 public void done(Integer integer, AVIMException e) {
-                    redPacketInfo.groupMemberCount = integer;
-                    redPacketInfo.chatType = RPConstant.CHATTYPE_GROUP;
-                    intent.putExtra(RPConstant.EXTRA_MONEY_INFO, redPacketInfo);
+                    String tpGroupId = imConversation.getConversationId();
+                    RedPacketInfo redpacketInfo = RedPacketUtils.initRedPacketInfo_group(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_GROUP, tpGroupId, integer);
+                    intent.putExtra(RPConstant.EXTRA_MONEY_INFO, redpacketInfo);
                     startActivityForResult(intent, REQUEST_CODE_SEND_MONEY);
                 }
             });
@@ -375,18 +368,19 @@ public class ChatFragment extends android.support.v4.app.Fragment {
                     if (data != null) {
                         String greetings = data.getStringExtra(RPConstant.EXTRA_MONEY_GREETING);
                         String moneyID = data.getStringExtra(RPConstant.EXTRA_CHECK_MONEY_ID);
-                        String content = "[" + getResources().getString(R.string.leancloud_luckymoney) + "]" + greetings;
-                        Map<String, Object> attrs = new HashMap<String, Object>();
-                        attrs.put(RPConstant.MESSAGE_ATTR_IS_MONEY_MESSAGE, true);
-                        attrs.put(RPConstant.EXTRA_SPONSOR_NAME, getResources().getString(R.string.leancloud_luckymoney));
-                        attrs.put(RPConstant.EXTRA_MONEY_GREETING, greetings);
-                        attrs.put(RPConstant.EXTRA_CHECK_MONEY_ID, moneyID);
+                        int chatType = RPConstant.CHATTYPE_SINGLE;
                         if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
                             //传入聊天类型---1为单聊，2为群聊
-                            attrs.put("chatType", 1);
+                            chatType = RPConstant.CHATTYPE_SINGLE;
                         } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
-                            attrs.put("chatType", 2);
+                            //用else if是因为防止后面出现聊天室等其他聊天模式
+                            chatType = RPConstant.CHATTYPE_GROUP;
                         }
+                        String sponsor_name = getResources().getString(R.string.leancloud_luckymoney);
+                        //获取发送红包的附加数据
+                        Map<String, Object> attrs = RedPacketUtils.initSendRedPacketAttrs(true, sponsor_name, greetings, moneyID, chatType);
+                        //文本消息内容
+                        String content = "[" + getResources().getString(R.string.leancloud_luckymoney) + "]" + greetings;
                         sendText(content, true, attrs);
                     }
                     break;
