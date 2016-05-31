@@ -33,6 +33,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.HashMap;
 import java.util.Map;
 
+import utils.RedPacketUtils;
+
 /**
  * Created by wli on 15/9/17.
  */
@@ -75,99 +77,53 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
             final AVIMTextMessage textMessage = (AVIMTextMessage) message;
             //获取附加字段
             final Map<String, Object> attrs = textMessage.getAttrs();
+            //检查数据，防止解析崩溃
+            if (RedPacketUtils.checkSendRPData(attrs)) return;
+            /**
+             *
+             *
+             * UI
+             */
+            String sponsorName = (String) attrs.get(RedPacketUtils.EXTRA_SPONSOR_NAME);
+            String greetings = (String) attrs.get(RedPacketUtils.EXTRA_RED_PACKET_GREETING);
+            //设置红包信息
+            mTvGreeting.setText(greetings);
+            mTvSponsorName.setText(sponsorName);
 
-            //防止崩潰，先檢查數據
-            if(!attrs.containsKey(RPConstant.EXTRA_SPONSOR_NAME)
-                    ||!attrs.containsKey(RPConstant.EXTRA_MONEY_GREETING)
-                    ||!attrs.containsKey(RPConstant.EXTRA_CHECK_MONEY_ID)
-                    ||!attrs.containsKey("chatType")
 
-                    ){
-
-                return;
-            }
-
-            String sponsorName = (String) attrs.get(RPConstant.EXTRA_SPONSOR_NAME);
-            String greetings = (String) attrs.get(RPConstant.EXTRA_MONEY_GREETING);
+            String moneyMsgDirect = getDirct(textMessage);
             //获取红包id
-           final   String moneyId = (String) attrs.get(RPConstant.EXTRA_CHECK_MONEY_ID);
+            String moneyId = (String) attrs.get(RedPacketUtils.EXTRA_RED_PACKET_ID);
             //获取聊天类型-----1单聊，2群聊--从附加字段里获取
             int chatType_temp = 1;
             try {
-                chatType_temp = (int) attrs.get("chatType");
+                chatType_temp = (int) attrs.get(RedPacketUtils.CHAT_TYPE);
             } catch (Exception e) {
                 chatType_temp = 1;
             }
-            final int chatType=chatType_temp;
-            //获取本地用户的昵称和头像
-            //先获取ID
-            ChatManager chatManager = ChatManager.getInstance();
-            String selfId = chatManager.getSelfId();
-            //获取昵称
-            String username = ThirdPartUserUtils.getInstance().getUserName(selfId);
-            final String fromNickname = TextUtils.isEmpty(username) ? selfId : username;
-            //获取头像
-            String avatarUrl = ThirdPartUserUtils.getInstance().getUserAvatar(selfId);
-            final String fromAvatarUrl = TextUtils.isEmpty(avatarUrl) ? "none" : avatarUrl;
+            final int chatType = chatType_temp;
+            final String fromNickname = getfromNickname();
+            final String fromAvatarUrl = getfromAvatarUrl();
+            final RedPacketInfo redPacketInfo = RedPacketUtils.initRedPacketInfo_received(fromNickname, fromAvatarUrl, moneyMsgDirect, chatType, moneyId);
 
-
-
-           //设置红包信息
-            mTvGreeting.setText(greetings);
-            mTvSponsorName.setText(sponsorName);
             //红包点击
             re_bubble.setOnClickListener(new View.OnClickListener() {
-
-
                 @Override
                 public void onClick(View view) {
-                    final ProgressDialog progressDialog = new ProgressDialog( getContext());
+                    final ProgressDialog progressDialog = new ProgressDialog(getContext());
                     progressDialog.setCanceledOnTouchOutside(false);
-
-                    RedPacketInfo redPacketInfo = new RedPacketInfo();
-                    //   System.out.println("rp---chatType------>>"+chatType);
-                    //判断发送还是接收
-                    if (fromMe(textMessage)) {
-                        redPacketInfo.moneyMsgDirect = RPConstant.MESSAGE_DIRECT_SEND;
-
-                    } else {
-                        redPacketInfo.moneyMsgDirect = RPConstant.MESSAGE_DIRECT_RECEIVE;
-
-                    }
-
-                    if(chatType==1){
-                        redPacketInfo.chatType = RPConstant.CHATTYPE_SINGLE;
-
-                    }else{
-                        redPacketInfo.chatType = RPConstant.CHATTYPE_GROUP;
-
-                    }
-
-                    redPacketInfo.moneyID = moneyId;
-                    redPacketInfo.toAvatarUrl = fromAvatarUrl;
-                    redPacketInfo.toNickName = fromNickname;
-//                    System.out.println("rp---moneyId------>>" + moneyId);
-//                    System.out.println("rp---moneyMsgDirect------>>" + redPacketInfo.moneyMsgDirect);
-//                    System.out.println("rp---fromAvatarUrl------>>" + fromAvatarUrl);
-//                    System.out.println("rp---fromNickname------>>" + fromNickname);
-
                     RPOpenPacketUtil.getInstance().openRedPacket(redPacketInfo, (AVChatActivity) getContext(), new RPOpenPacketUtil.RPOpenPacketCallBack() {
                         @Override
                         public void onSuccess(String senderId, String senderNickname) {
                             String content = String.format(getContext().getResources().getString(R.string.money_msg_someone_take_money), fromNickname);
-                            final Map<String, Object> attrs_temp = new HashMap<String, Object>();
-                            attrs_temp.put(RPConstant.MESSAGE_ATTR_IS_OPEN_MONEY_MESSAGE, true);
-                            attrs_temp.put(RPConstant.EXTRA_LUCKY_MONEY_RECEIVER, fromNickname);
-                            attrs_temp.put(RPConstant.EXTRA_LUCKY_MONEY_SENDER, senderNickname);
-                            attrs_temp.put(RPConstant.EXTRA_LUCKY_MONEY_SENDER_ID, senderId);
-                            attrs_temp.put("chatType", chatType);
+                            final Map<String, Object> attrs_temp = RedPacketUtils.initReceivedRedPacketAttrs(true, fromNickname, senderNickname, senderId, chatType);
                             ((AVChatActivity) getContext()).chatFragment.sendText(content, true, attrs_temp);
-                         }
+                        }
 
                         @Override
                         public void showLoading() {
                             progressDialog.show();
-                         }
+                        }
 
                         @Override
                         public void hideLoading() {
@@ -178,7 +134,7 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
                         @Override
                         public void onError(String code, String message) {
                             //错误处理
-                            Toast.makeText( getContext(), message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -186,11 +142,48 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
         }
     }
 
+    private String getDirct(AVIMTextMessage textMessage) {
+        String moneyMsgDirect = "";
+        //判断发送还是接收
+        if (fromMe(textMessage)) {
+            moneyMsgDirect = RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME;
+
+        } else {
+            moneyMsgDirect = RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME;
+
+        }
+        return moneyMsgDirect;
+    }
+
     private boolean fromMe(AVIMTypedMessage msg) {
         ChatManager chatManager = ChatManager.getInstance();
         String selfId = chatManager.getSelfId();
 
         return msg.getFrom() != null && msg.getFrom().equals(selfId);
+    }
+
+
+    //获取本地用户的昵称和头像
+    //先获取ID
+    ChatManager chatManager = ChatManager.getInstance();
+    String selfId = chatManager.getSelfId();
+
+    private String getfromNickname() {
+
+
+        //获取昵称
+        String username = ThirdPartUserUtils.getInstance().getUserName(selfId);
+        String fromNickname = TextUtils.isEmpty(username) ? selfId : username;
+        return fromNickname;
+    }
+
+    private String getfromAvatarUrl() {
+
+
+        //获取头像
+        String avatarUrl = ThirdPartUserUtils.getInstance().getUserAvatar(selfId);
+        final String fromAvatarUrl = TextUtils.isEmpty(avatarUrl) ? "none" : avatarUrl;
+        return fromAvatarUrl;
     }
 
 

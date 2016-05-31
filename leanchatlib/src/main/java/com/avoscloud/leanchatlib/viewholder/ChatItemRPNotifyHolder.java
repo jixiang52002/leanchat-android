@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
+import utils.RedPacketUtils;
 
 /**
  * Created by ustc on 2016/5/30.
@@ -68,49 +69,24 @@ public class ChatItemRPNotifyHolder extends ChatItemHolder {
              //获取附加字段
             final Map<String, Object> attrs = textMessage.getAttrs();
             //防止崩潰，先檢查數據
-            if(
-           !attrs.containsKey(RPConstant.EXTRA_LUCKY_MONEY_SENDER)
-                    ||!attrs.containsKey(RPConstant.EXTRA_LUCKY_MONEY_RECEIVER)
-                   ||!attrs.containsKey(RPConstant.EXTRA_LUCKY_MONEY_SENDER_ID)
-                    ||!attrs.containsKey("chatType")
+            if (RedPacketUtils.checkReceivedRPData(attrs)) return;
 
-                    ){
-
-                   return;
-            }
-
-
-
-
-            String fromUser= (String) attrs.get(RPConstant.EXTRA_LUCKY_MONEY_SENDER);//红包发送者
-            String toUser= (String) attrs.get(RPConstant.EXTRA_LUCKY_MONEY_RECEIVER);//红包接收者
-            String senderId =(String) attrs.get(RPConstant.EXTRA_LUCKY_MONEY_SENDER_ID);
+            String fromUser= (String) attrs.get(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME);//红包发送者
+            String toUser= (String) attrs.get(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);//红包接收者
+            String senderId =(String) attrs.get(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID);
 
             //获取聊天类型-----1单聊，2群聊--从附加字段里获取
             int chatType = 1;
             try {
-                chatType = (int) attrs.get("chatType");
+                chatType = (int) attrs.get(RedPacketUtils.CHAT_TYPE);
             } catch (Exception e) {
                 chatType = 1;
             }
-
-
 
             //获取本地用户的昵称和头像
             //先获取ID
             ChatManager chatManager = ChatManager.getInstance();
             String selfId = chatManager.getSelfId();
-            //获取昵称
-            String username = ThirdPartUserUtils.getInstance().getUserName(selfId);
-            final String fromNickname = TextUtils.isEmpty(username) ? selfId : username;
-            //获取头像
-            String avatarUrl = ThirdPartUserUtils.getInstance().getUserAvatar(selfId);
-            final String fromAvatarUrl = TextUtils.isEmpty(avatarUrl) ? "none" : avatarUrl;
-
-
-
-
-
 
             if (fromMe(textMessage)) {
                 if (chatType==2) {
@@ -146,4 +122,9 @@ public class ChatItemRPNotifyHolder extends ChatItemHolder {
 
         return msg.getFrom() != null && msg.getFrom().equals(selfId);
     }
+
+
+
+
+
 }
