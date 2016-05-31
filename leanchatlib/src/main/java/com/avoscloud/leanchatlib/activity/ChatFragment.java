@@ -44,7 +44,6 @@ import com.easemob.redpacketui.ui.activity.RPRedPacketActivity;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -297,28 +296,26 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
     public void selectRedpacket() {
         final Intent intent = new Intent(getActivity(), RPRedPacketActivity.class);
-        final RedPacketInfo moneyInfo = new RedPacketInfo();
-        moneyInfo.fromAvatarUrl = fromAvatarUrl;
-        moneyInfo.fromNickName = fromNickname;
+        final String toUserId= ConversationHelper.otherIdOfConversation(imConversation);
         //接收者Id或者接收的群Id
         if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
             //向adapter传入聊天类型---1为单聊，2为群聊
 
-            moneyInfo.toUserId = ConversationHelper.otherIdOfConversation(imConversation);
-            moneyInfo.chatType = RPConstant.CHATTYPE_SINGLE;
-            intent.putExtra(RPConstant.EXTRA_MONEY_INFO, moneyInfo);
+            RedPacketInfo redpacketInfo = RedPacketUtils.initRedPacketInfo_single(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_SINGLE);
+            intent.putExtra(RPConstant.EXTRA_MONEY_INFO, redpacketInfo);
             startActivityForResult(intent, REQUEST_CODE_SEND_MONEY);
         } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
 
-            moneyInfo.toGroupId = imConversation.getConversationId();
+//            moneyInfo.toGroupId = imConversation.getConversationId();
 
             imConversation.getMemberCount(new AVIMConversationMemberCountCallback() {
 
                 @Override
                 public void done(Integer integer, AVIMException e) {
-                    moneyInfo.groupMemberCount = integer;
-                    moneyInfo.chatType = RPConstant.CHATTYPE_GROUP;
-                    intent.putExtra(RPConstant.EXTRA_MONEY_INFO, moneyInfo);
+                    String tpGroupId=imConversation.getConversationId();
+                    RedPacketInfo redpacketInfo = RedPacketUtils.initRedPacketInfo_group(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_GROUP,tpGroupId,integer);
+
+                    intent.putExtra(RPConstant.EXTRA_MONEY_INFO, redpacketInfo);
                     startActivityForResult(intent, REQUEST_CODE_SEND_MONEY);
                 }
             });

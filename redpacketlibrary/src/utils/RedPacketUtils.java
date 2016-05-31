@@ -1,5 +1,6 @@
 package utils;
 
+import com.easemob.redpacketsdk.bean.RedPacketInfo;
 import com.easemob.redpacketsdk.constant.RPConstant;
 
 import java.util.HashMap;
@@ -31,5 +32,28 @@ public class RedPacketUtils {
 
         return  attrs;
     }
+
+    public static RedPacketInfo initRedPacketInfo_single(String fromNickname,String fromAvatarUrl, String toUserId,int chatType){
+        RedPacketInfo redPacketInfo=new RedPacketInfo();
+        redPacketInfo.fromAvatarUrl = fromAvatarUrl;
+        redPacketInfo.fromNickName = fromNickname;
+        redPacketInfo.toUserId =toUserId;
+        redPacketInfo.chatType = chatType;
+        return redPacketInfo;
+    }
+
+    public static RedPacketInfo initRedPacketInfo_group(String fromNickname,String fromAvatarUrl, String toUserId,int chatType,String toGroupId,int groupMemberCount){
+        RedPacketInfo redPacketInfo=new RedPacketInfo();
+        redPacketInfo.fromAvatarUrl = fromAvatarUrl;
+        redPacketInfo.fromNickName = fromNickname;
+        redPacketInfo.toUserId =toUserId;
+        redPacketInfo.chatType = chatType;
+        redPacketInfo.toGroupId = toGroupId;
+        redPacketInfo.groupMemberCount = groupMemberCount;
+        redPacketInfo.chatType = chatType;
+        return redPacketInfo;
+    }
+
+
 
 }
