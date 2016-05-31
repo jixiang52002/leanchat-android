@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
+import utils.RedPacketUtils;
 
 /**
  * Created by wli on 15/8/27.
@@ -80,101 +81,101 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
-    localCameraPath = PathUtils.getPicturePathByCurrentTime(getContext());
+        localCameraPath = PathUtils.getPicturePathByCurrentTime(getContext());
 
-    recyclerView = (RecyclerView) view.findViewById(R.id.fragment_chat_rv_chat);
-    refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_chat_srl_pullrefresh);
-    refreshLayout.setEnabled(false);
-    inputBottomBar = (InputBottomBar) view.findViewById(R.id.fragment_chat_inputbottombar);
-    layoutManager = new LinearLayoutManager(getActivity());
-    recyclerView.setLayoutManager(layoutManager);
+        recyclerView = (RecyclerView) view.findViewById(R.id.fragment_chat_rv_chat);
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_chat_srl_pullrefresh);
+        refreshLayout.setEnabled(false);
+        inputBottomBar = (InputBottomBar) view.findViewById(R.id.fragment_chat_inputbottombar);
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
 
-    itemAdapter = new MultipleItemAdapter();
-    itemAdapter.resetRecycledViewPoolSize(recyclerView);
-    recyclerView.setAdapter(itemAdapter);
+        itemAdapter = new MultipleItemAdapter();
+        itemAdapter.resetRecycledViewPoolSize(recyclerView);
+        recyclerView.setAdapter(itemAdapter);
 
-    EventBus.getDefault().register(this);
-    return view;
-  }
+        EventBus.getDefault().register(this);
+        return view;
+    }
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-      @Override
-      public void onRefresh() {
-        AVIMMessage message = itemAdapter.getFirstMessage();
-        if (null == message) {
-          refreshLayout.setRefreshing(false);
-        } else {
-          imConversation.queryMessages(message.getMessageId(), message.getTimestamp(), 20, new AVIMMessagesQueryCallback() {
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                AVIMMessage message = itemAdapter.getFirstMessage();
+                if (null == message) {
+                    refreshLayout.setRefreshing(false);
+                } else {
+                    imConversation.queryMessages(message.getMessageId(), message.getTimestamp(), 20, new AVIMMessagesQueryCallback() {
+                        @Override
+                        public void done(List<AVIMMessage> list, AVIMException e) {
+                            refreshLayout.setRefreshing(false);
+                            if (filterException(e)) {
+                                if (null != list && list.size() > 0) {
+                                    itemAdapter.addMessageList(list);
+                                    itemAdapter.notifyDataSetChanged();
+
+                                    layoutManager.scrollToPositionWithOffset(list.size() - 1, 0);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (null != imConversation) {
+            NotificationUtils.addTag(imConversation.getConversationId());
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onResume();
+        if (null != imConversation) {
+            NotificationUtils.removeTag(imConversation.getConversationId());
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void setConversation(AVIMConversation conversation) {
+        imConversation = conversation;
+        refreshLayout.setEnabled(true);
+        inputBottomBar.setTag(imConversation.getConversationId());
+        fetchMessages();
+        NotificationUtils.addTag(conversation.getConversationId());
+    }
+
+    public void showUserName(boolean isShow) {
+        itemAdapter.showUserName(isShow);
+    }
+
+    /**
+     * 拉取消息，必须加入 conversation 后才能拉取消息
+     */
+    private void fetchMessages() {
+        imConversation.queryMessages(new AVIMMessagesQueryCallback() {
             @Override
             public void done(List<AVIMMessage> list, AVIMException e) {
-              refreshLayout.setRefreshing(false);
-              if (filterException(e)) {
-                if (null != list && list.size() > 0) {
-                  itemAdapter.addMessageList(list);
-                  itemAdapter.notifyDataSetChanged();
-
-                  layoutManager.scrollToPositionWithOffset(list.size() - 1, 0);
+                if (filterException(e)) {
+                    itemAdapter.setMessageList(list);
+                    recyclerView.setAdapter(itemAdapter);
+                    itemAdapter.notifyDataSetChanged();
+                    scrollToBottom();
                 }
-              }
             }
-          });
-        }
-      }
-    });
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    if (null != imConversation) {
-      NotificationUtils.addTag(imConversation.getConversationId());
+        });
     }
-  }
-
-  @Override
-  public void onPause() {
-    super.onResume();
-    if (null != imConversation) {
-      NotificationUtils.removeTag(imConversation.getConversationId());
-    }
-  }
-
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    EventBus.getDefault().unregister(this);
-  }
-
-  public void setConversation(AVIMConversation conversation) {
-    imConversation = conversation;
-    refreshLayout.setEnabled(true);
-    inputBottomBar.setTag(imConversation.getConversationId());
-    fetchMessages();
-    NotificationUtils.addTag(conversation.getConversationId());
-  }
-
-  public void showUserName(boolean isShow) {
-    itemAdapter.showUserName(isShow);
-  }
-
-  /**
-   * 拉取消息，必须加入 conversation 后才能拉取消息
-   */
-  private void fetchMessages() {
-    imConversation.queryMessages(new AVIMMessagesQueryCallback() {
-      @Override
-      public void done(List<AVIMMessage> list, AVIMException e) {
-        if (filterException(e)) {
-          itemAdapter.setMessageList(list);
-          recyclerView.setAdapter(itemAdapter);
-          itemAdapter.notifyDataSetChanged();
-          scrollToBottom();
-        }
-      }
-    });
-  }
 
     /**
      * 输入事件处理，接收后构造成 AVIMTextMessage 然后发送
@@ -188,37 +189,37 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         }
     }
 
-  /**
-   * 处理推送过来的消息
-   * 同理，避免无效消息，此处加了 conversation id 判断
-   */
-  public void onEvent(ImTypeMessageEvent event) {
-    if (null != imConversation && null != event &&
-      imConversation.getConversationId().equals(event.conversation.getConversationId())) {
-      itemAdapter.addMessage(event.message);
-      itemAdapter.notifyDataSetChanged();
-      scrollToBottom();
-    }
-  }
-
-  /**
-   * 重新发送已经发送失败的消息
-   */
-  public void onEvent(ImTypeMessageResendEvent event) {
-    if (null != imConversation && null != event &&
-      null != event.message &&  imConversation.getConversationId().equals(event.message.getConversationId())) {
-      if (AVIMMessage.AVIMMessageStatus.AVIMMessageStatusFailed == event.message.getMessageStatus()
-        && imConversation.getConversationId().equals(event.message.getConversationId())) {
-        imConversation.sendMessage(event.message, new AVIMConversationCallback() {
-          @Override
-          public void done(AVIMException e) {
+    /**
+     * 处理推送过来的消息
+     * 同理，避免无效消息，此处加了 conversation id 判断
+     */
+    public void onEvent(ImTypeMessageEvent event) {
+        if (null != imConversation && null != event &&
+                imConversation.getConversationId().equals(event.conversation.getConversationId())) {
+            itemAdapter.addMessage(event.message);
             itemAdapter.notifyDataSetChanged();
-          }
-        });
-        itemAdapter.notifyDataSetChanged();
-      }
+            scrollToBottom();
+        }
     }
-  }
+
+    /**
+     * 重新发送已经发送失败的消息
+     */
+    public void onEvent(ImTypeMessageResendEvent event) {
+        if (null != imConversation && null != event &&
+                null != event.message && imConversation.getConversationId().equals(event.message.getConversationId())) {
+            if (AVIMMessage.AVIMMessageStatus.AVIMMessageStatusFailed == event.message.getMessageStatus()
+                    && imConversation.getConversationId().equals(event.message.getConversationId())) {
+                imConversation.sendMessage(event.message, new AVIMConversationCallback() {
+                    @Override
+                    public void done(AVIMException e) {
+                        itemAdapter.notifyDataSetChanged();
+                    }
+                });
+                itemAdapter.notifyDataSetChanged();
+            }
+        }
+    }
 
 //TODO
 //  public void onEvent(MessageEvent messageEvent) {
@@ -256,43 +257,43 @@ public class ChatFragment extends android.support.v4.app.Fragment {
                     selectImageFromCamera();
                 case InputBottomBarEvent.INPUTBOTTOMBAR_REDPACKET_ACTION:
                     selectRedpacket();
-                   
+
                     break;
             }
         }
     }
 
-  public void onEvent(InputBottomBarRecordEvent recordEvent) {
-    if (null != imConversation && null != recordEvent &&
-      !TextUtils.isEmpty(recordEvent.audioPath) &&
-      imConversation.getConversationId().equals(recordEvent.tag)) {
-      sendAudio(recordEvent.audioPath);
+    public void onEvent(InputBottomBarRecordEvent recordEvent) {
+        if (null != imConversation && null != recordEvent &&
+                !TextUtils.isEmpty(recordEvent.audioPath) &&
+                imConversation.getConversationId().equals(recordEvent.tag)) {
+            sendAudio(recordEvent.audioPath);
+        }
     }
-  }
 
-  public void selectImageFromLocal() {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-      Intent intent = new Intent();
-      intent.setType("image/*");
-      intent.setAction(Intent.ACTION_GET_CONTENT);
-      startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.chat_activity_select_picture)),
-        GALLERY_REQUEST);
-    } else {
-      Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-      intent.addCategory(Intent.CATEGORY_OPENABLE);
-      intent.setType("image/*");
-      startActivityForResult(intent, GALLERY_KITKAT_REQUEST);
+    public void selectImageFromLocal() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.chat_activity_select_picture)),
+                    GALLERY_REQUEST);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+            startActivityForResult(intent, GALLERY_KITKAT_REQUEST);
+        }
     }
-  }
 
-  public void selectImageFromCamera() {
-    Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-    Uri imageUri = Uri.fromFile(new File(localCameraPath));
-    takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageUri);
-    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-      startActivityForResult(takePictureIntent, TAKE_CAMERA_REQUEST);
+    public void selectImageFromCamera() {
+        Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        Uri imageUri = Uri.fromFile(new File(localCameraPath));
+        takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageUri);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, TAKE_CAMERA_REQUEST);
+        }
     }
-  }
 
     public void selectRedpacket() {
         final Intent intent = new Intent(getActivity(), RPRedPacketActivity.class);
@@ -331,71 +332,68 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         layoutManager.scrollToPositionWithOffset(itemAdapter.getItemCount() - 1, 0);
     }
 
-  protected boolean filterException(Exception e) {
-    if (e != null) {
-      e.printStackTrace();
-      toast(e.getMessage());
-      return false;
-    } else {
-      return true;
+    protected boolean filterException(Exception e) {
+        if (e != null) {
+            e.printStackTrace();
+            toast(e.getMessage());
+            return false;
+        } else {
+            return true;
+        }
     }
-  }
 
-  protected void toast(String str) {
-    Toast.makeText(getActivity(), str, Toast.LENGTH_SHORT).show();
-  }
+    protected void toast(String str) {
+        Toast.makeText(getActivity(), str, Toast.LENGTH_SHORT).show();
+    }
 
-  @TargetApi(Build.VERSION_CODES.KITKAT)
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (resultCode == Activity.RESULT_OK) {
-      switch (requestCode) {
-        case GALLERY_REQUEST:
-        case GALLERY_KITKAT_REQUEST:
-          if (data == null) {
-            toast("return intent is null");
-            return;
-          }
-          Uri uri;
-          if (requestCode == GALLERY_REQUEST) {
-            uri = data.getData();
-          } else {
-            //for Android 4.4
-            uri = data.getData();
-            final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION
-              | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            getActivity().getContentResolver().takePersistableUriPermission(uri, takeFlags);
-          }
-          String localSelectPath = ProviderPathUtils.getPath(getActivity(), uri);
-          inputBottomBar.hideMoreLayout();
-          sendImage(localSelectPath);
-          break;
-        case TAKE_CAMERA_REQUEST:
-          inputBottomBar.hideMoreLayout();
-          sendImage(localCameraPath);
-          break;
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case GALLERY_REQUEST:
+                case GALLERY_KITKAT_REQUEST:
+                    if (data == null) {
+                        toast("return intent is null");
+                        return;
+                    }
+                    Uri uri;
+                    if (requestCode == GALLERY_REQUEST) {
+                        uri = data.getData();
+                    } else {
+                        //for Android 4.4
+                        uri = data.getData();
+                        final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        getActivity().getContentResolver().takePersistableUriPermission(uri, takeFlags);
+                    }
+                    String localSelectPath = ProviderPathUtils.getPath(getActivity(), uri);
+                    inputBottomBar.hideMoreLayout();
+                    sendImage(localSelectPath);
+                    break;
+                case TAKE_CAMERA_REQUEST:
+                    inputBottomBar.hideMoreLayout();
+                    sendImage(localCameraPath);
+                    break;
                 case REQUEST_CODE_SEND_MONEY:
                     if (data != null) {
                         String greetings = data.getStringExtra(RPConstant.EXTRA_MONEY_GREETING);
                         String moneyID = data.getStringExtra(RPConstant.EXTRA_CHECK_MONEY_ID);
-
-                        String content = "[" + getResources().getString(R.string.leancloud_luckymoney) + "]" + greetings;
-                        Map<String, Object> attrs = new HashMap<String, Object>();
-                        attrs.put(RPConstant.MESSAGE_ATTR_IS_MONEY_MESSAGE, true);
-                        attrs.put(RPConstant.EXTRA_SPONSOR_NAME, getResources().getString(R.string.leancloud_luckymoney));
-                        attrs.put(RPConstant.EXTRA_MONEY_GREETING, greetings);
-                        attrs.put(RPConstant.EXTRA_CHECK_MONEY_ID, moneyID);
-
+                        int chatType = RPConstant.CHATTYPE_SINGLE;
                         if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
                             //传入聊天类型---1为单聊，2为群聊
-                            attrs.put("chatType", 1);
+                            chatType = RPConstant.CHATTYPE_SINGLE;
 
                         } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
-                            attrs.put("chatType", 2);
+                            //用else if是因为防止后面出现聊天室等其他聊天模式
+                            chatType = RPConstant.CHATTYPE_GROUP;
                         }
-
-
+                        String sponsor_name = getResources().getString(R.string.leancloud_luckymoney);
+                        //获取发送红包的附加数据
+                        Map<String, Object> attrs = RedPacketUtils.initSendRedPacketAttrs(true, sponsor_name, greetings, moneyID, chatType);
+                        //文本消息内容
+                        String content = "[" + getResources().getString(R.string.leancloud_luckymoney) + "]" + greetings;
                         sendText(content, true, attrs);
                     }
                     break;
@@ -413,34 +411,34 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         sendMessage(message);
     }
 
-  private void sendImage(String imagePath) {
-    AVIMImageMessage imageMsg = null;
-    try {
-      imageMsg = new AVIMImageMessage(imagePath);
-      sendMessage(imageMsg);
-    } catch (IOException e) {
-      e.printStackTrace();
+    private void sendImage(String imagePath) {
+        AVIMImageMessage imageMsg = null;
+        try {
+            imageMsg = new AVIMImageMessage(imagePath);
+            sendMessage(imageMsg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-  }
 
-  private void sendAudio(String audioPath) {
-    try {
-      AVIMAudioMessage audioMessage = new AVIMAudioMessage(audioPath);
-      sendMessage(audioMessage);
-    } catch (IOException e) {
-      e.printStackTrace();
+    private void sendAudio(String audioPath) {
+        try {
+            AVIMAudioMessage audioMessage = new AVIMAudioMessage(audioPath);
+            sendMessage(audioMessage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-  }
 
-  public void sendMessage(AVIMTypedMessage message) {
-    itemAdapter.addMessage(message);
-    itemAdapter.notifyDataSetChanged();
-    scrollToBottom();
-    imConversation.sendMessage(message, new AVIMConversationCallback() {
-      @Override
-      public void done(AVIMException e) {
+    public void sendMessage(AVIMTypedMessage message) {
+        itemAdapter.addMessage(message);
         itemAdapter.notifyDataSetChanged();
-      }
-    });
-  }
+        scrollToBottom();
+        imConversation.sendMessage(message, new AVIMConversationCallback() {
+            @Override
+            public void done(AVIMException e) {
+                itemAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 }
