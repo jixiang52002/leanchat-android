@@ -12,11 +12,10 @@ import com.avoscloud.leanchatlib.viewholder.ChatItemAudioHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemImageHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemLocationHolder;
-import com.avoscloud.leanchatlib.viewholder.ChatItemRPNotifyHolder;
+import com.avoscloud.leanchatlib.viewholder.ChatItemReceivedRedpacketHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemRedpacketHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemTextHolder;
 import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
-import com.easemob.redpacketsdk.constant.RPConstant;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -104,7 +103,7 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ITEM_RIGHT_TEXT_REDPACKET:
                 return new ChatItemRedpacketHolder(parent.getContext(), parent, false);
             case ITEM_TEXT_REDPACKET_NOTIFY:
-                return new ChatItemRPNotifyHolder(parent.getContext(), parent, false);
+                return new ChatItemReceivedRedpacketHolder(parent.getContext(), parent, false);
 
 
             default:

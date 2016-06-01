@@ -293,25 +293,20 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     }
 
     public void selectRedPacket() {
-        final Intent intent = new Intent(getActivity(), RPRedPacketActivity.class);
-        final String toUserId = ConversationHelper.otherIdOfConversation(imConversation);
+
+          String toUserId = ConversationHelper.otherIdOfConversation(imConversation);
+          int chatType=1;
+         String tpGroupId="";
+        int membersNum=imConversation.getMembers().size();
         //接收者Id或者接收的群Id
         if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
-            RedPacketInfo redpacketInfo = RedPacketUtils.initRedPacketInfo_single(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_SINGLE);
-            intent.putExtra(RPConstant.EXTRA_MONEY_INFO, redpacketInfo);
-            startActivityForResult(intent, REQUEST_CODE_SEND_MONEY);
+            chatType=1;
         } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
-            imConversation.getMemberCount(new AVIMConversationMemberCountCallback() {
-                @Override
-                public void done(Integer integer, AVIMException e) {
-                    String tpGroupId = imConversation.getConversationId();
-                    RedPacketInfo redpacketInfo = RedPacketUtils.initRedPacketInfo_group(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_GROUP, tpGroupId, integer);
-                    intent.putExtra(RPConstant.EXTRA_MONEY_INFO, redpacketInfo);
-                    startActivityForResult(intent, REQUEST_CODE_SEND_MONEY);
-                }
-            });
-
+            chatType=2;
+            tpGroupId   = imConversation.getConversationId();
         }
+
+        RedPacketUtils. selectRedpacket(this,   toUserId,   fromNickname,   fromAvatarUrl,    chatType,   tpGroupId,   membersNum,   REQUEST_CODE_SEND_MONEY);
 
 
     }
