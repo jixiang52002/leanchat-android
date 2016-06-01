@@ -45,7 +45,7 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
         } else {
             conventLayout.addView(View.inflate(getContext(), R.layout.rp_chat_item_right_text_redpacket_layout, null));
         }
-
+       //红包view
         re_bubble = (RelativeLayout) itemView.findViewById(R.id.bubble);
         mTvGreeting = (TextView) itemView.findViewById(R.id.tv_money_greeting);
         mTvSponsorName = (TextView) itemView.findViewById(R.id.tv_sponsor_name);
@@ -72,11 +72,6 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
         }
 
     }
-
-
-
-
-
 
     //获取本地用户的昵称和头像
     //先获取ID
