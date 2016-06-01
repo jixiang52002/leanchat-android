@@ -8,7 +8,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.avos.avoscloud.im.v2.AVIMMessage;
-import com.avos.avoscloud.im.v2.AVIMTypedMessage;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.R;
 import com.avoscloud.leanchatlib.activity.AVChatActivity;
@@ -63,7 +62,7 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
             Map<String, Object> attrs = textMessage.getAttrs();
             String fromNickname = getfromNickname();
             String fromAvatarUrl = getfromAvatarUrl();
-            boolean isSend=fromMe(textMessage);
+            boolean isSend= textMessage.getFrom() != null && textMessage.getFrom().equals(selfId);
             RedPacketUtils.initRedpacketChatItem(attrs, mTvGreeting, mTvSponsorName, re_bubble, isSend , fromNickname, fromAvatarUrl, getContext(), new RedPacketUtils.OnSuccessOpenRedPacket() {
                 @Override
                 public void callBack(String content, boolean isRP, Map<String, Object> attrs_temp) {
@@ -76,11 +75,7 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
 
 
 
-    private boolean fromMe(AVIMTypedMessage msg) {
-        ChatManager chatManager = ChatManager.getInstance();
-        String selfId = chatManager.getSelfId();
-        return msg.getFrom() != null && msg.getFrom().equals(selfId);
-    }
+
 
 
     //获取本地用户的昵称和头像
@@ -89,8 +84,6 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
     String selfId = chatManager.getSelfId();
 
     private String getfromNickname() {
-
-
         //获取昵称
         String username = ThirdPartUserUtils.getInstance().getUserName(selfId);
         String fromNickname = TextUtils.isEmpty(username) ? selfId : username;
@@ -98,8 +91,6 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
     }
 
     private String getfromAvatarUrl() {
-
-
         //获取头像
         String avatarUrl = ThirdPartUserUtils.getInstance().getUserAvatar(selfId);
         final String fromAvatarUrl = TextUtils.isEmpty(avatarUrl) ? "none" : avatarUrl;

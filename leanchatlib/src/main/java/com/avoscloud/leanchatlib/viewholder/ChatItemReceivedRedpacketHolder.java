@@ -49,20 +49,10 @@ public class ChatItemReceivedRedPacketHolder extends ChatItemHolder {
             final Map<String, Object> attrs = textMessage.getAttrs();
             ChatManager chatManager = ChatManager.getInstance();
             String selfId = chatManager.getSelfId();
-            boolean isSend = fromMe(textMessage);
+            boolean isSend= textMessage.getFrom() != null && textMessage.getFrom().equals(selfId);
             RedPacketUtils.initReceivedRedpacketChatItem(attrs, isSend, selfId, contentView, getContext());
         }
-
-
     }
-
-
-    private boolean fromMe(AVIMTypedMessage msg) {
-        ChatManager chatManager = ChatManager.getInstance();
-        String selfId = chatManager.getSelfId();
-        return msg.getFrom() != null && msg.getFrom().equals(selfId);
-    }
-
 
 
 }
