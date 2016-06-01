@@ -2,6 +2,7 @@ package utils;
 
 import com.easemob.redpacketsdk.bean.RedPacketInfo;
 import com.easemob.redpacketsdk.constant.RPConstant;
+import com.easemob.redpacketui.R;
 
 import java.util.HashMap;
 import java.util.Map;
