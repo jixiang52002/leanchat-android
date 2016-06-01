@@ -21,7 +21,7 @@ import utils.RedPacketUtils;
 /**
  * Created by wli on 15/9/17.
  */
-public class ChatItemRedPacketHolder extends ChatItemHolder {
+public class RedPacketChatItemHolder extends ChatItemHolder {
 
     protected TextView mTvGreeting;
     protected TextView mTvSponsorName;
@@ -29,7 +29,7 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
     protected Context context;
 
 
-    public ChatItemRedPacketHolder(Context context, ViewGroup root, boolean isLeft) {
+    public RedPacketChatItemHolder(Context context, ViewGroup root, boolean isLeft) {
         super(context, root, isLeft);
 
 

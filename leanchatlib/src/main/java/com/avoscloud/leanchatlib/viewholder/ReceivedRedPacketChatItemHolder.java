@@ -18,11 +18,11 @@ import utils.RedPacketUtils;
 /**
  * Created by ustc on 2016/5/30.
  */
-public class ChatItemReceivedRedPacketHolder extends ChatItemHolder {
+public class ReceivedRedPacketChatItemHolder extends ChatItemHolder {
 
     protected TextView contentView;
 
-    public ChatItemReceivedRedPacketHolder(Context context, ViewGroup root, boolean isLeft) {
+    public ReceivedRedPacketChatItemHolder(Context context, ViewGroup root, boolean isLeft) {
         super(context, root, isLeft);
 
     }
