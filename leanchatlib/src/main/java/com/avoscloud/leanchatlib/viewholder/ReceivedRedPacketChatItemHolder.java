@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.avos.avoscloud.im.v2.AVIMMessage;
-import com.avos.avoscloud.im.v2.AVIMTypedMessage;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.R;
 import com.avoscloud.leanchatlib.controller.ChatManager;
@@ -32,10 +31,7 @@ public class ReceivedRedPacketChatItemHolder extends ChatItemHolder {
         super.initView();
         conventLayout.addView(View.inflate(getContext(), R.layout.rp_chat_item_received_redpacket, null));
         avatarView.setVisibility(View.GONE);
-
         contentView = (TextView) itemView.findViewById(R.id.tv_money_msg);
-
-
     }
 
     @Override
@@ -49,10 +45,9 @@ public class ReceivedRedPacketChatItemHolder extends ChatItemHolder {
             final Map<String, Object> attrs = textMessage.getAttrs();
             ChatManager chatManager = ChatManager.getInstance();
             String selfId = chatManager.getSelfId();
-            boolean isSend= textMessage.getFrom() != null && textMessage.getFrom().equals(selfId);
-            RedPacketUtils.initReceivedRedpacketChatItem(attrs, isSend, selfId, contentView, getContext());
+            boolean isSend = textMessage.getFrom() != null && textMessage.getFrom().equals(selfId);
+            RedPacketUtils.initReceivedRedPacketChatItem(attrs, isSend, selfId, contentView, getContext());
         }
     }
-
 
 }

@@ -25,9 +25,7 @@ import java.util.Map;
  */
 public class RedPacketUtils {
 
-    public static final String REFRESH_GROUP_RED_PACKET_ACTION = "refresh_group_money_action";
     public static final String EXTRA_RED_PACKET_SENDER_ID = "money_sender_id";
-    public static final String EXTRA_RED_PACKET_RECEIVER_ID = "money_receiver_id";
     public static final String MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE = "is_open_money_msg";
     public static final String MESSAGE_ATTR_IS_RED_PACKET_MESSAGE = "is_money_msg";
     public static final String EXTRA_RED_PACKET_SENDER_NAME = "money_sender";
@@ -50,7 +48,6 @@ public class RedPacketUtils {
         attrs.put(EXTRA_RED_PACKET_ID, moneyID);
         attrs.put(CHAT_TYPE, chatType);
         return attrs;
-
     }
 
     /**
@@ -122,9 +119,7 @@ public class RedPacketUtils {
         return true;
     }
 
-    public static void initRedpacketChatItem(Map<String, Object> attrs, TextView mTvGreeting, TextView mTvSponsorName, RelativeLayout re_bubble, boolean isSend, final String fromNickname, String fromAvatarUrl, final Context context, final OnSuccessOpenRedPacket onSuccessOpenRedPacket) {
-
-
+    public static void initRedPacketChatItem(Map<String, Object> attrs, TextView mTvGreeting, TextView mTvSponsorName, RelativeLayout re_bubble, boolean isSend, final String fromNickname, String fromAvatarUrl, final Context context, final OnSuccessOpenRedPacket onSuccessOpenRedPacket) {
         //检查数据，防止解析崩溃
         if (!checkSendRPData(attrs)) return;
         //UI
@@ -133,16 +128,12 @@ public class RedPacketUtils {
         //设置红包信息
         mTvGreeting.setText(greetings);
         mTvSponsorName.setText(sponsorName);
-
-
-        String moneyMsgDirect = "";
+        String moneyMsgDirect;
         //判断发送还是接收
         if (isSend) {
             moneyMsgDirect = MESSAGE_DIRECT_SEND;
-
         } else {
             moneyMsgDirect = MESSAGE_DIRECT_RECEIVE;
-
         }
         //获取红包id
         String moneyId = (String) attrs.get(EXTRA_RED_PACKET_ID);
@@ -168,9 +159,7 @@ public class RedPacketUtils {
                     public void onSuccess(String senderId, String senderNickname) {
                         String content = String.format(context.getResources().getString(R.string.money_msg_someone_take_money), fromNickname);
                         final Map<String, Object> attrs_temp = initReceivedRedPacketAttrs(true, fromNickname, senderNickname, senderId, chatType);
-
                         onSuccessOpenRedPacket.callBack(content, true, attrs_temp);
-
                     }
 
                     @Override
@@ -180,7 +169,6 @@ public class RedPacketUtils {
 
                     @Override
                     public void hideLoading() {
-
                         progressDialog.dismiss();
                     }
 
@@ -200,11 +188,10 @@ public class RedPacketUtils {
 
         void callBack(String content, boolean isRP, Map<String, Object> attrs);
 
-
     }
 
 
-    public static void initReceivedRedpacketChatItem(Map<String, Object> attrs, boolean isSend, String selfId, TextView contentView, Context context) {
+    public static void initReceivedRedPacketChatItem(Map<String, Object> attrs, boolean isSend, String selfId, TextView contentView, Context context) {
         //防止崩潰，先檢查數據
         if (!checkReceivedRPData(attrs)) return;
         String fromUser = (String) attrs.get(EXTRA_RED_PACKET_SENDER_NAME);//红包发送者
@@ -219,7 +206,6 @@ public class RedPacketUtils {
         }
         if (isSend) {
             if (chatType == 2) {
-
                 if (senderId.equals(selfId)) {
                     contentView.setText(R.string.money_msg_take_money);
                 } else {
@@ -231,39 +217,26 @@ public class RedPacketUtils {
         } else {
             if (senderId.equals(selfId)) {
                 contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money), toUser));
-
             } else {
                 contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money_same), toUser, fromUser));
             }
-
-
         }
-
-
     }
 
 
-    public static void selectRedpacket(Fragment fragment, String toUserId, String fromNickname, String fromAvatarUrl, int chatType, String tpGroupId, int membersNum, int REQUEST_CODE_SEND_MONEY) {
-
-        Intent intent = new Intent( fragment.getActivity(), RPRedPacketActivity.class);
+    public static void selectRedPacket(Fragment fragment, String toUserId, String fromNickname, String fromAvatarUrl, int chatType, String tpGroupId, int membersNum, int REQUEST_CODE_SEND_MONEY) {
+        Intent intent = new Intent(fragment.getActivity(), RPRedPacketActivity.class);
         //接收者Id或者接收的群Id
-
         RedPacketInfo redpacketInfo;
         if (chatType == 1) {
-
             redpacketInfo = initRedPacketInfo_single(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_SINGLE);
-        } else if(chatType == 2) {
-
+        } else if (chatType == 2) {
             redpacketInfo = initRedPacketInfo_group(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_GROUP, tpGroupId, membersNum);
-        }else{
+        } else {
             return;
         }
-
-
         intent.putExtra(RPConstant.EXTRA_MONEY_INFO, redpacketInfo);
         fragment.startActivityForResult(intent, REQUEST_CODE_SEND_MONEY);
-
-
     }
 
 }

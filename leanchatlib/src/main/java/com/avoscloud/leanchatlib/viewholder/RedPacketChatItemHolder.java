@@ -45,7 +45,7 @@ public class RedPacketChatItemHolder extends ChatItemHolder {
         } else {
             conventLayout.addView(View.inflate(getContext(), R.layout.rp_chat_item_right_text_redpacket_layout, null));
         }
-       //红包view
+        //红包view
         re_bubble = (RelativeLayout) itemView.findViewById(R.id.bubble);
 
         mTvGreeting = (TextView) itemView.findViewById(R.id.tv_money_greeting);
@@ -61,10 +61,10 @@ public class RedPacketChatItemHolder extends ChatItemHolder {
             AVIMTextMessage textMessage = (AVIMTextMessage) message;
             //获取附加字段
             Map<String, Object> attrs = textMessage.getAttrs();
-            String fromNickname = getfromNickname();
-            String fromAvatarUrl = getfromAvatarUrl();
-            boolean isSend= textMessage.getFrom() != null && textMessage.getFrom().equals(selfId);
-            RedPacketUtils.initRedpacketChatItem(attrs, mTvGreeting, mTvSponsorName, re_bubble, isSend , fromNickname, fromAvatarUrl, getContext(), new RedPacketUtils.OnSuccessOpenRedPacket() {
+            String fromNickname = getFromNickname();
+            String fromAvatarUrl = getFromAvatarUrl();
+            boolean isSend = textMessage.getFrom() != null && textMessage.getFrom().equals(selfId);
+            RedPacketUtils.initRedPacketChatItem(attrs, mTvGreeting, mTvSponsorName, re_bubble, isSend, fromNickname, fromAvatarUrl, getContext(), new RedPacketUtils.OnSuccessOpenRedPacket() {
                 @Override
                 public void callBack(String content, boolean isRP, Map<String, Object> attrs_temp) {
                     ((AVChatActivity) getContext()).chatFragment.sendText(content, isRP, attrs_temp);
@@ -79,14 +79,14 @@ public class RedPacketChatItemHolder extends ChatItemHolder {
     ChatManager chatManager = ChatManager.getInstance();
     String selfId = chatManager.getSelfId();
 
-    private String getfromNickname() {
+    private String getFromNickname() {
         //获取昵称
         String username = ThirdPartUserUtils.getInstance().getUserName(selfId);
         String fromNickname = TextUtils.isEmpty(username) ? selfId : username;
         return fromNickname;
     }
 
-    private String getfromAvatarUrl() {
+    private String getFromAvatarUrl() {
         //获取头像
         String avatarUrl = ThirdPartUserUtils.getInstance().getUserAvatar(selfId);
         final String fromAvatarUrl = TextUtils.isEmpty(avatarUrl) ? "none" : avatarUrl;
