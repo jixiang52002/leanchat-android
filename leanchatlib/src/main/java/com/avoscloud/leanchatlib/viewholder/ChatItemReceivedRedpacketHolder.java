@@ -18,11 +18,11 @@ import utils.RedPacketUtils;
 /**
  * Created by ustc on 2016/5/30.
  */
-public class ChatItemReceivedRedpacketHolder extends ChatItemHolder {
+public class ChatItemReceivedRedPacketHolder extends ChatItemHolder {
 
     protected TextView contentView;
 
-    public ChatItemReceivedRedpacketHolder(Context context, ViewGroup root, boolean isLeft) {
+    public ChatItemReceivedRedPacketHolder(Context context, ViewGroup root, boolean isLeft) {
         super(context, root, isLeft);
 
     }
@@ -30,7 +30,7 @@ public class ChatItemReceivedRedpacketHolder extends ChatItemHolder {
     @Override
     public void initView() {
         super.initView();
-        conventLayout.addView(View.inflate(getContext(), R.layout.chat_item_money_message, null));
+        conventLayout.addView(View.inflate(getContext(), R.layout.rp_chat_item_received_redpacket, null));
         avatarView.setVisibility(View.GONE);
 
         contentView = (TextView) itemView.findViewById(R.id.tv_money_msg);

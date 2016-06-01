@@ -1,14 +1,11 @@
 package com.avoscloud.leanchatlib.viewholder;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.avos.avoscloud.im.v2.AVIMMessage;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
@@ -17,8 +14,6 @@ import com.avoscloud.leanchatlib.R;
 import com.avoscloud.leanchatlib.activity.AVChatActivity;
 import com.avoscloud.leanchatlib.controller.ChatManager;
 import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
-import com.easemob.redpacketsdk.bean.RedPacketInfo;
-import com.easemob.redpacketui.utils.RPOpenPacketUtil;
 
 import java.util.Map;
 
@@ -27,7 +22,7 @@ import utils.RedPacketUtils;
 /**
  * Created by wli on 15/9/17.
  */
-public class ChatItemRedpacketHolder extends ChatItemHolder {
+public class ChatItemRedPacketHolder extends ChatItemHolder {
 
     protected TextView mTvGreeting;
     protected TextView mTvSponsorName;
@@ -35,7 +30,7 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
     protected Context context;
 
 
-    public ChatItemRedpacketHolder(Context context, ViewGroup root, boolean isLeft) {
+    public ChatItemRedPacketHolder(Context context, ViewGroup root, boolean isLeft) {
         super(context, root, isLeft);
 
 
@@ -46,10 +41,10 @@ public class ChatItemRedpacketHolder extends ChatItemHolder {
         super.initView();
 
         if (isLeft) {
-            conventLayout.addView(View.inflate(getContext(), R.layout.chat_item_left_text_redpacket_layout, null));
+            conventLayout.addView(View.inflate(getContext(), R.layout.rp_chat_item_left_text_redpacket_layout, null));
 
         } else {
-            conventLayout.addView(View.inflate(getContext(), R.layout.chat_item_right_text_redpacket_layout, null));
+            conventLayout.addView(View.inflate(getContext(), R.layout.rp_chat_item_right_text_redpacket_layout, null));
         }
 
         re_bubble = (RelativeLayout) itemView.findViewById(R.id.bubble);
