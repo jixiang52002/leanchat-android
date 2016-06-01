@@ -47,6 +47,7 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
         }
        //红包view
         re_bubble = (RelativeLayout) itemView.findViewById(R.id.bubble);
+
         mTvGreeting = (TextView) itemView.findViewById(R.id.tv_money_greeting);
         mTvSponsorName = (TextView) itemView.findViewById(R.id.tv_sponsor_name);
 
@@ -66,7 +67,7 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
             RedPacketUtils.initRedpacketChatItem(attrs, mTvGreeting, mTvSponsorName, re_bubble, isSend , fromNickname, fromAvatarUrl, getContext(), new RedPacketUtils.OnSuccessOpenRedPacket() {
                 @Override
                 public void callBack(String content, boolean isRP, Map<String, Object> attrs_temp) {
-                    ((AVChatActivity) getContext()).chatFragment.sendText(content, true, attrs_temp);
+                    ((AVChatActivity) getContext()).chatFragment.sendText(content, isRP, attrs_temp);
                 }
             });
         }
