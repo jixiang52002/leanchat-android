@@ -294,19 +294,30 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
     public void selectRedPacket() {
 
-          String toUserId = ConversationHelper.otherIdOfConversation(imConversation);
-          int chatType=1;
-         String tpGroupId="";
-        int membersNum=imConversation.getMembers().size();
+        final  String toUserId = ConversationHelper.otherIdOfConversation(imConversation);
+
+
         //接收者Id或者接收的群Id
         if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
-            chatType=1;
+            int chatType=1;
+            int membersNum=0;
+            String tpGroupId="";
+            RedPacketUtils. selectRedpacket(this,   toUserId,   fromNickname,   fromAvatarUrl,    chatType,   tpGroupId,   membersNum,   REQUEST_CODE_SEND_MONEY);
         } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
-            chatType=2;
-            tpGroupId   = imConversation.getConversationId();
+
+            imConversation.getMemberCount(new AVIMConversationMemberCountCallback() {
+                @Override
+                public void done(Integer integer, AVIMException e) {
+                    int chatType=2;
+                    String  tpGroupId   = imConversation.getConversationId();
+                    int membersNum=integer;
+                    RedPacketUtils. selectRedpacket(ChatFragment.this,   toUserId,   fromNickname,   fromAvatarUrl,    chatType,   tpGroupId,   membersNum,   REQUEST_CODE_SEND_MONEY);
+                }
+            });
+
         }
 
-        RedPacketUtils. selectRedpacket(this,   toUserId,   fromNickname,   fromAvatarUrl,    chatType,   tpGroupId,   membersNum,   REQUEST_CODE_SEND_MONEY);
+
 
 
     }
