@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ListFragment;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -191,7 +193,7 @@ public class RedPacketUtils {
     }
 
 
-    public static void initReceivedRedPacketChatItem(Map<String, Object> attrs, boolean isSend, String selfId, TextView contentView, Context context) {
+    public static void initReceivedRedPacketChatItem(Map<String, Object> attrs, boolean isSend, String selfId, TextView contentView, Context context, LinearLayout conventLayout) {
         //防止崩潰，先檢查數據
         if (!checkReceivedRPData(attrs)) return;
         String fromUser = (String) attrs.get(EXTRA_RED_PACKET_SENDER_NAME);//红包发送者
@@ -218,7 +220,8 @@ public class RedPacketUtils {
             if (senderId.equals(selfId)) {
                 contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money), toUser));
             } else {
-                contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money_same), toUser, fromUser));
+                conventLayout.setVisibility(View.GONE);
+              //  contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money_same), toUser, fromUser));
             }
         }
     }

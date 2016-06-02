@@ -47,6 +47,7 @@ import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 import utils.RedPacketUtils;
+import utils.UserUtils;
 
 /**
  * Created by wli on 15/8/27.
@@ -77,7 +78,6 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
-
         localCameraPath = PathUtils.getPicturePathByCurrentTime(getContext());
 
         recyclerView = (RecyclerView) view.findViewById(R.id.fragment_chat_rv_chat);
@@ -92,6 +92,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         recyclerView.setAdapter(itemAdapter);
 
         EventBus.getDefault().register(this);
+
         return view;
     }
 

@@ -94,6 +94,11 @@ public class MessageHandler extends AVIMTypedMessageHandler<AVIMTypedMessage> {
           if(((AVIMTextMessage) message).getAttrs()!=null){
             Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
             if(attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)!=null&&(boolean)attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)){
+             String sendId=(String )     attrs.get(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID);
+              if(!TextUtils.isEmpty(sendId)){
+
+
+              }
                return;
             }
           }

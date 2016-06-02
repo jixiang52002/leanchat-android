@@ -94,6 +94,6 @@ public class App extends Application {
   }
 
   private void initBaiduMap() {
-    SDKInitializer.initialize(this);
+    //SDKInitializer.initialize(this);
   }
 }

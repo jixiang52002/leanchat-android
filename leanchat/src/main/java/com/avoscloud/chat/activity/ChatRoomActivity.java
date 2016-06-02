@@ -17,6 +17,8 @@ import com.avoscloud.leanchatlib.event.LocationItemClickEvent;
 import com.avoscloud.leanchatlib.utils.Constants;
 import com.avoscloud.leanchatlib.utils.NotificationUtils;
 
+import utils.UserUtils;
+
 /**
  * Created by lzw on 15/4/24.
  */
@@ -31,8 +33,11 @@ public class ChatRoomActivity extends AVChatActivity {
 
     LeanchatUser curUser = LeanchatUser.getCurrentUser();
     if (curUser != null) {
+      UserUtils.getInstance(ChatRoomActivity.this).setUserInfo("fromAvatarUrl",TextUtils.isEmpty(curUser.getAvatarUrl()) ? "none" : curUser.getAvatarUrl());
+      UserUtils.getInstance(ChatRoomActivity.this).setUserInfo("fromNickname",curUser.getUsername());
       chatFragment.fromAvatarUrl = TextUtils.isEmpty(curUser.getAvatarUrl()) ? "none" : curUser.getAvatarUrl();
       chatFragment. fromNickname =  curUser.getUsername();
+
     }
   }
 

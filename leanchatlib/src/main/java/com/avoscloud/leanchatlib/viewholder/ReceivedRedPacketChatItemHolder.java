@@ -46,7 +46,7 @@ public class ReceivedRedPacketChatItemHolder extends ChatItemHolder {
             ChatManager chatManager = ChatManager.getInstance();
             String selfId = chatManager.getSelfId();
             boolean isSend = textMessage.getFrom() != null && textMessage.getFrom().equals(selfId);
-            RedPacketUtils.initReceivedRedPacketChatItem(attrs, isSend, selfId, contentView, getContext());
+            RedPacketUtils.initReceivedRedPacketChatItem(attrs, isSend, selfId, contentView, getContext(),conventLayout);
         }
     }
 

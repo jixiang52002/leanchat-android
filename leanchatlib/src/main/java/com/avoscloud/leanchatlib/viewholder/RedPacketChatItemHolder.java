@@ -17,6 +17,7 @@ import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
 import java.util.Map;
 
 import utils.RedPacketUtils;
+import utils.UserUtils;
 
 /**
  * Created by wli on 15/9/17.
@@ -61,8 +62,18 @@ public class RedPacketChatItemHolder extends ChatItemHolder {
             AVIMTextMessage textMessage = (AVIMTextMessage) message;
             //获取附加字段
             Map<String, Object> attrs = textMessage.getAttrs();
-            String fromNickname = getFromNickname();
-            String fromAvatarUrl = getFromAvatarUrl();
+            String fromNickname= UserUtils.getInstance(getContext()).getUserInfo("fromNickname");
+            String fromAvatarUrl= UserUtils.getInstance(getContext()).getUserInfo("fromAvatarUrl");
+            if(TextUtils.isEmpty(fromNickname)){
+                  fromNickname = getFromNickname();
+
+            }
+            if(TextUtils.isEmpty(fromAvatarUrl)){
+                fromAvatarUrl = getFromAvatarUrl();
+
+            }
+
+
             boolean isSend = textMessage.getFrom() != null && textMessage.getFrom().equals(selfId);
             RedPacketUtils.initRedPacketChatItem(attrs, mTvGreeting, mTvSponsorName, re_bubble, isSend, fromNickname, fromAvatarUrl, getContext(), new RedPacketUtils.OnSuccessOpenRedPacket() {
                 @Override
