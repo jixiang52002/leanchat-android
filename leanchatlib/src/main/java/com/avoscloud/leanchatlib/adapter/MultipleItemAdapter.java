@@ -1,6 +1,8 @@
 package com.avoscloud.leanchatlib.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.ViewGroup;
 
 import com.avos.avoscloud.im.v2.AVIMMessage;
@@ -8,10 +10,12 @@ import com.avos.avoscloud.im.v2.AVIMReservedMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.controller.ChatManager;
+import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
 import com.avoscloud.leanchatlib.viewholder.ChatItemAudioHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemImageHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemLocationHolder;
+import com.avoscloud.leanchatlib.viewholder.HideRedPacketChatItemHolder;
 import com.avoscloud.leanchatlib.viewholder.ReceivedRedPacketChatItemHolder;
 import com.avoscloud.leanchatlib.viewholder.RedPacketChatItemHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemTextHolder;
@@ -25,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import utils.RedPacketUtils;
+import utils.UserUtils;
 
 /**
  * Created by wli on 15/8/13.
@@ -45,14 +50,16 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final int ITEM_RIGHT_LOCATION = 204;
     private final int ITEM_RIGHT_TEXT_REDPACKET = 205;
     private final int ITEM_TEXT_REDPACKET_NOTIFY = 300;
+    private final int ITEM_TEXT_REDPACKET_NOTIFY_MEMBER = 301;
     // 时间间隔最小为十分钟
     private final static long TIME_INTERVAL = 1000 * 60 * 3;
     private boolean isShowUserName = true;
 
     private List<AVIMMessage> messageList = new ArrayList<AVIMMessage>();
     private static PrettyTime prettyTime = new PrettyTime();
-
-    public MultipleItemAdapter() {
+    private    Context context;
+    public MultipleItemAdapter(Context context) {
+        this.context=context;
     }
 
     public void setMessageList(List<AVIMMessage> messages) {
@@ -105,7 +112,8 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ITEM_TEXT_REDPACKET_NOTIFY:
                 return new ReceivedRedPacketChatItemHolder(parent.getContext(), parent, false);
 
-
+            case ITEM_TEXT_REDPACKET_NOTIFY_MEMBER:
+                return new HideRedPacketChatItemHolder(parent.getContext(), parent);
             default:
                 //TODO 此处还要判断左右
                 return new ChatItemTextHolder(parent.getContext(), parent, true);
@@ -135,7 +143,32 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                      return isMe ? ITEM_RIGHT_TEXT_REDPACKET : ITEM_LEFT_TEXT_REDPACKET;
                 } else if(attrs != null &&  attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)!=null&&(boolean)attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)) {
                      //收取紅包通知
-                    return ITEM_TEXT_REDPACKET_NOTIFY;
+                    String sendId=(String) attrs.get(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID);
+                    ChatManager chatManager = ChatManager.getInstance();
+                    String selfId = chatManager.getSelfId();
+                    if(sendId.equals(selfId)){
+                        return ITEM_TEXT_REDPACKET_NOTIFY;
+
+
+                    }else{
+
+                        String fromNickname= UserUtils.getInstance(context).getUserInfo("fromNickname");
+                        if(TextUtils.isEmpty(fromNickname)){
+                            //获取昵称
+                            String username = ThirdPartUserUtils.getInstance().getUserName(selfId);
+                            fromNickname = TextUtils.isEmpty(username) ? selfId : username;
+                        }
+
+                         String receivedNickname=(String) attrs.get(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);
+                        if(receivedNickname.equals(fromNickname)){
+
+                            return ITEM_TEXT_REDPACKET_NOTIFY;
+                        }else{
+                            return ITEM_TEXT_REDPACKET_NOTIFY_MEMBER;
+                        }
+
+                    }
+
                 }else{
                     return isMe ? ITEM_RIGHT_TEXT : ITEM_LEFT_TEXT;
                 }
@@ -153,6 +186,7 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         return 8888;
     }
+
 
     @Override
     public int getItemCount() {

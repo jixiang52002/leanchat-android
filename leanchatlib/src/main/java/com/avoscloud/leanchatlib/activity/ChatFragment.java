@@ -87,7 +87,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        itemAdapter = new MultipleItemAdapter();
+        itemAdapter = new MultipleItemAdapter(getActivity());
         itemAdapter.resetRecycledViewPoolSize(recyclerView);
         recyclerView.setAdapter(itemAdapter);
 

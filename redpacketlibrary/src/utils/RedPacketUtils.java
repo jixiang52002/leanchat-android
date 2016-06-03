@@ -193,7 +193,7 @@ public class RedPacketUtils {
     }
 
 
-    public static void initReceivedRedPacketChatItem(Map<String, Object> attrs, boolean isSend, String selfId, TextView contentView, Context context, LinearLayout conventLayout) {
+    public static void initReceivedRedPacketChatItem(Map<String, Object> attrs, boolean isSend, String selfId, TextView contentView, Context context) {
         //防止崩潰，先檢查數據
         if (!checkReceivedRPData(attrs)) return;
         String fromUser = (String) attrs.get(EXTRA_RED_PACKET_SENDER_NAME);//红包发送者
@@ -220,8 +220,8 @@ public class RedPacketUtils {
             if (senderId.equals(selfId)) {
                 contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money), toUser));
             } else {
-                conventLayout.setVisibility(View.GONE);
-              //  contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money_same), toUser, fromUser));
+
+              contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money_same), toUser, fromUser));
             }
         }
     }
