@@ -32,10 +32,12 @@ public class RequestTask extends AsyncTask<String, String, String> {
             super.handleMessage(msg);
             switch (msg.what) {
                 case HANDLER_LOGIN_SUCCESS:
-                    Toast.makeText(context, "红包SDK登陆成功", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(context, "红包SDK登陆成功", Toast.LENGTH_SHORT).show();
+                    System.out.println("---->红包SDK登陆成功");
                     break;
                 case HANDLER_LOGIN_FAILURE:
-                    Toast.makeText(context, "红包SDK登陆失败", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(context, "红包SDK登陆失败", Toast.LENGTH_SHORT).show();
+                    System.out.println("---->红包SDK登陆失败");
                     break;
             }
         }
