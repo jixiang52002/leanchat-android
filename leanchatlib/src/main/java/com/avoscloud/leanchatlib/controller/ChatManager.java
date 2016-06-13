@@ -2,11 +2,7 @@ package com.avoscloud.leanchatlib.controller;
 
 import android.content.Context;
 
-import com.avos.avoscloud.im.v2.AVIMClient;
-import com.avos.avoscloud.im.v2.AVIMConversationQuery;
-import com.avos.avoscloud.im.v2.AVIMException;
-import com.avos.avoscloud.im.v2.AVIMMessageManager;
-import com.avos.avoscloud.im.v2.AVIMTypedMessage;
+import com.avos.avoscloud.im.v2.*;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback;
 import com.avoscloud.leanchatlib.model.ConversationType;
@@ -59,12 +55,14 @@ public class ChatManager {
 
     // 消息处理 handler
     AVIMMessageManager.registerMessageHandler(AVIMTypedMessage.class, new MessageHandler(context));
-
+    AVIMMessageManager.registerDefaultMessageHandler(new IMMessageHandler(context) );
     // 与网络相关的 handler
     AVIMClient.setClientEventHandler(LeanchatClientEventHandler.getInstance());
 
     // 和 Conversation 相关的事件的 handler
     AVIMMessageManager.setConversationEventHandler(ConversationEventHandler.getInstance());
+
+
 
     // 签名
     //AVIMClient.setSignatureFactory(new SignatureFactory());
