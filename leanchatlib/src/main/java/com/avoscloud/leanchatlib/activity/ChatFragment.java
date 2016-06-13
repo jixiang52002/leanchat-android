@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONObject;
 import com.avos.avoscloud.im.v2.AVIMConversation;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.AVIMMessage;
@@ -29,6 +30,7 @@ import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.R;
 import com.avoscloud.leanchatlib.adapter.MultipleItemAdapter;
 import com.avoscloud.leanchatlib.controller.ConversationHelper;
+import com.avoscloud.leanchatlib.event.ImMessageEvent;
 import com.avoscloud.leanchatlib.event.ImTypeMessageEvent;
 import com.avoscloud.leanchatlib.event.ImTypeMessageResendEvent;
 import com.avoscloud.leanchatlib.event.InputBottomBarEvent;
@@ -42,6 +44,7 @@ import com.easemob.redpacketsdk.constant.RPConstant;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,10 +72,17 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     protected InputBottomBar inputBottomBar;
 
     protected String localCameraPath;
+
+    //以下三个值从ChatRoomActivity中传递过来
     //发送者头像url
     public String fromAvatarUrl;
     //发送者昵称 设置了昵称就传昵称 否则传id
     public String fromNickname;
+    public String userID;
+
+
+    //接收者id,单聊是对方userid，群聊是群id
+    private String money_receiver_id;
 
     @Nullable
     @Override
@@ -181,7 +191,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     public void onEvent(InputBottomBarTextEvent textEvent) {
         if (null != imConversation && null != textEvent) {
             if (!TextUtils.isEmpty(textEvent.sendContent) && imConversation.getConversationId().equals(textEvent.tag)) {
-                sendText(textEvent.sendContent, false, null);
+                sendText(textEvent.sendContent);
             }
         }
     }
@@ -191,6 +201,19 @@ public class ChatFragment extends android.support.v4.app.Fragment {
      * 同理，避免无效消息，此处加了 conversation id 判断
      */
     public void onEvent(ImTypeMessageEvent event) {
+        if (null != imConversation && null != event &&
+                imConversation.getConversationId().equals(event.conversation.getConversationId())) {
+            itemAdapter.addMessage(event.message);
+            itemAdapter.notifyDataSetChanged();
+            scrollToBottom();
+        }
+    }
+
+    /**
+     *
+     *  红包回执消息为AVIMMessage，无法有接收消息的监听。因此写了针对AVIMMessage监听事件
+    */
+    public void onEvent(ImMessageEvent event) {
         if (null != imConversation && null != event &&
                 imConversation.getConversationId().equals(event.conversation.getConversationId())) {
             itemAdapter.addMessage(event.message);
@@ -301,6 +324,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
             int chatType = 1;
             int membersNum = 0;
             String tpGroupId = "";
+            money_receiver_id=toUserId;
             RedPacketUtils.selectRedPacket(this, toUserId, fromNickname, fromAvatarUrl, chatType, tpGroupId, membersNum, REQUEST_CODE_SEND_MONEY);
         } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
 
@@ -309,6 +333,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
                 public void done(Integer integer, AVIMException e) {
                     int chatType = 2;
                     String tpGroupId = imConversation.getConversationId();
+                    money_receiver_id=tpGroupId;
                     int membersNum = integer;
                     RedPacketUtils.selectRedPacket(ChatFragment.this, toUserId, fromNickname, fromAvatarUrl, chatType, tpGroupId, membersNum, REQUEST_CODE_SEND_MONEY);
                 }
@@ -371,34 +396,63 @@ public class ChatFragment extends android.support.v4.app.Fragment {
                     if (data != null) {
                         String greetings = data.getStringExtra(RPConstant.EXTRA_MONEY_GREETING);
                         String moneyID = data.getStringExtra(RPConstant.EXTRA_CHECK_MONEY_ID);
-                        int chatType = RPConstant.CHATTYPE_SINGLE;
-                        if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
-                            //传入聊天类型---1为单聊，2为群聊
-                            chatType = RPConstant.CHATTYPE_SINGLE;
-                        } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
-                            //用else if是因为防止后面出现聊天室等其他聊天模式
-                            chatType = RPConstant.CHATTYPE_GROUP;
-                        }
+//                        int chatType = RPConstant.CHATTYPE_SINGLE;
+//                        if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
+//                            //传入聊天类型---1为单聊，2为群聊
+//                            chatType = RPConstant.CHATTYPE_SINGLE;
+//                        } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
+//                            //用else if是因为防止后面出现聊天室等其他聊天模式
+//                            chatType = RPConstant.CHATTYPE_GROUP;
+//                        }
                         String sponsor_name = getResources().getString(R.string.leancloud_luckymoney);
                         //获取发送红包的附加数据
-                        Map<String, Object> attrs = RedPacketUtils.initSendRedPacketAttrs(true, sponsor_name, greetings, moneyID, chatType);
+                        Map<String, Object> attrs =toSendRedPacket(  userID ,  fromNickname  ,  sponsor_name,   greetings,   moneyID,  money_receiver_id  );
                         //文本消息内容
                         String content = "[" + getResources().getString(R.string.leancloud_luckymoney) + "]" + greetings;
-                        sendText(content, true, attrs);
+                        sendText(content,attrs);
                     }
                     break;
             }
         }
     }
+    //普通消息
+    public void sendText(String content) {
 
-    public void sendText(String content, boolean isRP, Map<String, Object> attrs) {
         AVIMTextMessage message = new AVIMTextMessage();
         message.setText(content);
-        if (isRP) {
-            message.setAttrs(attrs);
-
-        }
         sendMessage(message);
+
+    }
+    //发送红包
+    public void sendText(String content,Map<String,Object> attrs) {
+
+
+        AVIMTextMessage message = new AVIMTextMessage();
+        message.setText(content);
+        message.setAttrs(attrs);
+        sendMessage(message);
+
+
+
+    }
+    //
+    public void sendText(String content, JSONObject jsonObject) {
+
+
+        AVIMMessage  message=  new AVIMMessage();
+        message.setContent(jsonObject.toString());
+        itemAdapter.addMessage(message);
+        itemAdapter.notifyDataSetChanged();
+        scrollToBottom();
+        imConversation.sendMessage(message, new AVIMConversationCallback() {
+            @Override
+            public void done(AVIMException e) {
+                itemAdapter.notifyDataSetChanged();
+            }
+        });
+
+
+
     }
 
     private void sendImage(String imagePath) {
@@ -431,4 +485,45 @@ public class ChatFragment extends android.support.v4.app.Fragment {
             }
         });
     }
+
+
+    /**
+     * 设置发消息红包的附加字段的attrs
+     **/
+    public static Map<String, Object> toSendRedPacket(String userId ,String username  ,String money_sponsor_name, String money_greeting, String moneyID,String money_receiver_id) {
+
+        System.out.println("userId---->>" +userId);
+        System.out.println("username---->>" +username);
+        System.out.println("money_sponsor_name---->>" +money_sponsor_name);
+        System.out.println("money_greeting---->>" +money_greeting);
+        System.out.println("moneyID---->>" +moneyID);
+        System.out.println("money_receiver_id---->>" +money_receiver_id);
+
+
+        Map<String, Object> attrs = new HashMap<String, Object>();
+        JSONObject jsonObject=new JSONObject();
+
+        jsonObject.put("ID",moneyID);
+        jsonObject.put("is_money_msg",true);
+        jsonObject.put("money_greeting",money_greeting);
+        jsonObject.put("money_receiver_id",money_receiver_id);
+        jsonObject.put("money_sender",username);
+        jsonObject.put("money_sender_id",userId);
+        jsonObject.put("money_sponsor_name",money_sponsor_name);
+
+
+
+        JSONObject userJson=new JSONObject();
+
+        userJson.put("username",username);
+        userJson.put("id",userId);
+
+
+
+        attrs.put("redpacket", jsonObject);
+        attrs.put("redpacket_user", userJson);
+
+        return attrs;
+    }
+
 }

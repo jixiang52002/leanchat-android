@@ -43,7 +43,7 @@ public class MessageHandler extends AVIMTypedMessageHandler<AVIMTypedMessage> {
       LogUtils.d("may be SDK Bug, message or message id is null");
       return;
     }
-
+       System.out.println("9999------->>999");
     if (!ConversationHelper.isValidConversation(conversation)) {
       LogUtils.d("receive msg from invalid conversation");
     }

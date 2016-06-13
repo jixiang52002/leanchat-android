@@ -1,19 +1,31 @@
 package com.avoscloud.leanchatlib.viewholder;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMMessage;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.R;
 import com.avoscloud.leanchatlib.activity.AVChatActivity;
 import com.avoscloud.leanchatlib.controller.ChatManager;
+import com.avoscloud.leanchatlib.controller.ConversationHelper;
+import com.avoscloud.leanchatlib.model.ConversationType;
 import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
+import com.easemob.redpacketsdk.bean.RedPacketInfo;
+import com.easemob.redpacketui.utils.RPOpenPacketUtil;
 
+
+import java.util.HashMap;
 import java.util.Map;
 
 import utils.RedPacketUtils;
@@ -60,27 +72,37 @@ public class RedPacketChatItemHolder extends ChatItemHolder {
         AVIMMessage message = (AVIMMessage) o;
         if (message instanceof AVIMTextMessage) {
             AVIMTextMessage textMessage = (AVIMTextMessage) message;
+            int chatType = 1;
+            if (ConversationHelper.typeOfConversation(AVIMClient.getInstance(ChatManager.getInstance().getSelfId()).getConversation(textMessage.getConversationId())) == ConversationType.Group) {
+
+                chatType = 2;
+            }
             //获取附加字段
             Map<String, Object> attrs = textMessage.getAttrs();
-            String fromNickname= UserUtils.getInstance(getContext()).getUserInfo("fromNickname");
-            String fromAvatarUrl= UserUtils.getInstance(getContext()).getUserInfo("fromAvatarUrl");
-            if(TextUtils.isEmpty(fromNickname)){
-                  fromNickname = getFromNickname();
 
+            if (attrs == null || !attrs.containsKey("redpacket") || !(attrs.get("redpacket") instanceof com.alibaba.fastjson.JSONObject)) {
+
+                return;
             }
-            if(TextUtils.isEmpty(fromAvatarUrl)){
+
+            JSONObject rpJSON = (JSONObject) attrs.get("redpacket");
+            if (rpJSON.size() == 0) {
+
+                return;
+            }
+            System.out.println("attrs---->>" + attrs);
+            String fromNickname = UserUtils.getInstance(getContext()).getUserInfo("fromNickname");
+            String fromAvatarUrl = UserUtils.getInstance(getContext()).getUserInfo("fromAvatarUrl");
+            if (TextUtils.isEmpty(fromNickname)) {
+                fromNickname = getFromNickname();
+            }
+            if (TextUtils.isEmpty(fromAvatarUrl)) {
                 fromAvatarUrl = getFromAvatarUrl();
-
             }
-
-
             boolean isSend = textMessage.getFrom() != null && textMessage.getFrom().equals(selfId);
-            RedPacketUtils.initRedPacketChatItem(attrs, mTvGreeting, mTvSponsorName, re_bubble, isSend, fromNickname, fromAvatarUrl, getContext(), new RedPacketUtils.OnSuccessOpenRedPacket() {
-                @Override
-                public void callBack(String content, boolean isRP, Map<String, Object> attrs_temp) {
-                    ((AVChatActivity) getContext()).chatFragment.sendText(content, isRP, attrs_temp);
-                }
-            });
+            initRedPacketChatItem(rpJSON, chatType, mTvGreeting, mTvSponsorName, re_bubble, isSend, fromNickname, fromAvatarUrl, selfId, getContext());
+
+
         }
 
     }
@@ -104,5 +126,89 @@ public class RedPacketChatItemHolder extends ChatItemHolder {
         return fromAvatarUrl;
     }
 
+
+    public void initRedPacketChatItem(JSONObject rpJSON, final int chatType, TextView mTvGreeting, TextView mTvSponsorName, RelativeLayout re_bubble, boolean isSend, final String fromNickname, String fromAvatarUrl, final String fromUserId, final Context context) {
+
+        final String ID = rpJSON.getString("ID");
+
+        final String money_greeting = rpJSON.getString("money_greeting");
+
+        final String money_sponsor_name = rpJSON.getString("money_sponsor_name");
+
+        mTvGreeting.setText(money_greeting);
+        mTvSponsorName.setText(money_sponsor_name);
+
+        String moneyMsgDirect;
+        //判断发送还是接收
+        if (isSend) {
+            moneyMsgDirect = RedPacketUtils.MESSAGE_DIRECT_SEND;
+        } else {
+            moneyMsgDirect = RedPacketUtils.MESSAGE_DIRECT_RECEIVE;
+        }
+
+        final RedPacketInfo redPacketInfo = RedPacketUtils.initRedPacketInfo_received(fromNickname, fromAvatarUrl, moneyMsgDirect, chatType, ID);
+        //红包点击
+        re_bubble.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final ProgressDialog progressDialog = new ProgressDialog(context);
+                progressDialog.setCanceledOnTouchOutside(false);
+                RPOpenPacketUtil.getInstance().openRedPacket(redPacketInfo, (FragmentActivity) context, new RPOpenPacketUtil.RPOpenPacketCallBack() {
+                    @Override
+                    public void onSuccess(String senderId, String senderNickname) {
+                        String content = String.format(context.getResources().getString(R.string.money_msg_someone_take_money), fromNickname);
+                        final JSONObject jsonObject = initReceivedRedPacketAttrs(ID, money_greeting, money_sponsor_name, fromNickname, fromUserId, senderNickname, senderId);
+                        ( (AVChatActivity)context).chatFragment.sendText(content,jsonObject);
+
+                    }
+
+                    @Override
+                    public void showLoading() {
+                        progressDialog.show();
+                    }
+
+                    @Override
+                    public void hideLoading() {
+                        progressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(String code, String message) {
+                        //错误处理
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+            }
+        });
+
+
+    }
+
+
+    /**
+     * 设置领取红包后发领取通知的附加字段的attrs
+     **/
+    public JSONObject initReceivedRedPacketAttrs(String ID, String money_greeting, String money_sponsor_name, String money_receiver, String money_receiver_id, String senderNickname, String senderId) {
+        JSONObject  jsonObject=new JSONObject();
+        JSONObject rpJSON = new JSONObject();
+        JSONObject userJSON = new JSONObject();
+
+        rpJSON.put("money_sender", senderNickname);
+        rpJSON.put("ID", ID);
+        rpJSON.put("is_open_money_msg", true);
+        rpJSON.put("money_greeting", money_greeting);
+        rpJSON.put("money_receiver", money_receiver);
+        rpJSON.put("money_receiver_id", money_receiver_id);
+        rpJSON.put("money_sender_id", senderId);
+        rpJSON.put("money_sponsor_name", money_sponsor_name);
+        userJSON.put("id", money_receiver_id);
+        userJSON.put("username", money_receiver);
+        jsonObject.put("redpacket",rpJSON);
+        jsonObject.put("redpacket_user",userJSON);
+        jsonObject.put("type","redpacket_taken" );
+        return jsonObject;
+    }
 
 }
