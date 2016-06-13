@@ -54,7 +54,7 @@ public class Utils {
           return "[未知]";
       }
     } else {
-      return message.getContent();
+      return "[LeanCloud 红包]";
     }
   }
 }

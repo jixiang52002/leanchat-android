@@ -137,6 +137,7 @@ public class ConversationRecentFragment extends BaseFragment {
           @Override
           public void done(AVIMMessage avimMessage, AVIMException e) {
             if (filterException(e) && null != avimMessage) {
+
               room.setLastMessage(avimMessage);
               int index = roomList.indexOf(room);
               itemAdapter.notifyItemChanged(index);

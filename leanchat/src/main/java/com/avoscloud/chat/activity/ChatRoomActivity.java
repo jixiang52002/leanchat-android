@@ -36,8 +36,8 @@ public class ChatRoomActivity extends AVChatActivity {
       UserUtils.getInstance(ChatRoomActivity.this).setUserInfo("fromAvatarUrl",TextUtils.isEmpty(curUser.getAvatarUrl()) ? "none" : curUser.getAvatarUrl());
       UserUtils.getInstance(ChatRoomActivity.this).setUserInfo("fromNickname",curUser.getUsername());
       chatFragment.fromAvatarUrl = TextUtils.isEmpty(curUser.getAvatarUrl()) ? "none" : curUser.getAvatarUrl();
-      chatFragment. fromNickname =  curUser.getUsername();
-
+      chatFragment.fromNickname =  curUser.getUsername();
+      chatFragment.userID=curUser.getUuid();
 
     }
   }
