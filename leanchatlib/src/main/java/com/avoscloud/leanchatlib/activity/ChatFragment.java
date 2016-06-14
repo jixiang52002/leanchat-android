@@ -29,6 +29,7 @@ import com.avos.avoscloud.im.v2.messages.AVIMImageMessage;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.R;
 import com.avoscloud.leanchatlib.adapter.MultipleItemAdapter;
+import com.avoscloud.leanchatlib.controller.ChatManager;
 import com.avoscloud.leanchatlib.controller.ConversationHelper;
 import com.avoscloud.leanchatlib.event.ImMessageEvent;
 import com.avoscloud.leanchatlib.event.ImTypeMessageEvent;
@@ -78,7 +79,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     public String fromAvatarUrl;
     //发送者昵称 设置了昵称就传昵称 否则传id
     public String fromNickname;
-    public String userID;
+
 
 
     //接收者id,单聊是对方userid，群聊是群id
@@ -405,10 +406,13 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 //                            chatType = RPConstant.CHATTYPE_GROUP;
 //                        }
                         String sponsor_name = getResources().getString(R.string.leancloud_luckymoney);
+                        ChatManager chatManager = ChatManager.getInstance();
+                        String selfId = chatManager.getSelfId();
+                        System.out.println("selfId------>"+selfId);
                         //获取发送红包的附加数据
-                        Map<String, Object> attrs =toSendRedPacket(  userID ,  fromNickname  ,  sponsor_name,   greetings,   moneyID,  money_receiver_id  );
+                        Map<String, Object> attrs =toSendRedPacket(  selfId ,  fromNickname  ,  sponsor_name,   greetings,   moneyID,  money_receiver_id  );
                         //文本消息内容
-                        String content = "[" + getResources().getString(R.string.leancloud_luckymoney) + "]" + greetings;
+                        String content = "[" + getResources().getString(R.string.leancloud_luckymoney) + "]"+greetings;
                         sendText(content,attrs);
                     }
                     break;

@@ -241,6 +241,8 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private boolean fromMe(AVIMMessage msg) {
         ChatManager chatManager = ChatManager.getInstance();
         String selfId = chatManager.getSelfId();
+        System.out.println("selfId------>"+selfId);
         return msg.getFrom() != null && msg.getFrom().equals(selfId);
+
     }
 }
