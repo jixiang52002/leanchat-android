@@ -139,7 +139,6 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         //TODO 如果是自定义的数据类型该如何
         AVIMMessage message = messageList.get(position);
         boolean isMe = fromMe(message);
-        Log.e("test----->>", "test----->>" + message.getContent());
         try {
             JSONObject jsonObject = JSONObject.parseObject(message.getContent());
             if (jsonObject != null) {

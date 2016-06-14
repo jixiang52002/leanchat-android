@@ -36,7 +36,6 @@ public class IMMessageHandler extends AVIMMessageHandler {
             LogUtils.d("may be SDK Bug, message or message id is null");
             return;
         }
-        System.out.println("88888------->>88888");
         if (!ConversationHelper.isValidConversation(conversation)) {
             LogUtils.d("receive msg from invalid conversation");
         }
@@ -65,6 +64,7 @@ public class IMMessageHandler extends AVIMMessageHandler {
     /**
      * 因为没有 db，所以暂时先把消息广播出去，由接收方自己处理
      * 稍后应该加入 db
+     *
      * @param message
      * @param conversation
      */

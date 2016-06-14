@@ -25,97 +25,85 @@ import utils.RedPacketUtils;
 
 /**
  * Created by zhangxiaobo on 15/4/20.
- *  AVIMTypedMessage 的 handler，socket 过来的 AVIMTypedMessage 都会通过此 handler 与应用交互
- *  需要应用主动调用 AVIMMessageManager.registerMessageHandler 来注册
- *  当然，自定义的消息也可以通过这种方式来处理
+ * AVIMTypedMessage 的 handler，socket 过来的 AVIMTypedMessage 都会通过此 handler 与应用交互
+ * 需要应用主动调用 AVIMMessageManager.registerMessageHandler 来注册
+ * 当然，自定义的消息也可以通过这种方式来处理
  */
 public class MessageHandler extends AVIMTypedMessageHandler<AVIMTypedMessage> {
 
-  private Context context;
+    private Context context;
 
-  public MessageHandler(Context context) {
-    this.context = context.getApplicationContext();
-  }
-
-  @Override
-  public void onMessage(AVIMTypedMessage message, AVIMConversation conversation, AVIMClient client) {
-    if (message == null || message.getMessageId() == null) {
-      LogUtils.d("may be SDK Bug, message or message id is null");
-      return;
-    }
-       System.out.println("9999------->>999");
-    if (!ConversationHelper.isValidConversation(conversation)) {
-      LogUtils.d("receive msg from invalid conversation");
+    public MessageHandler(Context context) {
+        this.context = context.getApplicationContext();
     }
 
-    if (ChatManager.getInstance().getSelfId() == null) {
-      LogUtils.d("selfId is null, please call setupManagerWithUserId ");
-      client.close(null);
-    } else {
-      if (!client.getClientId().equals(ChatManager.getInstance().getSelfId())) {
-        client.close(null);
-      } else {
-        ChatManager.getInstance().getRoomsTable().insertRoom(message.getConversationId());
-        if (!message.getFrom().equals(client.getClientId())) {
-          if (NotificationUtils.isShowNotification(conversation.getConversationId())) {
-            sendNotification(message, conversation);
-          }
-          ChatManager.getInstance().getRoomsTable().increaseUnreadCount(message.getConversationId());
-          sendEvent(message, conversation);
+    @Override
+    public void onMessage(AVIMTypedMessage message, AVIMConversation conversation, AVIMClient client) {
+        if (message == null || message.getMessageId() == null) {
+            LogUtils.d("may be SDK Bug, message or message id is null");
+            return;
         }
-      }
-    }
-  }
+         if (!ConversationHelper.isValidConversation(conversation)) {
+            LogUtils.d("receive msg from invalid conversation");
+        }
 
-  @Override
-  public void onMessageReceipt(AVIMTypedMessage message, AVIMConversation conversation, AVIMClient client) {
-    super.onMessageReceipt(message, conversation, client);
-  }
-
-  /**
-   * 因为没有 db，所以暂时先把消息广播出去，由接收方自己处理
-   * 稍后应该加入 db
-   * @param message
-   * @param conversation
-   */
-  private void sendEvent(AVIMTypedMessage message, AVIMConversation conversation) {
-    ImTypeMessageEvent event = new ImTypeMessageEvent();
-    event.message = message;
-    event.conversation = conversation;
-    EventBus.getDefault().post(event);
-  }
-
-  private void sendNotification(AVIMTypedMessage message, AVIMConversation conversation) {
-    if (null != conversation && null != message) {
-      String notificationContent = message instanceof AVIMTextMessage ?
-        ((AVIMTextMessage) message).getText() : context.getString(R.string.unspport_message_type);
-        if(message instanceof AVIMTextMessage){
-
-          if(((AVIMTextMessage) message).getAttrs()!=null){
-            Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
-            if(attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)!=null&&(boolean)attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)){
-             String sendId=(String )     attrs.get(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID);
-              if(!TextUtils.isEmpty(sendId)){
-
-
-              }
-               return;
+        if (ChatManager.getInstance().getSelfId() == null) {
+            LogUtils.d("selfId is null, please call setupManagerWithUserId ");
+            client.close(null);
+        } else {
+            if (!client.getClientId().equals(ChatManager.getInstance().getSelfId())) {
+                client.close(null);
+            } else {
+                ChatManager.getInstance().getRoomsTable().insertRoom(message.getConversationId());
+                if (!message.getFrom().equals(client.getClientId())) {
+                    if (NotificationUtils.isShowNotification(conversation.getConversationId())) {
+                        sendNotification(message, conversation);
+                    }
+                    ChatManager.getInstance().getRoomsTable().increaseUnreadCount(message.getConversationId());
+                    sendEvent(message, conversation);
+                }
             }
-          }
         }
-      String userName = ThirdPartUserUtils.getInstance().getUserName(message.getFrom());
-      String title = (TextUtils.isEmpty(userName) ? "" : userName);
-
-      Intent intent = new Intent();
-      intent.setAction("com.avoscloud.chat.intent.client_notification");
-      intent.putExtra(Constants.CONVERSATION_ID, conversation.getConversationId());
-      intent.putExtra(Constants.MEMBER_ID, message.getFrom());
-      if (ConversationHelper.typeOfConversation(conversation) == ConversationType.Single) {
-        intent.putExtra(Constants.NOTOFICATION_TAG, Constants.NOTIFICATION_SINGLE_CHAT);
-      } else {
-        intent.putExtra(Constants.NOTOFICATION_TAG, Constants.NOTIFICATION_SINGLE_CHAT);
-      }
-      NotificationUtils.showNotification(context, title, notificationContent, null, intent);
     }
-  }
+
+    @Override
+    public void onMessageReceipt(AVIMTypedMessage message, AVIMConversation conversation, AVIMClient client) {
+        super.onMessageReceipt(message, conversation, client);
+    }
+
+    /**
+     * 因为没有 db，所以暂时先把消息广播出去，由接收方自己处理
+     * 稍后应该加入 db
+     *
+     * @param message
+     * @param conversation
+     */
+    private void sendEvent(AVIMTypedMessage message, AVIMConversation conversation) {
+        ImTypeMessageEvent event = new ImTypeMessageEvent();
+        event.message = message;
+        event.conversation = conversation;
+        EventBus.getDefault().post(event);
+    }
+
+    private void sendNotification(AVIMTypedMessage message, AVIMConversation conversation) {
+        if (null != conversation && null != message) {
+            String notificationContent = message instanceof AVIMTextMessage ?
+                    ((AVIMTextMessage) message).getText() : context.getString(R.string.unspport_message_type);
+            if (message instanceof AVIMTextMessage) {
+                String userName = ThirdPartUserUtils.getInstance().getUserName(message.getFrom());
+                String title = (TextUtils.isEmpty(userName) ? "" : userName);
+
+                Intent intent = new Intent();
+                intent.setAction("com.avoscloud.chat.intent.client_notification");
+                intent.putExtra(Constants.CONVERSATION_ID, conversation.getConversationId());
+                intent.putExtra(Constants.MEMBER_ID, message.getFrom());
+                if (ConversationHelper.typeOfConversation(conversation) == ConversationType.Single) {
+                    intent.putExtra(Constants.NOTOFICATION_TAG, Constants.NOTIFICATION_SINGLE_CHAT);
+                } else {
+                    intent.putExtra(Constants.NOTOFICATION_TAG, Constants.NOTIFICATION_SINGLE_CHAT);
+                }
+                NotificationUtils.showNotification(context, title, notificationContent, null, intent);
+            }
+        }
+    }
 }
