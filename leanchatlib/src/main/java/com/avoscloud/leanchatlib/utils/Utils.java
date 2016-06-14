@@ -2,6 +2,8 @@ package com.avoscloud.leanchatlib.utils;
 
 import android.content.Context;
 
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import com.avos.avoscloud.im.v2.AVIMMessage;
 import com.avos.avoscloud.im.v2.AVIMReservedMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
@@ -14,6 +16,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.io.Closeable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by lzw on 15/4/27.
@@ -43,6 +46,22 @@ public class Utils {
       AVIMReservedMessageType type = AVIMReservedMessageType.getAVIMReservedMessageType(((AVIMTypedMessage) message).getMessageType());
       switch (type) {
         case TextMessageType:
+
+          Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
+
+          if (attrs != null && attrs.containsKey("redpacket")) {
+
+
+
+            JSONObject rpJSON = (JSONObject) attrs.get("redpacket");
+            if (rpJSON!=null&&rpJSON.size() != 0) {
+
+                String money_greeting = rpJSON.getString("money_greeting");
+              return "[LeanCloud红包]"+money_greeting;
+
+            }
+          }
+
           return EmotionHelper.replace(context, ((AVIMTextMessage) message).getText());
         case ImageMessageType:
           return "[图片]";
@@ -54,7 +73,33 @@ public class Utils {
           return "[未知]";
       }
     } else {
+      try {
+        JSONObject jsonObject = JSONObject.parseObject(message.getContent());
+        if (jsonObject != null) {
+          if (jsonObject.containsKey("redpacket")) {
+            ChatManager chatManager = ChatManager.getInstance();
+            String selfId = chatManager.getSelfId();
+            if (jsonObject.containsKey("type") && jsonObject.getString("type").equals("redpacket_taken")) {
+              JSONObject rpJSON = jsonObject.getJSONObject("redpacket");
+              if (rpJSON.getString("money_sender_id").equals(selfId)) {
+                  String money_receiver=rpJSON.getString("money_receiver");
+
+                return money_receiver+"领取了你的红包";
+              }  else if(rpJSON.getString("money_receiver_id").equals(selfId)){
+                  String money_sender=rpJSON.getString("money_sender");
+                  return "你领取了"+money_sender+"的红包";
+              }
+
+            }
+          }
+
+
+        }
+      } catch (JSONException exception) {
+
+      }
       return "[LeanCloud 红包]";
+
     }
   }
 }
