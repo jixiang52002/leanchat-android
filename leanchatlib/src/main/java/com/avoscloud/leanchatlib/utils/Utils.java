@@ -90,6 +90,7 @@ public class Utils {
                   return "你领取了"+money_sender+"的红包";
               }
 
+
             }
           }
 
