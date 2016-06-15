@@ -14,7 +14,8 @@ public class UserUtils {
     private static SharedPreferences mSharedPreferences;
     private static UserUtils mPreferenceUtils;
     private static SharedPreferences.Editor editor;
-
+    public static String USER_AVATAR_URL= "fromAvatarUrl";
+    public static String USER_NICK_NAME= "fromNickname";
     private UserUtils(Context cxt) {
         mSharedPreferences = cxt.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
     }

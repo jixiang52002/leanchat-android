@@ -399,10 +399,10 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         jsonObject.put(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID, senderId);
         jsonObject.put(RedPacketUtils.EXTRA_SPONSOR_NAME, sponsorName);
         JSONObject userJson = new JSONObject();
-        userJson.put("username", senderNickname);
-        userJson.put("id", senderId);
-        attrs.put("redpacket", jsonObject);
-        attrs.put("redpacket_user", userJson);
+        userJson.put(RedPacketUtils.KEY_USER_NAME, senderNickname);
+        userJson.put(RedPacketUtils.KEY_USER_ID, senderId);
+        attrs.put(RedPacketUtils.KEY_REDPACKET, jsonObject);
+        attrs.put(RedPacketUtils.KEY_REDPACKET_USER, userJson);
         return attrs;
     }
 }

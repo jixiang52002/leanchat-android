@@ -57,8 +57,8 @@ public class Utils {
             switch (type) {
                 case TextMessageType:
                     Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
-                    if (attrs != null && attrs.containsKey("redpacket")) {
-                        JSONObject rpJSON = (JSONObject) attrs.get("redpacket");
+                    if (attrs != null && attrs.containsKey(RedPacketUtils.KEY_REDPACKET)) {
+                        JSONObject rpJSON = (JSONObject) attrs.get(RedPacketUtils.KEY_REDPACKET);
                         if (rpJSON != null && rpJSON.size() != 0) {
                             String money_greeting = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_GREETING);
                             return "[LeanCloud红包]" + money_greeting;
@@ -77,11 +77,11 @@ public class Utils {
         } else {
             try {
                 JSONObject jsonObject = JSONObject.parseObject(message.getContent());
-                if (jsonObject != null) if (jsonObject.containsKey("redpacket")) {
+                if (jsonObject != null) if (jsonObject.containsKey(RedPacketUtils.KEY_REDPACKET)) {
                     ChatManager chatManager = ChatManager.getInstance();
                     String selfId = chatManager.getSelfId();
-                    if (jsonObject.containsKey("type") && jsonObject.getString("type").equals("redpacket_taken")) {
-                        JSONObject rpJSON = jsonObject.getJSONObject("redpacket");
+                    if (jsonObject.containsKey(RedPacketUtils.KEY_TYPE) && jsonObject.getString(RedPacketUtils.KEY_TYPE).equals(RedPacketUtils.VALUE_TYPE)) {
+                        JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_REDPACKET);
                          if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId)) {
                             if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
                                 return  context.getResources().getString(R.string.money_msg_take_money);
@@ -136,11 +136,11 @@ public class Utils {
 
                 try {
                     JSONObject jsonObject = JSONObject.parseObject(message.getContent());
-                    if (jsonObject != null) if (jsonObject.containsKey("redpacket")) {
+                    if (jsonObject != null) if (jsonObject.containsKey(RedPacketUtils.KEY_REDPACKET)) {
                         ChatManager chatManager = ChatManager.getInstance();
                         String selfId = chatManager.getSelfId();
-                        if (jsonObject.containsKey("type") && jsonObject.getString("type").equals("redpacket_taken")) {
-                            JSONObject rpJSON = jsonObject.getJSONObject("redpacket");
+                        if (jsonObject.containsKey(RedPacketUtils.KEY_TYPE) && jsonObject.getString(RedPacketUtils.KEY_TYPE).equals(RedPacketUtils.VALUE_TYPE)) {
+                            JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_REDPACKET);
                              if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId)) {
                                 if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
                                     temp =  context.getResources().getString(R.string.money_msg_take_money);
@@ -171,8 +171,8 @@ public class Utils {
         switch (type) {
             case TextMessageType:
                 Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
-                if (attrs != null && attrs.containsKey("redpacket")) {
-                    JSONObject rpJSON = (JSONObject) attrs.get("redpacket");
+                if (attrs != null && attrs.containsKey(RedPacketUtils.KEY_REDPACKET)) {
+                    JSONObject rpJSON = (JSONObject) attrs.get(RedPacketUtils.KEY_REDPACKET);
                     if (rpJSON != null && rpJSON.size() != 0) {
                         String money_greeting = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_GREETING);
                         return "[LeanCloud红包]" + money_greeting;

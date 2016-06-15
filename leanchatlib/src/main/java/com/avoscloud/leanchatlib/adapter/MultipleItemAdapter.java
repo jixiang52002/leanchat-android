@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import utils.RedPacketUtils;
+
 /**
  * Created by wli on 15/8/13.
  * 聊天的 Adapter，此处还有可优化的地方，稍后考虑一下提取出公共的 adapter
@@ -134,12 +136,12 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         try {
             JSONObject jsonObject = JSONObject.parseObject(message.getContent());
             if (jsonObject != null) {
-                if (jsonObject.containsKey("redpacket")) {
+                if (jsonObject.containsKey(RedPacketUtils.KEY_REDPACKET)) {
                     ChatManager chatManager = ChatManager.getInstance();
                     String selfId = chatManager.getSelfId();
-                    if (jsonObject.containsKey("type") && jsonObject.getString("type").equals("redpacket_taken")) {
-                        JSONObject rpJSON = jsonObject.getJSONObject("redpacket");
-                        if (rpJSON.getString("money_sender_id").equals(selfId) || rpJSON.getString("money_receiver_id").equals(selfId)) {
+                    if (jsonObject.containsKey(RedPacketUtils.KEY_TYPE) && jsonObject.getString(RedPacketUtils.KEY_TYPE).equals(RedPacketUtils.VALUE_TYPE)) {
+                        JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_REDPACKET);
+                        if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId) || rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
                             return ITEM_TEXT_REDPACKET_NOTIFY;
                         } else {
                             return ITEM_TEXT_REDPACKET_NOTIFY_MEMBER;
@@ -154,7 +156,7 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             AVIMTypedMessage typedMessage = (AVIMTypedMessage) message;
             if (typedMessage.getMessageType() == AVIMReservedMessageType.TextMessageType.getType()) {
                 Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
-                if (attrs != null && attrs.containsKey("redpacket")) {
+                if (attrs != null && attrs.containsKey(RedPacketUtils.KEY_REDPACKET)) {
                     return isMe ? ITEM_RIGHT_TEXT_REDPACKET : ITEM_LEFT_TEXT_REDPACKET;
                 } else {
                     return isMe ? ITEM_RIGHT_TEXT : ITEM_LEFT_TEXT;

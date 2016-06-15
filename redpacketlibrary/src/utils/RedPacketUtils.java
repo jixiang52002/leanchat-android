@@ -29,6 +29,8 @@ public class RedPacketUtils {
     public static final String KEY_REDPACKET = "redpacket";
     public static final String KEY_REDPACKET_USER = "redpacket_user";
     public static final String KEY_TYPE = "type";
+    public static final String VALUE_TYPE = "redpacket_taken";
+
 
     public static RedPacketInfo initRedPacketInfo_single(String fromNickname, String fromAvatarUrl, String toUserId, int chatType) {
         RedPacketInfo redPacketInfo = new RedPacketInfo();

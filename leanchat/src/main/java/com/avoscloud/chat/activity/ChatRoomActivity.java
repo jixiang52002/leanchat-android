@@ -33,8 +33,8 @@ public class ChatRoomActivity extends AVChatActivity {
         super.onCreate(savedInstanceState);
         LeanchatUser curUser = LeanchatUser.getCurrentUser();
         if (curUser != null) {
-            UserUtils.getInstance(ChatRoomActivity.this).setUserInfo("fromAvatarUrl", TextUtils.isEmpty(curUser.getAvatarUrl()) ? "none" : curUser.getAvatarUrl());
-            UserUtils.getInstance(ChatRoomActivity.this).setUserInfo("fromNickname", curUser.getUsername());
+            UserUtils.getInstance(ChatRoomActivity.this).setUserInfo(UserUtils.USER_AVATAR_URL, TextUtils.isEmpty(curUser.getAvatarUrl()) ? "none" : curUser.getAvatarUrl());
+            UserUtils.getInstance(ChatRoomActivity.this).setUserInfo(UserUtils.USER_NICK_NAME, curUser.getUsername());
             chatFragment.fromAvatarUrl = TextUtils.isEmpty(curUser.getAvatarUrl()) ? "none" : curUser.getAvatarUrl();
             chatFragment.fromNickname = curUser.getUsername();
         }
