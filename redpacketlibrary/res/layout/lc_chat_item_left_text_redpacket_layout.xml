@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/bubble"
+<RelativeLayout
+    android:id="@+id/red_packet_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="210dp"
     android:layout_height="90dp"
-    android:layout_marginRight="5dp"
-
-    android:background="@drawable/rp_chatto_bg"
+    android:layout_marginLeft="5dp"
+    android:background="@drawable/lc_chatfrom_bg"
     >
 
     <ImageView
         android:id="@+id/iv_money_icon"
-        android:src="@drawable/rp_icon"
-        style="@style/MoneyIconStyle"
+        style="@style/RedPacketIconStyle"
+        android:src="@drawable/lc_icon"
         />
 
     <TextView
         android:id="@+id/tv_money_greeting"
-        style="@style/MoneyGreetingStyle"
+        style="@style/RedPacketGreetingStyle"
+        android:text="恭喜发财，大吉大利！"
         />
 
     <TextView
+        style="@style/RedPacketCheckStyle"
         android:text="查看红包"
-        style="@style/MoneyCheckStyle"
         />
 
     <RelativeLayout
@@ -32,13 +32,10 @@
         >
 
         <TextView
-
             android:id="@+id/tv_sponsor_name"
-            style="@style/MoneySponsorStyle"
+            style="@style/RedPacketSponsorStyle"
             />
-        <ImageView
 
-            style="@style/MoneySponsorIconStyle"
-            />
+        <ImageView style="@style/RedPacketSponsorIconStyle"/>
     </RelativeLayout>
 </RelativeLayout>

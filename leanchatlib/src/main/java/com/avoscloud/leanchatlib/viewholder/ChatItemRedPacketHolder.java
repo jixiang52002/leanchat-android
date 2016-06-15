@@ -18,39 +18,30 @@ import java.util.Map;
 
 import utils.RedPacketUtils;
 
-/**
- * Created by wli on 15/9/17.
- */
-public class RedPacketChatItemHolder extends ChatItemHolder {
+public class ChatItemRedPacketHolder extends ChatItemHolder {
 
     protected TextView mTvGreeting;
+
     protected TextView mTvSponsorName;
-    protected RelativeLayout re_bubble;
-    protected Context context;
 
+    protected RelativeLayout mRedPacketLayout;
 
-    public RedPacketChatItemHolder(Context context, ViewGroup root, boolean isLeft) {
+    public ChatItemRedPacketHolder(Context context, ViewGroup root, boolean isLeft) {
         super(context, root, isLeft);
-
-
     }
 
     @Override
     public void initView() {
         super.initView();
-
         if (isLeft) {
-            conventLayout.addView(View.inflate(getContext(), R.layout.rp_chat_item_left_text_redpacket_layout, null));
-
+            conventLayout.addView(View.inflate(getContext(), R.layout.lc_chat_item_left_text_redpacket_layout, null));
         } else {
-            conventLayout.addView(View.inflate(getContext(), R.layout.rp_chat_item_right_text_redpacket_layout, null));
+            conventLayout.addView(View.inflate(getContext(), R.layout.lc_chat_item_right_text_redpacket_layout, null));
         }
         //红包view
-        re_bubble = (RelativeLayout) itemView.findViewById(R.id.bubble);
-
+        mRedPacketLayout = (RelativeLayout) itemView.findViewById(R.id.red_packet_layout);
         mTvGreeting = (TextView) itemView.findViewById(R.id.tv_money_greeting);
         mTvSponsorName = (TextView) itemView.findViewById(R.id.tv_sponsor_name);
-
     }
 
     @Override
@@ -64,34 +55,30 @@ public class RedPacketChatItemHolder extends ChatItemHolder {
             String fromNickname = getFromNickname();
             String fromAvatarUrl = getFromAvatarUrl();
             boolean isSend = textMessage.getFrom() != null && textMessage.getFrom().equals(selfId);
-            RedPacketUtils.initRedPacketChatItem(attrs, mTvGreeting, mTvSponsorName, re_bubble, isSend, fromNickname, fromAvatarUrl, getContext(), new RedPacketUtils.OnSuccessOpenRedPacket() {
+            RedPacketUtils.initRedPacketChatItem(attrs, mTvGreeting, mTvSponsorName, mRedPacketLayout, isSend, fromNickname, fromAvatarUrl, getContext(), new RedPacketUtils.OpenRedPacketCallback() {
                 @Override
-                public void callBack(String content, boolean isRP, Map<String, Object> attrs_temp) {
+                public void onSuccess(String content, boolean isRP, Map<String, Object> attrs_temp) {
                     ((AVChatActivity) getContext()).chatFragment.sendText(content, isRP, attrs_temp);
                 }
             });
         }
-
     }
 
     //获取本地用户的昵称和头像
     //先获取ID
     ChatManager chatManager = ChatManager.getInstance();
+
     String selfId = chatManager.getSelfId();
 
     private String getFromNickname() {
         //获取昵称
         String username = ThirdPartUserUtils.getInstance().getUserName(selfId);
-        String fromNickname = TextUtils.isEmpty(username) ? selfId : username;
-        return fromNickname;
+        return TextUtils.isEmpty(username) ? selfId : username;
     }
 
     private String getFromAvatarUrl() {
         //获取头像
         String avatarUrl = ThirdPartUserUtils.getInstance().getUserAvatar(selfId);
-        final String fromAvatarUrl = TextUtils.isEmpty(avatarUrl) ? "none" : avatarUrl;
-        return fromAvatarUrl;
+        return TextUtils.isEmpty(avatarUrl) ? "none" : avatarUrl;
     }
-
-
 }

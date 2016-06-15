@@ -291,22 +291,18 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     }
 
     public void selectRedPacket() {
-
         final String toUserId = ConversationHelper.otherIdOfConversation(imConversation);
-
-
         //接收者Id或者接收的群Id
         if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
-            int chatType = 1;
+            int chatType = RPConstant.CHATTYPE_SINGLE;
             int membersNum = 0;
             String tpGroupId = "";
             RedPacketUtils.selectRedPacket(this, toUserId, fromNickname, fromAvatarUrl, chatType, tpGroupId, membersNum, REQUEST_CODE_SEND_MONEY);
         } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
-
             imConversation.getMemberCount(new AVIMConversationMemberCountCallback() {
                 @Override
                 public void done(Integer integer, AVIMException e) {
-                    int chatType = 2;
+                    int chatType = RPConstant.CHATTYPE_GROUP;
                     String tpGroupId = imConversation.getConversationId();
                     int membersNum = integer;
                     RedPacketUtils.selectRedPacket(ChatFragment.this, toUserId, fromNickname, fromAvatarUrl, chatType, tpGroupId, membersNum, REQUEST_CODE_SEND_MONEY);

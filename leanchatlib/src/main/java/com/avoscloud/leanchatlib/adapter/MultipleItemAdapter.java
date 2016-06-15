@@ -12,8 +12,8 @@ import com.avoscloud.leanchatlib.viewholder.ChatItemAudioHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemImageHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemLocationHolder;
-import com.avoscloud.leanchatlib.viewholder.ReceivedRedPacketChatItemHolder;
-import com.avoscloud.leanchatlib.viewholder.RedPacketChatItemHolder;
+import com.avoscloud.leanchatlib.viewholder.ChatItemRedPacketAckHolder;
+import com.avoscloud.leanchatlib.viewholder.ChatItemRedPacketHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemTextHolder;
 import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
 
@@ -99,11 +99,11 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ITEM_RIGHT_LOCATION:
                 return new ChatItemLocationHolder(parent.getContext(), parent, false);
             case ITEM_LEFT_TEXT_REDPACKET:
-                return new RedPacketChatItemHolder(parent.getContext(), parent, true);
+                return new ChatItemRedPacketHolder(parent.getContext(), parent, true);
             case ITEM_RIGHT_TEXT_REDPACKET:
-                return new RedPacketChatItemHolder(parent.getContext(), parent, false);
+                return new ChatItemRedPacketHolder(parent.getContext(), parent, false);
             case ITEM_TEXT_REDPACKET_NOTIFY:
-                return new ReceivedRedPacketChatItemHolder(parent.getContext(), parent, false);
+                return new ChatItemRedPacketAckHolder(parent.getContext(), parent, false);
 
 
             default:

@@ -14,14 +14,11 @@ import java.util.Map;
 
 import utils.RedPacketUtils;
 
-/**
- * Created by ustc on 2016/5/30.
- */
-public class ReceivedRedPacketChatItemHolder extends ChatItemHolder {
+public class ChatItemRedPacketAckHolder extends ChatItemHolder {
 
     protected TextView contentView;
 
-    public ReceivedRedPacketChatItemHolder(Context context, ViewGroup root, boolean isLeft) {
+    public ChatItemRedPacketAckHolder(Context context, ViewGroup root, boolean isLeft) {
         super(context, root, isLeft);
 
     }
@@ -29,7 +26,7 @@ public class ReceivedRedPacketChatItemHolder extends ChatItemHolder {
     @Override
     public void initView() {
         super.initView();
-        conventLayout.addView(View.inflate(getContext(), R.layout.rp_chat_item_received_redpacket, null));
+        conventLayout.addView(View.inflate(getContext(), R.layout.lc_chat_item_redpacket_ack, null));
         avatarView.setVisibility(View.GONE);
         contentView = (TextView) itemView.findViewById(R.id.tv_money_msg);
     }
@@ -46,7 +43,7 @@ public class ReceivedRedPacketChatItemHolder extends ChatItemHolder {
             ChatManager chatManager = ChatManager.getInstance();
             String selfId = chatManager.getSelfId();
             boolean isSend = textMessage.getFrom() != null && textMessage.getFrom().equals(selfId);
-            RedPacketUtils.initReceivedRedPacketChatItem(attrs, isSend, selfId, contentView, getContext());
+            RedPacketUtils.initRedPacketAckChatItem(attrs, isSend, selfId, contentView, getContext());
         }
     }
 
