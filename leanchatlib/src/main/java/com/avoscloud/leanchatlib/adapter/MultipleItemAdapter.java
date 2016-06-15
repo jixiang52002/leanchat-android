@@ -1,8 +1,11 @@
 package com.avoscloud.leanchatlib.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import com.avos.avoscloud.im.v2.AVIMMessage;
 import com.avos.avoscloud.im.v2.AVIMReservedMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
@@ -16,6 +19,7 @@ import com.avoscloud.leanchatlib.viewholder.ChatItemRedPacketAckHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemRedPacketHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemTextHolder;
 import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
+import com.avoscloud.leanchatlib.viewholder.ChatItemRedPacketEmptyHolder;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -23,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import utils.RedPacketUtils;
 
 /**
  * Created by wli on 15/8/13.
@@ -45,14 +47,17 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final int ITEM_RIGHT_LOCATION = 204;
     private final int ITEM_RIGHT_TEXT_REDPACKET = 205;
     private final int ITEM_TEXT_REDPACKET_NOTIFY = 300;
+    private final int ITEM_TEXT_REDPACKET_NOTIFY_MEMBER = 301;
     // 时间间隔最小为十分钟
     private final static long TIME_INTERVAL = 1000 * 60 * 3;
     private boolean isShowUserName = true;
 
     private List<AVIMMessage> messageList = new ArrayList<AVIMMessage>();
     private static PrettyTime prettyTime = new PrettyTime();
+    private Context context;
 
-    public MultipleItemAdapter() {
+    public MultipleItemAdapter(Context context) {
+        this.context = context;
     }
 
     public void setMessageList(List<AVIMMessage> messages) {
@@ -104,8 +109,8 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 return new ChatItemRedPacketHolder(parent.getContext(), parent, false);
             case ITEM_TEXT_REDPACKET_NOTIFY:
                 return new ChatItemRedPacketAckHolder(parent.getContext(), parent, false);
-
-
+            case ITEM_TEXT_REDPACKET_NOTIFY_MEMBER:
+                return new ChatItemRedPacketEmptyHolder(parent.getContext(), parent);
             default:
                 //TODO 此处还要判断左右
                 return new ChatItemTextHolder(parent.getContext(), parent, true);
@@ -125,22 +130,35 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public int getItemViewType(int position) {
         //TODO 如果是自定义的数据类型该如何
         AVIMMessage message = messageList.get(position);
+        boolean isMe = fromMe(message);
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(message.getContent());
+            if (jsonObject != null) {
+                if (jsonObject.containsKey("redpacket")) {
+                    ChatManager chatManager = ChatManager.getInstance();
+                    String selfId = chatManager.getSelfId();
+                    if (jsonObject.containsKey("type") && jsonObject.getString("type").equals("redpacket_taken")) {
+                        JSONObject rpJSON = jsonObject.getJSONObject("redpacket");
+                        if (rpJSON.getString("money_sender_id").equals(selfId) || rpJSON.getString("money_receiver_id").equals(selfId)) {
+                            return ITEM_TEXT_REDPACKET_NOTIFY;
+                        } else {
+                            return ITEM_TEXT_REDPACKET_NOTIFY_MEMBER;
+                        }
+                    }
+                }
+            }
+        } catch (JSONException exception) {
+
+        }
         if (null != message && message instanceof AVIMTypedMessage) {
             AVIMTypedMessage typedMessage = (AVIMTypedMessage) message;
-            boolean isMe = fromMe(typedMessage);
             if (typedMessage.getMessageType() == AVIMReservedMessageType.TextMessageType.getType()) {
                 Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
-                if (attrs != null &&  attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_MESSAGE)!=null&&(boolean)attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_MESSAGE)) {
-                     //收發紅包
-                     return isMe ? ITEM_RIGHT_TEXT_REDPACKET : ITEM_LEFT_TEXT_REDPACKET;
-                } else if(attrs != null &&  attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)!=null&&(boolean)attrs.get(RedPacketUtils.MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE)) {
-                     //收取紅包通知
-                    return ITEM_TEXT_REDPACKET_NOTIFY;
-                }else{
+                if (attrs != null && attrs.containsKey("redpacket")) {
+                    return isMe ? ITEM_RIGHT_TEXT_REDPACKET : ITEM_LEFT_TEXT_REDPACKET;
+                } else {
                     return isMe ? ITEM_RIGHT_TEXT : ITEM_LEFT_TEXT;
                 }
-
-
             } else if (typedMessage.getMessageType() == AVIMReservedMessageType.AudioMessageType.getType()) {
                 return isMe ? ITEM_RIGHT_AUDIO : ITEM_LEFT_AUDIO;
             } else if (typedMessage.getMessageType() == AVIMReservedMessageType.ImageMessageType.getType()) {
@@ -153,6 +171,7 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         return 8888;
     }
+
 
     @Override
     public int getItemCount() {
@@ -169,8 +188,8 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void showUserName(boolean isShow) {
-    isShowUserName = isShow;
-  }
+        isShowUserName = isShow;
+    }
 
 
     /**
@@ -182,20 +201,20 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_IMAGE, 10);
         recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_AUDIO, 15);
         recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_LOCATION, 10);
-         recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_TEXT_REDPACKET, 25);
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_LEFT_TEXT_REDPACKET, 25);
 
         recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_TEXT, 25);
         recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_IMAGE, 10);
         recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_AUDIO, 15);
         recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_LOCATION, 10);
-       recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_TEXT_REDPACKET, 25);
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_RIGHT_TEXT_REDPACKET, 25);
 
         recyclerView.getRecycledViewPool().setMaxRecycledViews(ITEM_TEXT_REDPACKET_NOTIFY, 10);
     }
 
-  private boolean fromMe(AVIMTypedMessage msg) {
-    ChatManager chatManager = ChatManager.getInstance();
-    String selfId = chatManager.getSelfId();
-    return msg.getFrom() != null && msg.getFrom().equals(selfId);
-  }
+    private boolean fromMe(AVIMMessage msg) {
+        ChatManager chatManager = ChatManager.getInstance();
+        String selfId = chatManager.getSelfId();
+        return msg.getFrom() != null && msg.getFrom().equals(selfId);
+    }
 }

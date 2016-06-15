@@ -201,11 +201,4 @@
     <string name="msg_error_retry">点此重试</string>
     <string name="error_not_net_connect">未连接到网络,请稍后重试</string>
 
-
-    <string name="money_msg_take_money">你领取了自己的红包</string>
-    <string name="money_msg_take_someone_money">你领取了%1$s的红包</string>
-    <string name="money_msg_someone_take_money">%1$s领取了你的红包</string>
-    <string name="money_msg_someone_take_money_same">%1$s领取了%2$s的红包</string>
-    <string name="leancloud_luckymoney">LeanCloud红包</string>
-
 </resources>

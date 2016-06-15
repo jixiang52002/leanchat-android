@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.easemob.redpacketsdk.RPCallback;
 import com.easemob.redpacketsdk.RedPacket;
@@ -32,10 +31,10 @@ public class RequestTask extends AsyncTask<String, String, String> {
             super.handleMessage(msg);
             switch (msg.what) {
                 case HANDLER_LOGIN_SUCCESS:
-                    Toast.makeText(context, "红包SDK登陆成功", Toast.LENGTH_SHORT).show();
+                    System.out.println("---->红包SDK登陆成功");
                     break;
                 case HANDLER_LOGIN_FAILURE:
-                    Toast.makeText(context, "红包SDK登陆失败", Toast.LENGTH_SHORT).show();
+                    System.out.println("---->红包SDK登陆失败");
                     break;
             }
         }
@@ -50,7 +49,6 @@ public class RequestTask extends AsyncTask<String, String, String> {
 
     @Override
     protected String doInBackground(String... uri) {
-        Log.e(TAG, "—UserId—" + userID);
         String mockUrl = "http://rpv2.yunzhanghu.com/api/sign?duid=" + userID;
         HttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet(mockUrl);
@@ -76,7 +74,6 @@ public class RequestTask extends AsyncTask<String, String, String> {
     protected void onPostExecute(String result) {
         try {
             if (result != null) {
-                Log.e("zyh", "-res-" + result);
                 JSONObject jsonObj = new JSONObject(result);
                 String partner = jsonObj.getString("partner");
                 String userId = jsonObj.getString("user_id");
@@ -88,15 +85,14 @@ public class RequestTask extends AsyncTask<String, String, String> {
                             public void onSuccess() {
                                 // 进入主页面
                                 mHandler.obtainMessage(HANDLER_LOGIN_SUCCESS).sendToTarget();
-                                Log.e(TAG, "init luck money success token: " + RedPacket.getInstance().sToken);
+                                Log.e(TAG, "init Red Packet success token: " + RedPacket.getInstance().sToken);
                             }
 
                             @Override
                             public void onError(String code, String message) {
                                 //错误处理
                                 mHandler.obtainMessage(HANDLER_LOGIN_FAILURE).sendToTarget();
-                                Log.e(TAG, "init luck money fail token:" + message);
-
+                                Log.e(TAG, "init Red Packet fail token:" + message);
                             }
                         });
             } else {
