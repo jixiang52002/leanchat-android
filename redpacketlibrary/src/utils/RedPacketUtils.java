@@ -24,6 +24,11 @@ public class RedPacketUtils {
     public static final String EXTRA_CHAT_TYPE = "chatType";
     public static final String MESSAGE_DIRECT_SEND = "SEND";
     public static final String MESSAGE_DIRECT_RECEIVE = "RECEIVE";
+    public static final String KEY_USER_ID = "id";
+    public static final String KEY_USER_NAME = "username";
+    public static final String KEY_REDPACKET = "redpacket";
+    public static final String KEY_REDPACKET_USER = "redpacket_user";
+    public static final String KEY_TYPE = "type";
 
     public static RedPacketInfo initRedPacketInfo_single(String fromNickname, String fromAvatarUrl, String toUserId, int chatType) {
         RedPacketInfo redPacketInfo = new RedPacketInfo();
