@@ -10,6 +10,7 @@ import android.util.Log;
 import com.easemob.redpacketsdk.RPCallback;
 import com.easemob.redpacketsdk.RedPacket;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -59,6 +60,11 @@ public class RequestTask extends AsyncTask<String, String, String> {
             if (response.getStatusLine().getStatusCode() == 200) {
                 Log.d("Response of GET request", response.toString());
                 String responseBody = EntityUtils.toString(response.getEntity());
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    entity.consumeContent();
+                }
+                client.getConnectionManager().shutdown();
                 return responseBody;
             }
 
