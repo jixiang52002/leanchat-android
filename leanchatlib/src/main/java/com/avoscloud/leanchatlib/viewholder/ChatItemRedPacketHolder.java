@@ -147,12 +147,11 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
         rpJSON.put(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID, senderId);
         rpJSON.put(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME, senderNickname);
         rpJSON.put(RedPacketUtils.EXTRA_SPONSOR_NAME, sponsorName);
-        // TODO: 16/6/15 id ，username等抽象出常量
-        userJSON.put("id", receiverId);
-        userJSON.put("username", receiverNickname);
-        jsonObject.put("redpacket", rpJSON);
-        jsonObject.put("redpacket_user", userJSON);
-        jsonObject.put("type", "redpacket_taken");
+        userJSON.put(RedPacketUtils.KEY_USER_ID, receiverId);
+        userJSON.put(RedPacketUtils.KEY_USER_NAME, receiverNickname);
+        jsonObject.put(RedPacketUtils.KEY_REDPACKET, rpJSON);
+        jsonObject.put(RedPacketUtils.KEY_REDPACKET_USER, userJSON);
+        jsonObject.put(RedPacketUtils.KEY_TYPE, "redpacket_taken");
         return jsonObject;
     }
 }
