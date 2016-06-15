@@ -59,16 +59,22 @@ public class ChatItemRedPacketAckHolder extends ChatItemHolder {
         String fromUser = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME);/*红包发送者*/
         String toUser = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);/*红包接收者*/
         String senderId = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID);
-        //TODO 加花括号
-        if (isSend) if (chatType == RPConstant.CHATTYPE_GROUP)
-            if (senderId.equals(selfId)) contentView.setText(R.string.money_msg_take_money);
-            else
+        if (isSend) {
+            if (chatType == RPConstant.CHATTYPE_GROUP) {
+                if (senderId.equals(selfId)) {
+                    contentView.setText(R.string.money_msg_take_money);
+                } else {
+                    contentView.setText(String.format(context.getResources().getString(R.string.money_msg_take_someone_money), fromUser));
+                }
+            } else {
                 contentView.setText(String.format(context.getResources().getString(R.string.money_msg_take_someone_money), fromUser));
-        else
-            contentView.setText(String.format(context.getResources().getString(R.string.money_msg_take_someone_money), fromUser));
-        else if (senderId.equals(selfId))
-            contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money), toUser));
-        else
-            contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money_same), toUser, fromUser));
+            }
+        } else {
+            if (senderId.equals(selfId)) {
+                contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money), toUser));
+            } else {
+                contentView.setText(String.format(context.getResources().getString(R.string.money_msg_someone_take_money_same), toUser, fromUser));
+            }
+        }
     }
 }
