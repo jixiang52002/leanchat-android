@@ -401,8 +401,8 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         JSONObject userJson = new JSONObject();
         userJson.put(RedPacketUtils.KEY_USER_NAME, senderNickname);
         userJson.put(RedPacketUtils.KEY_USER_ID, senderId);
-        attrs.put(RedPacketUtils.KEY_REDPACKET, jsonObject);
-        attrs.put(RedPacketUtils.KEY_REDPACKET_USER, userJson);
+        attrs.put(RedPacketUtils.KEY_RED_PACKET, jsonObject);
+        attrs.put(RedPacketUtils.KEY_RED_PACKET_USER, userJson);
         return attrs;
     }
 }

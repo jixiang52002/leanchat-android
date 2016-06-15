@@ -41,8 +41,8 @@ public class ChatItemRedPacketAckHolder extends ChatItemHolder {
         String content = message.getContent();
         if (!TextUtils.isEmpty(content)) {
             JSONObject jsonObject = JSONObject.parseObject(content);
-            if (jsonObject != null && jsonObject.containsKey(RedPacketUtils.KEY_REDPACKET)) {
-                JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_REDPACKET);
+            if (jsonObject != null && jsonObject.containsKey(RedPacketUtils.KEY_RED_PACKET)) {
+                JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_RED_PACKET);
                 int chatType = RPConstant.CHATTYPE_SINGLE;
                 if (ConversationHelper.typeOfConversation(AVIMClient.getInstance(ChatManager.getInstance().getSelfId()).getConversation(message.getConversationId())) == ConversationType.Group) {
                     chatType = RPConstant.CHATTYPE_GROUP;

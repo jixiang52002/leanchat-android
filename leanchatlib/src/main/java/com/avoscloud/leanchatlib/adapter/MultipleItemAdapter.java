@@ -136,11 +136,11 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         try {
             JSONObject jsonObject = JSONObject.parseObject(message.getContent());
             if (jsonObject != null) {
-                if (jsonObject.containsKey(RedPacketUtils.KEY_REDPACKET)) {
+                if (jsonObject.containsKey(RedPacketUtils.KEY_RED_PACKET)) {
                     ChatManager chatManager = ChatManager.getInstance();
                     String selfId = chatManager.getSelfId();
                     if (jsonObject.containsKey(RedPacketUtils.KEY_TYPE) && jsonObject.getString(RedPacketUtils.KEY_TYPE).equals(RedPacketUtils.VALUE_TYPE)) {
-                        JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_REDPACKET);
+                        JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_RED_PACKET);
                         if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId) || rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
                             return ITEM_TEXT_REDPACKET_NOTIFY;
                         } else {
@@ -156,7 +156,7 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             AVIMTypedMessage typedMessage = (AVIMTypedMessage) message;
             if (typedMessage.getMessageType() == AVIMReservedMessageType.TextMessageType.getType()) {
                 Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
-                if (attrs != null && attrs.containsKey(RedPacketUtils.KEY_REDPACKET)) {
+                if (attrs != null && attrs.containsKey(RedPacketUtils.KEY_RED_PACKET)) {
                     return isMe ? ITEM_RIGHT_TEXT_REDPACKET : ITEM_LEFT_TEXT_REDPACKET;
                 } else {
                     return isMe ? ITEM_RIGHT_TEXT : ITEM_LEFT_TEXT;

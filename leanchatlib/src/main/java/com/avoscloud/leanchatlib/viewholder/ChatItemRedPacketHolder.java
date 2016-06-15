@@ -63,9 +63,9 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
             if (ConversationHelper.typeOfConversation(AVIMClient.getInstance(ChatManager.getInstance().getSelfId()).getConversation(textMessage.getConversationId())) == ConversationType.Group)
                 chatType = 2; /*获取附加字段*/
             Map<String, Object> attrs = textMessage.getAttrs();
-            if (attrs == null || !attrs.containsKey(RedPacketUtils.KEY_REDPACKET) || !(attrs.get(RedPacketUtils.KEY_REDPACKET) instanceof com.alibaba.fastjson.JSONObject))
+            if (attrs == null || !attrs.containsKey(RedPacketUtils.KEY_RED_PACKET) || !(attrs.get(RedPacketUtils.KEY_RED_PACKET) instanceof com.alibaba.fastjson.JSONObject))
                 return;
-            JSONObject rpJSON = (JSONObject) attrs.get(RedPacketUtils.KEY_REDPACKET);
+            JSONObject rpJSON = (JSONObject) attrs.get(RedPacketUtils.KEY_RED_PACKET);
             if (rpJSON.size() == 0) return;
             String fromNickname = UserUtils.getInstance(getContext()).getUserInfo(UserUtils.USER_NICK_NAME);
             String fromAvatarUrl = UserUtils.getInstance(getContext()).getUserInfo(UserUtils.USER_AVATAR_URL);
@@ -149,8 +149,8 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
         rpJSON.put(RedPacketUtils.EXTRA_SPONSOR_NAME, sponsorName);
         userJSON.put(RedPacketUtils.KEY_USER_ID, receiverId);
         userJSON.put(RedPacketUtils.KEY_USER_NAME, receiverNickname);
-        jsonObject.put(RedPacketUtils.KEY_REDPACKET, rpJSON);
-        jsonObject.put(RedPacketUtils.KEY_REDPACKET_USER, userJSON);
+        jsonObject.put(RedPacketUtils.KEY_RED_PACKET, rpJSON);
+        jsonObject.put(RedPacketUtils.KEY_RED_PACKET_USER, userJSON);
         jsonObject.put(RedPacketUtils.KEY_TYPE,RedPacketUtils.VALUE_TYPE);
         return jsonObject;
     }
