@@ -13,6 +13,7 @@ import com.avos.avoscloud.im.v2.AVIMReservedMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
 import com.avos.avoscloud.im.v2.callback.AVIMMessagesQueryCallback;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
+import com.avoscloud.leanchatlib.R;
 import com.avoscloud.leanchatlib.controller.ChatManager;
 import com.avoscloud.leanchatlib.controller.EmotionHelper;
 
@@ -81,16 +82,15 @@ public class Utils {
                     String selfId = chatManager.getSelfId();
                     if (jsonObject.containsKey("type") && jsonObject.getString("type").equals("redpacket_taken")) {
                         JSONObject rpJSON = jsonObject.getJSONObject("redpacket");
-                        // TODO: 16/6/15 去掉硬编码
-                        if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId)) {
+                         if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId)) {
                             if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
-                                return "你领取了自己的红包";
+                                return  context.getResources().getString(R.string.money_msg_take_money);
                             }
                             String money_receiver = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);
-                            return money_receiver + "领取了你的红包";
+                            return String.format(context.getResources().getString(R.string.money_msg_someone_take_money), money_receiver);
                         } else if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
                             String money_sender = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME);
-                            return "你领取了" + money_sender + "的红包";
+                            return String.format(context.getResources().getString(R.string.money_msg_take_someone_money), money_sender);
                         } else {
                             AVIMConversation conversation = AVIMClient.getInstance(ChatManager.getInstance().getSelfId()).getConversation(message.getConversationId());
                             /**
@@ -129,10 +129,7 @@ public class Utils {
         CharSequence temp = "";
         for (int i = 0; i < list.size(); i++) {
             AVIMMessage message = list.get(list.size() - i - 1);
-            System.out.println("list.size()-------------------->" + list.size());
-            System.out.println("i-------------------->" + i);
-            System.out.println("message-------------------->" + message.getContent());
-            if (message instanceof AVIMTypedMessage) {
+             if (message instanceof AVIMTypedMessage) {
                 temp = isTypeMessage(context, message);
                 break;
             } else {
@@ -144,18 +141,17 @@ public class Utils {
                         String selfId = chatManager.getSelfId();
                         if (jsonObject.containsKey("type") && jsonObject.getString("type").equals("redpacket_taken")) {
                             JSONObject rpJSON = jsonObject.getJSONObject("redpacket");
-                            // TODO: 16/6/15 去掉硬编码
-                            if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId)) {
+                             if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId)) {
                                 if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
-                                    temp = "你领取了自己的红包";
+                                    temp =  context.getResources().getString(R.string.money_msg_take_money);
                                     break;
                                 }
                                 String money_receiver = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);
-                                temp = money_receiver + "领取了你的红包";
+                                temp = String.format(context.getResources().getString(R.string.money_msg_someone_take_money), money_receiver);
                                 break;
                             } else if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
                                 String money_sender = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME);
-                                temp = "你领取了" + money_sender + "的红包";
+                                temp = String.format(context.getResources().getString(R.string.money_msg_take_someone_money), money_sender);
                                 break;
                             }
                         }
