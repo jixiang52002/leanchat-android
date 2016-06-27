@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.avoscloud.leanchatlib.utils.LogUtils;
 import com.easemob.redpacketsdk.RPCallback;
 import com.easemob.redpacketsdk.RedPacket;
 
@@ -32,10 +33,10 @@ public class RequestTask extends AsyncTask<String, String, String> {
             super.handleMessage(msg);
             switch (msg.what) {
                 case HANDLER_LOGIN_SUCCESS:
-                    System.out.println("---->红包SDK登陆成功");
+                    LogUtils.e("msg", "----->红包SDK登录成功");
                     break;
                 case HANDLER_LOGIN_FAILURE:
-                    System.out.println("---->红包SDK登陆失败");
+                    LogUtils.e("msg", "----->红包SDK登录失败");
                     break;
             }
         }

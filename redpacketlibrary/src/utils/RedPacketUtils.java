@@ -42,13 +42,13 @@ public class RedPacketUtils {
 
     public static RedPacketInfo initRedPacketInfo_group(String fromNickname, String fromAvatarUrl, String toUserId, int chatType, String toGroupId, int groupMemberCount) {
         RedPacketInfo redPacketInfo = new RedPacketInfo();
-        redPacketInfo.fromAvatarUrl = fromAvatarUrl;
-        redPacketInfo.fromNickName = fromNickname;
+        redPacketInfo.fromAvatarUrl = fromAvatarUrl;//发送人的头像
+        redPacketInfo.fromNickName = fromNickname;//发送人的名字
         redPacketInfo.toUserId = toUserId;
-        redPacketInfo.chatType = chatType;
-        redPacketInfo.toGroupId = toGroupId;
-        redPacketInfo.groupMemberCount = groupMemberCount;
-        redPacketInfo.chatType = chatType;
+        redPacketInfo.chatType = chatType;//判断是否是单聊
+        redPacketInfo.toGroupId = toGroupId;//群id
+        redPacketInfo.groupMemberCount = groupMemberCount;//群成员数量
+//        redPacketInfo.chatType = chatType;
         return redPacketInfo;
     }
 

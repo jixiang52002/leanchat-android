@@ -39,9 +39,9 @@
         android:textSize="@dimen/font90px" />
 
     <View
+        android:id="@+id/divider_top"
         style="@style/DividerStyleNoHead"
-        android:layout_marginTop="@dimen/size60px"
-        android:id="@+id/divider_top" />
+        android:layout_marginTop="@dimen/size60px" />
 
     <RelativeLayout
         android:id="@+id/layout_pay_change"

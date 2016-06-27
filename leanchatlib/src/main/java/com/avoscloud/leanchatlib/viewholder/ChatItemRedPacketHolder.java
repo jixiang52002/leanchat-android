@@ -28,6 +28,9 @@ import java.util.Map;
 import utils.RedPacketUtils;
 import utils.UserUtils;
 
+/**
+ * 点击红包消息，领取红包或者查看红包详情
+ */
 public class ChatItemRedPacketHolder extends ChatItemHolder {
 
     protected TextView mTvGreeting;
@@ -90,7 +93,7 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
         return TextUtils.isEmpty(avatarUrl) ? "none" : avatarUrl;
     }
 
-    public void initRedPacketChatItem(JSONObject rpJSON, final int chatType, TextView mTvGreeting, TextView mTvSponsorName, RelativeLayout re_bubble, boolean isSend, final String fromNickname, String fromAvatarUrl, final String fromUserId, final Context context) {
+    private void initRedPacketChatItem(JSONObject rpJSON, final int chatType, TextView mTvGreeting, TextView mTvSponsorName, RelativeLayout re_bubble, boolean isSend, final String fromNickname, String fromAvatarUrl, final String fromUserId, final Context context) {
         final String redPacketId = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_ID);
         final String greeting = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_GREETING);
         final String sponsorName = rpJSON.getString(RedPacketUtils.EXTRA_SPONSOR_NAME);
@@ -135,7 +138,7 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
     /**
      * 设置领取红包后发领取通知的附加字段的attrs
      */
-    public JSONObject initRedPacketAckAttrs(String redPacketId, String greetings, String sponsorName, String receiverNickname, String receiverId, String senderNickname, String senderId) {
+    private JSONObject initRedPacketAckAttrs(String redPacketId, String greetings, String sponsorName, String receiverNickname, String receiverId, String senderNickname, String senderId) {
         JSONObject jsonObject = new JSONObject();
         JSONObject rpJSON = new JSONObject();
         JSONObject userJSON = new JSONObject();
@@ -151,7 +154,7 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
         userJSON.put(RedPacketUtils.KEY_USER_NAME, receiverNickname);
         jsonObject.put(RedPacketUtils.KEY_RED_PACKET, rpJSON);
         jsonObject.put(RedPacketUtils.KEY_RED_PACKET_USER, userJSON);
-        jsonObject.put(RedPacketUtils.KEY_TYPE,RedPacketUtils.VALUE_TYPE);
+        jsonObject.put(RedPacketUtils.KEY_TYPE, RedPacketUtils.VALUE_TYPE);
         return jsonObject;
     }
 }

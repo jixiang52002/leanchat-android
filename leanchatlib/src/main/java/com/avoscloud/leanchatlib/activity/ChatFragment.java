@@ -68,7 +68,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     protected InputBottomBar inputBottomBar;
     protected String localCameraPath; /*以下三个值从ChatRoomActivity中传递过来 发送者头像url*/
     public String fromAvatarUrl; /*发送者昵称 设置了昵称就传昵称 否则传id*/
-    public String fromNickname; /*接收者id,单聊是对方userid，群聊是群id*/
+    public String fromNickname; /*发送者id,单聊是对方userid，群聊是群id*/
     private String receiverId;
 
     @Nullable
@@ -247,6 +247,9 @@ public class ChatFragment extends android.support.v4.app.Fragment {
             startActivityForResult(takePictureIntent, TAKE_CAMERA_REQUEST);
     }
 
+    /**
+     * 点击红包按钮之后的逻辑处理,分为两个部分,一是单聊发红包,二是,群聊发红包
+     */
     public void selectRedPacket() {
         final String toUserId = ConversationHelper.otherIdOfConversation(imConversation); /*接收者Id或者接收的群Id*/
         if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {

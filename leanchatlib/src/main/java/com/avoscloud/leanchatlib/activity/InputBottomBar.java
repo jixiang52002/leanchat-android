@@ -235,6 +235,9 @@ public class InputBottomBar extends LinearLayout {
       }
     });
 
+    /**
+     * 红包按钮,点击后回到ChatFragment进行处理
+     */
     redpacketBtn.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {

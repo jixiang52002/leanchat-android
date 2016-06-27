@@ -1,6 +1,7 @@
 package com.avoscloud.chat.viewholder;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -39,6 +40,7 @@ public class ContactItemHolder extends CommonViewHolder<ContactsAdapter.ContactI
     itemView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        Log.e("msg","=====>"+contactItem);
         EventBus.getDefault().post(new ContactItemClickEvent(contactItem.user.getObjectId()));
       }
     });
