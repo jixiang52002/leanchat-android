@@ -56,15 +56,7 @@ public class Utils {
             AVIMReservedMessageType type = AVIMReservedMessageType.getAVIMReservedMessageType(((AVIMTypedMessage) message).getMessageType());
             switch (type) {
                 case TextMessageType:
-                    Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
-                    if (attrs != null && attrs.containsKey(RedPacketUtils.KEY_RED_PACKET)) {
-                        JSONObject rpJSON = (JSONObject) attrs.get(RedPacketUtils.KEY_RED_PACKET);
-                        if (rpJSON != null && rpJSON.size() != 0) {
-                            String money_greeting = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_GREETING);
-                            return "[LeanCloud红包]" + money_greeting;
-                        }
-                    }
-                    return EmotionHelper.replace(context, ((AVIMTextMessage) message).getText());
+                    return getTextMessageTypeShorthand(context,message);
                 case ImageMessageType:
                     return "[图片]";
                 case LocationMessageType:
@@ -77,6 +69,24 @@ public class Utils {
         } else {
             return ProcessRedPacketMessage(context, message);
         }
+    }
+
+    /**
+     *
+     * @param context
+     * @param message
+     * @return
+     */
+    private static CharSequence getTextMessageTypeShorthand(final Context context, AVIMMessage message){
+        Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
+        if (attrs != null && attrs.containsKey(RedPacketUtils.KEY_RED_PACKET)) {
+            JSONObject rpJSON = (JSONObject) attrs.get(RedPacketUtils.KEY_RED_PACKET);
+            if (rpJSON != null && rpJSON.size() != 0) {
+                String money_greeting = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_GREETING);
+                return "[LeanCloud红包]" + money_greeting;
+            }
+        }
+        return EmotionHelper.replace(context, ((AVIMTextMessage) message).getText());
     }
 
     /**
