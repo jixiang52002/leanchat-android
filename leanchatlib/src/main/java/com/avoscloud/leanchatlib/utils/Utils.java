@@ -75,7 +75,7 @@ public class Utils {
                     return "[未知]";
             }
         } else {
-            return getRedPacket(context, message);
+            return ProcessRedPacketMessage(context, message);
         }
     }
 
@@ -86,7 +86,7 @@ public class Utils {
      * @param message
      * @return
      */
-    private static CharSequence getRedPacket(final Context context, AVIMMessage message) {
+    private static CharSequence ProcessRedPacketMessage(final Context context, AVIMMessage message) {
         try {
             JSONObject jsonObject = JSONObject.parseObject(message.getContent());
             if (jsonObject != null) if (jsonObject.containsKey(RedPacketUtils.KEY_RED_PACKET)) {
