@@ -75,46 +75,57 @@ public class Utils {
                     return "[未知]";
             }
         } else {
-            try {
-                JSONObject jsonObject = JSONObject.parseObject(message.getContent());
-                if (jsonObject != null) if (jsonObject.containsKey(RedPacketUtils.KEY_RED_PACKET)) {
-                    ChatManager chatManager = ChatManager.getInstance();
-                    String selfId = chatManager.getSelfId();
-                    if (jsonObject.containsKey(RedPacketUtils.KEY_TYPE) && jsonObject.getString(RedPacketUtils.KEY_TYPE).equals(RedPacketUtils.VALUE_TYPE)) {
-                        JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_RED_PACKET);
-                         if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId)) {
-                            if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
-                                return  context.getResources().getString(R.string.money_msg_take_money);
-                            }
-                            String money_receiver = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);
-                            return String.format(context.getResources().getString(R.string.money_msg_someone_take_money), money_receiver);
-                        } else if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
-                            String money_sender = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME);
-                            return String.format(context.getResources().getString(R.string.money_msg_take_someone_money), money_sender);
-                        } else {
-                            AVIMConversation conversation = AVIMClient.getInstance(ChatManager.getInstance().getSelfId()).getConversation(message.getConversationId());
-                            /**
-                             * 拉取消息，必须加入 conversation 后才能拉取消息
-                             */
-                            conversation.queryMessages(new AVIMMessagesQueryCallback() {
-                                @Override
-                                public void done(List<AVIMMessage> list, AVIMException e) {
-                                    if (filterException(e)) {
-                                        cTemp = checkMsgs(list, context);
-                                    }
+            return getRedPacket(context, message);
+        }
+    }
+
+    /**
+     * 收取红包时会话列表最后一条消息要展示不同的消息内容
+     *
+     * @param context
+     * @param message
+     * @return
+     */
+    private static CharSequence getRedPacket(final Context context, AVIMMessage message) {
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(message.getContent());
+            if (jsonObject != null) if (jsonObject.containsKey(RedPacketUtils.KEY_RED_PACKET)) {
+                ChatManager chatManager = ChatManager.getInstance();
+                String selfId = chatManager.getSelfId();
+                if (jsonObject.containsKey(RedPacketUtils.KEY_TYPE) && jsonObject.getString(RedPacketUtils.KEY_TYPE).equals(RedPacketUtils.VALUE_TYPE)) {
+                    JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_RED_PACKET);
+                    if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId)) {
+                        if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
+                            return context.getResources().getString(R.string.money_msg_take_money);
+                        }
+                        String money_receiver = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);
+                        return String.format(context.getResources().getString(R.string.money_msg_someone_take_money), money_receiver);
+                    } else if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
+                        String money_sender = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME);
+                        return String.format(context.getResources().getString(R.string.money_msg_take_someone_money), money_sender);
+                    } else {
+                        AVIMConversation conversation = AVIMClient.getInstance(ChatManager.getInstance().getSelfId()).getConversation(message.getConversationId());
+                        /**
+                         * 拉取消息，必须加入 conversation 后才能拉取消息
+                         */
+                        conversation.queryMessages(new AVIMMessagesQueryCallback() {
+                            @Override
+                            public void done(List<AVIMMessage> list, AVIMException e) {
+                                if (filterException(e)) {
+                                    cTemp = checkMsgs(list, context);
                                 }
-                            });
-                            if (!TextUtils.isEmpty(cTemp)) {
-                                return cTemp;
                             }
+                        });
+                        if (!TextUtils.isEmpty(cTemp)) {
+                            return cTemp;
                         }
                     }
                 }
-            } catch (JSONException exception) {
-                exception.printStackTrace();
             }
-            return "[LeanCloud 红包]";
+        } catch (JSONException exception) {
+            exception.printStackTrace();
         }
+        return "[LeanCloud 红包]";
     }
 
     private static boolean filterException(Exception e) {
@@ -129,33 +140,34 @@ public class Utils {
         CharSequence temp = "";
         for (int i = 0; i < list.size(); i++) {
             AVIMMessage message = list.get(list.size() - i - 1);
-             if (message instanceof AVIMTypedMessage) {
+            if (message instanceof AVIMTypedMessage) {
                 temp = isTypeMessage(context, message);
                 break;
             } else {
 
                 try {
                     JSONObject jsonObject = JSONObject.parseObject(message.getContent());
-                    if (jsonObject != null) if (jsonObject.containsKey(RedPacketUtils.KEY_RED_PACKET)) {
-                        ChatManager chatManager = ChatManager.getInstance();
-                        String selfId = chatManager.getSelfId();
-                        if (jsonObject.containsKey(RedPacketUtils.KEY_TYPE) && jsonObject.getString(RedPacketUtils.KEY_TYPE).equals(RedPacketUtils.VALUE_TYPE)) {
-                            JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_RED_PACKET);
-                             if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId)) {
-                                if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
-                                    temp =  context.getResources().getString(R.string.money_msg_take_money);
+                    if (jsonObject != null)
+                        if (jsonObject.containsKey(RedPacketUtils.KEY_RED_PACKET)) {
+                            ChatManager chatManager = ChatManager.getInstance();
+                            String selfId = chatManager.getSelfId();
+                            if (jsonObject.containsKey(RedPacketUtils.KEY_TYPE) && jsonObject.getString(RedPacketUtils.KEY_TYPE).equals(RedPacketUtils.VALUE_TYPE)) {
+                                JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_RED_PACKET);
+                                if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId)) {
+                                    if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
+                                        temp = context.getResources().getString(R.string.money_msg_take_money);
+                                        break;
+                                    }
+                                    String money_receiver = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);
+                                    temp = String.format(context.getResources().getString(R.string.money_msg_someone_take_money), money_receiver);
+                                    break;
+                                } else if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
+                                    String money_sender = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME);
+                                    temp = String.format(context.getResources().getString(R.string.money_msg_take_someone_money), money_sender);
                                     break;
                                 }
-                                String money_receiver = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);
-                                temp = String.format(context.getResources().getString(R.string.money_msg_someone_take_money), money_receiver);
-                                break;
-                            } else if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
-                                String money_sender = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME);
-                                temp = String.format(context.getResources().getString(R.string.money_msg_take_someone_money), money_sender);
-                                break;
                             }
                         }
-                    }
                 } catch (JSONException exception) {
                     exception.printStackTrace();
                 }
