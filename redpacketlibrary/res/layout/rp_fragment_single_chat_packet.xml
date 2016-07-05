@@ -31,7 +31,7 @@
             android:layout_toLeftOf="@id/tv_money_unit"
             android:layout_toRightOf="@id/tv_money_amount"
             android:inputType="numberDecimal"
-            android:maxLength="5" />
+            android:maxLength="6" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -65,7 +65,7 @@
             style="@style/SendMoneyGreetingsStyle"
             android:layout_toLeftOf="@id/btn_layout"
             android:hint="@string/default_money_greeting"
-            android:maxLength="30" />
+            android:maxLength="22" />
     </RelativeLayout>
 
 

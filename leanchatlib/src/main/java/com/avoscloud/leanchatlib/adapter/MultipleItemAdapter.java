@@ -59,6 +59,7 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Context context;
 
     public MultipleItemAdapter(Context context) {
+
         this.context = context;
     }
 
@@ -71,6 +72,7 @@ public class MultipleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
     public void addMessageList(List<AVIMMessage> messages) {
+
         messageList.addAll(0, messages);
     }
 

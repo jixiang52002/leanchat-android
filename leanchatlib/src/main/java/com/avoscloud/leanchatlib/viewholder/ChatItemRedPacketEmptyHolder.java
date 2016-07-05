@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import com.avoscloud.leanchatlib.R;
 
 /**
- * Created by ustc on 2016/6/2.
+ * Created by ust on 2016/6/2.
  */
 public class ChatItemRedPacketEmptyHolder extends CommonViewHolder {
 

@@ -14,13 +14,13 @@
     <TextView
         android:id="@+id/tv_username"
         style="@style/UserNameStyle"
-        android:text="hill" />
+        android:maxLength="18"
+        android:singleLine="true" />
 
 
     <TextView
         android:id="@+id/tv_send_money_amount"
-        style="@style/ReceivedMoneyStyle"
-        android:text="8888" />
+        style="@style/ReceivedMoneyStyle" />
 
     <LinearLayout
         android:layout_width="match_parent"

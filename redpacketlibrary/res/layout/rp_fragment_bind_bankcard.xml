@@ -35,7 +35,8 @@
 
         <TextView
             android:id="@+id/tv_bank_name"
-            style="@style/BindBankCardTextViewStyle" />
+            style="@style/BindBankCardTextViewStyle"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/layout_additional_msg"
@@ -134,8 +135,8 @@
                     android:id="@+id/iv_amount_agreement"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size12px"
                     android:layout_marginRight="@dimen/size9px"
+                    android:layout_marginTop="@dimen/size12px"
                     android:src="@drawable/rp_iv_my_agreement" />
 
                 <TextView

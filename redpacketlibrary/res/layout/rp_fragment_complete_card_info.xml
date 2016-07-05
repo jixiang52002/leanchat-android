@@ -66,8 +66,8 @@
 
     <View
         android:id="@+id/line_one"
-        android:layout_below="@id/layout_choose_province"
-        style="@style/DividerStyleNoHead" />
+        style="@style/DividerStyleNoHead"
+        android:layout_below="@id/layout_choose_province" />
 
     <RelativeLayout
         android:id="@+id/layout_choose_city"
@@ -87,13 +87,13 @@
 
     <View
         android:id="@+id/line_two"
-        android:layout_below="@id/layout_choose_city"
-        style="@style/DividerStyleNoHead" />
+        style="@style/DividerStyleNoHead"
+        android:layout_below="@id/layout_choose_city" />
 
     <RelativeLayout
         android:id="@+id/layout_choose_branch"
-        android:layout_below="@id/line_two"
-        style="@style/BindBankCardRLayoutStyle">
+        style="@style/BindBankCardRLayoutStyle"
+        android:layout_below="@id/line_two">
 
         <TextView
             android:id="@+id/tv_choose_branch_name"

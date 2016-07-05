@@ -147,11 +147,11 @@ public class Utils {
     }
 
     private static CharSequence checkMsgs(List<AVIMMessage> list, Context context) {
-        CharSequence temp = "";
+        CharSequence charSequence = "";
         for (int i = 0; i < list.size(); i++) {
             AVIMMessage message = list.get(list.size() - i - 1);
             if (message instanceof AVIMTypedMessage) {
-                temp = isTypeMessage(context, message);
+                charSequence = isTypeMessage(context, message);
                 break;
             } else {
 
@@ -165,15 +165,15 @@ public class Utils {
                                 JSONObject rpJSON = jsonObject.getJSONObject(RedPacketUtils.KEY_RED_PACKET);
                                 if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID).equals(selfId)) {
                                     if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
-                                        temp = context.getResources().getString(R.string.money_msg_take_money);
+                                        charSequence = context.getResources().getString(R.string.money_msg_take_money);
                                         break;
                                     }
                                     String money_receiver = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_NAME);
-                                    temp = String.format(context.getResources().getString(R.string.money_msg_someone_take_money), money_receiver);
+                                    charSequence = String.format(context.getResources().getString(R.string.money_msg_someone_take_money), money_receiver);
                                     break;
                                 } else if (rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_RECEIVER_ID).equals(selfId)) {
                                     String money_sender = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME);
-                                    temp = String.format(context.getResources().getString(R.string.money_msg_take_someone_money), money_sender);
+                                    charSequence = String.format(context.getResources().getString(R.string.money_msg_take_someone_money), money_sender);
                                     break;
                                 }
                             }
@@ -183,7 +183,7 @@ public class Utils {
                 }
             }
         }
-        return temp;
+        return charSequence;
     }
 
 

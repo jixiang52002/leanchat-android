@@ -14,8 +14,8 @@
         android:id="@+id/tv_not_receive_msg"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/size132px"
-        android:layout_marginRight="@dimen/size30px"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/size30px"
         android:gravity="center_vertical|right"
         android:text="@string/tv_not_receive_message"
         android:textColor="@color/button_blue"
@@ -33,6 +33,7 @@
             android:id="@+id/ed_input_captcha"
             style="@style/BindBankCardEditTextStyle"
             android:layout_width="wrap_content"
+            android:layout_marginLeft="@dimen/size45px"
             android:layout_weight="2"
             android:hint="@string/str_input_sms_code"
             android:inputType="number"
@@ -49,11 +50,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
             android:background="@color/background_white"
+            android:gravity="center"
+            android:text="@string/btn_str_resend"
             android:textColor="@color/button_blue"
-            android:textSize="@dimen/font42px"
-            android:text="@string/btn_str_resend" />
+            android:textSize="@dimen/font42px" />
 
     </LinearLayout>
 
@@ -63,6 +64,7 @@
         android:layout_below="@id/layout_captcha_code"
         android:background="@drawable/rp_btn_blue_selector"
         android:text="@string/btn_ok" />
+
     <LinearLayout
         android:id="@+id/target_layout"
         android:layout_width="@dimen/size180px"

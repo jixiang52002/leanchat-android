@@ -56,6 +56,8 @@
         <TextView
             android:id="@+id/tv_pay_change_balance"
             style="@style/DialogPayTypeStyle"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/size24px"
             android:layout_toRightOf="@id/iv_change_icon"
             android:text="@string/my_change" />
 
@@ -77,7 +79,10 @@
             android:src="@drawable/rp_add_card_icon" />
 
         <TextView
+            android:id="@+id/tv_add_card_text"
             style="@style/DialogPayTypeStyle"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/size24px"
             android:layout_toRightOf="@id/iv_add_card_icon"
             android:text="@string/add_bankcard" />
 

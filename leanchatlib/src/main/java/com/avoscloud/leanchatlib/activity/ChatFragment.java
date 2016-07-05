@@ -41,7 +41,8 @@ import com.avoscloud.leanchatlib.model.ConversationType;
 import com.avoscloud.leanchatlib.utils.NotificationUtils;
 import com.avoscloud.leanchatlib.utils.PathUtils;
 import com.avoscloud.leanchatlib.utils.ProviderPathUtils;
-import com.easemob.redpacketsdk.constant.RPConstant;
+import com.yunzhanghu.redpacketsdk.bean.RPUserBean;
+import com.yunzhanghu.redpacketsdk.constant.RPConstant;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +52,7 @@ import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 import utils.RedPacketUtils;
+import utils.UserInfoCallback;
 
 /**
  * Created by wli on 15/8/27. 将聊天相关的封装到此 Fragment 里边，只需要通过 setConversation 传入 Conversation 即可
@@ -258,7 +260,22 @@ public class ChatFragment extends android.support.v4.app.Fragment {
             String tpGroupId = "";
             receiverId = toUserId;
             RedPacketUtils.selectRedPacket(this, toUserId, fromNickname, fromAvatarUrl, chatType, tpGroupId, membersNum, REQUEST_CODE_SEND_RED_PACKET);
-        } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group)
+        } else if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Group) {
+            /**
+             * 发送专属红包用的,获取群组成员
+             */
+            RedPacketUtils.getInstance().getmGetUserInfoCallback().done(imConversation.getMembers(), new UserInfoCallback() {
+                @Override
+                public void getUserInfo(List<RPUserBean> rpuserlist) {
+                    /**
+                     * 发专属红包,把群组成员信息传给红包SDK
+                     */
+                    RedPacketUtils.getInstance().initRpGroupMember(rpuserlist);
+                }
+            });
+            /**
+             * 获取群成员数量,发群红包时需要
+             */
             imConversation.getMemberCount(new AVIMConversationMemberCountCallback() {
                 @Override
                 public void done(Integer integer, AVIMException e) {
@@ -269,6 +286,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
                     RedPacketUtils.selectRedPacket(ChatFragment.this, toUserId, fromNickname, fromAvatarUrl, chatType, tpGroupId, membersNum, REQUEST_CODE_SEND_RED_PACKET);
                 }
             });
+        }
     }
 
     private void scrollToBottom() {
@@ -299,8 +317,9 @@ public class ChatFragment extends android.support.v4.app.Fragment {
                     return;
                 }
                 Uri uri;
-                if (requestCode == GALLERY_REQUEST) uri = data.getData();
-                else { /*for Android 4.4*/
+                if (requestCode == GALLERY_REQUEST) {
+                    uri = data.getData();
+                } else { /*for Android 4.4*/
                     uri = data.getData();
                     final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     getActivity().getContentResolver().takePersistableUriPermission(uri, takeFlags);
@@ -315,13 +334,16 @@ public class ChatFragment extends android.support.v4.app.Fragment {
                 break;
             case REQUEST_CODE_SEND_RED_PACKET:
                 if (data != null) {
-                    String greetings = data.getStringExtra(RPConstant.EXTRA_MONEY_GREETING);
-                    String moneyID = data.getStringExtra(RPConstant.EXTRA_CHECK_MONEY_ID);
+                    String greetings = data.getStringExtra(RPConstant.EXTRA_RED_PACKET_GREETING);
+                    String moneyID = data.getStringExtra(RPConstant.EXTRA_RED_PACKET_ID);
+                    String redPacketType = data.getStringExtra(RPConstant.EXTRA_RED_PACKET_TYPE);//群红包类型
+                    String specialReceiveId = data.getStringExtra(RPConstant.EXTRA_RED_PACKET_RECEIVER_ID);//专属红包接受者ID
                     String sponsorName = getResources().getString(R.string.leancloud_luckymoney);
                     ChatManager chatManager = ChatManager.getInstance();
                     String selfId = chatManager.getSelfId();
+
                     /*获取发送红包的附加数据*/
-                    Map<String, Object> attrs = toSendRedPacket(selfId, fromNickname, sponsorName, greetings, moneyID, receiverId); /*文本消息内容*/
+                    Map<String, Object> attrs = toSendRedPacket(selfId, fromNickname, sponsorName, greetings, moneyID, receiverId, redPacketType, specialReceiveId); /*文本消息内容*/
                     String content = "[" + getResources().getString(R.string.leancloud_luckymoney) + "]" + greetings;
                     sendText(content, attrs);
                 }
@@ -391,7 +413,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
     /**
      * 设置发消息红包的附加字段的attrs
      */
-    public static Map<String, Object> toSendRedPacket(String senderId, String senderNickname, String sponsorName, String moneyGreeting, String moneyID, String receiverId) {
+    public static Map<String, Object> toSendRedPacket(String senderId, String senderNickname, String sponsorName, String moneyGreeting, String moneyID, String receiverId, String redPacketType, String specialReceiveId) {
         Map<String, Object> attrs = new HashMap<String, Object>();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(RedPacketUtils.EXTRA_RED_PACKET_ID, moneyID);
@@ -401,6 +423,8 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         jsonObject.put(RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME, senderNickname);
         jsonObject.put(RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID, senderId);
         jsonObject.put(RedPacketUtils.EXTRA_SPONSOR_NAME, sponsorName);
+        jsonObject.put(RedPacketUtils.KEY_RED_PACKET_TYPE, redPacketType);
+        jsonObject.put(RedPacketUtils.KEY_RED_PACKET_SPECIAL_RECEIVEID, specialReceiveId);
         JSONObject userJson = new JSONObject();
         userJson.put(RedPacketUtils.KEY_USER_NAME, senderNickname);
         userJson.put(RedPacketUtils.KEY_USER_ID, senderId);

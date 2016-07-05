@@ -6,14 +6,15 @@
     android:background="@color/money_bg_color"
     android:orientation="vertical">
 
-    <com.easemob.redpacketui.widget.RPTitleBar
+    <com.yunzhanghu.redpacketui.widget.RPTitleBar
         android:id="@+id/bc_title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:RPleftImage="@drawable/rp_back_arrow_blue"
+        app:RPleftImage="@drawable/rp_back_arrow_black"
         app:RPmytitle="@string/title_add_bankcard"
+        app:RPsubTitleTextColor="@color/text_transparent_black"
         app:RPtitleBackground="@color/money_white"
-        app:RPtitleTextColor="@color/text_black" />
+        app:RPtitleTextColor="@color/text_all_black" />
 
     <RelativeLayout
         android:layout_width="match_parent"
