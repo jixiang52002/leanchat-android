@@ -38,4 +38,13 @@
         android:drawableTop="@drawable/chat_button_add_location_selector"
         android:gravity="center"
         android:text="@string/chat_bottom_location" />
+    <TextView
+        android:id="@+id/input_bar_btn_redpacket"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:drawablePadding="10dp"
+        android:drawableTop="@drawable/chat_button_add_redpacket_selector"
+        android:gravity="center"
+        android:text="@string/chat_bottom_redpacket" />
 </LinearLayout>

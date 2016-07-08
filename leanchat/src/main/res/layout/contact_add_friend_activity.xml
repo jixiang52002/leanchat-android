@@ -21,6 +21,7 @@
             android:paddingLeft="5dp"
             android:singleLine="true"
             android:textColorHint="#b3b3b3"
+            android:textColor="@color/chat_LeftText"
             android:textSize="18sp" />
 
         <Button

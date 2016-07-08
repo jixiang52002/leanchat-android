@@ -40,7 +40,7 @@ import de.greenrobot.event.EventBus;
  * 当点击相关按钮时发送 InputBottomBarEvent，需要的 View 可以自己去订阅相关消息
  */
 public class InputBottomBar extends LinearLayout {
-
+//
   /**
    * 加号 Button
    */
@@ -95,6 +95,8 @@ public class InputBottomBar extends LinearLayout {
   private View cameraBtn;
   private View locationBtn;
   private View pictureBtn;
+  private View redpacketBtn;
+
 
   /**
    * 最小间隔时间为 1 秒，避免多次点击
@@ -138,6 +140,7 @@ public class InputBottomBar extends LinearLayout {
     cameraBtn = findViewById(R.id.input_bar_btn_camera);
     locationBtn = findViewById(R.id.input_bar_btn_location);
     pictureBtn = findViewById(R.id.input_bar_btn_picture);
+    redpacketBtn = findViewById(R.id.input_bar_btn_redpacket);
 
     setEditTextChangeListener();
     initEmotionPager();
@@ -147,7 +150,7 @@ public class InputBottomBar extends LinearLayout {
       @Override
       public void onClick(View v) {
         boolean showActionView =
-          (GONE == moreLayout.getVisibility() || GONE == actionLayout.getVisibility());
+                (GONE == moreLayout.getVisibility() || GONE == actionLayout.getVisibility());
         moreLayout.setVisibility(showActionView ? VISIBLE : GONE);
         actionLayout.setVisibility(showActionView ? VISIBLE : GONE);
         emotionLayout.setVisibility(View.GONE);
@@ -159,7 +162,7 @@ public class InputBottomBar extends LinearLayout {
       @Override
       public void onClick(View v) {
         boolean showEmotionView =
-          (GONE == moreLayout.getVisibility() || GONE == emotionLayout.getVisibility());
+                (GONE == moreLayout.getVisibility() || GONE == emotionLayout.getVisibility());
         moreLayout.setVisibility(showEmotionView ? VISIBLE : GONE);
         emotionLayout.setVisibility(showEmotionView ? VISIBLE : GONE);
         actionLayout.setVisibility(View.GONE);
@@ -207,7 +210,7 @@ public class InputBottomBar extends LinearLayout {
         }, MIN_INTERVAL_SEND_MESSAGE);
 
         EventBus.getDefault().post(
-          new InputBottomBarTextEvent(InputBottomBarEvent.INPUTBOTTOMBAR_SEND_TEXT_ACTION, content, getTag()));
+                new InputBottomBarTextEvent(InputBottomBarEvent.INPUTBOTTOMBAR_SEND_TEXT_ACTION, content, getTag()));
       }
     });
 
@@ -231,6 +234,17 @@ public class InputBottomBar extends LinearLayout {
         EventBus.getDefault().post(new InputBottomBarLocationClickEvent(InputBottomBarEvent.INPUTBOTTOMBAR_LOCATION_ACTION, getTag()));
       }
     });
+
+    /**
+     * 红包按钮,点击后回到ChatFragment进行处理
+     */
+    redpacketBtn.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        EventBus.getDefault().post(new InputBottomBarEvent(InputBottomBarEvent.INPUTBOTTOMBAR_REDPACKET_ACTION, getTag()));
+      }
+    });
+
   }
 
   /**
@@ -282,7 +296,7 @@ public class InputBottomBar extends LinearLayout {
       @Override
       public void onFinishedRecord(final String audioPath, int secs) {
         EventBus.getDefault().post(
-          new InputBottomBarRecordEvent(InputBottomBarEvent.INPUTBOTTOMBAR_SEND_AUDIO_ACTION, audioPath, secs, getTag()));
+                new InputBottomBarRecordEvent(InputBottomBarEvent.INPUTBOTTOMBAR_SEND_AUDIO_ACTION, audioPath, secs, getTag()));
       }
 
       @Override

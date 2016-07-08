@@ -3,21 +3,20 @@ package com.avoscloud.chat;
 import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
-import android.text.TextUtils;
 
 import com.avos.avoscloud.AVAnalytics;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVObject;
 import com.avoscloud.chat.friends.AddRequest;
+import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.model.UpdateInfo;
 import com.avoscloud.chat.service.PushManager;
 import com.avoscloud.chat.util.LeanchatUserProvider;
-import com.avoscloud.leanchatlib.controller.ConversationEventHandler;
 import com.avoscloud.chat.util.Utils;
 import com.avoscloud.leanchatlib.controller.ChatManager;
-import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
 import com.baidu.mapapi.SDKInitializer;
+import com.easemob.redpacketsdk.RedPacket;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
@@ -60,6 +59,7 @@ public class App extends Application {
     ThirdPartUserUtils.setThirdPartUserProvider(new LeanchatUserProvider());
     ChatManager.getInstance().init(this);
     ChatManager.getInstance().setDebugEnabled(App.debug);
+    RedPacket.getInstance().initContext(ctx);
   }
 
   public void openStrictMode() {

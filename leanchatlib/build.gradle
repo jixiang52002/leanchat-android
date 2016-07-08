@@ -26,6 +26,9 @@ android {
 
 //jar 包请见 ./libs，不是 ./leanchatlib/libs。转 Eclipse 的项目格式的时候可能用到。
 dependencies {
+
+
+    compile project(':redpacketlibrary')
     // local lib
     compile files('libs/prettytime-3.2.5.Final.jar')
 
