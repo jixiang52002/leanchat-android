@@ -1,5 +1,7 @@
 package com.avoscloud.chat.util;
 
+import com.avoscloud.leanchatlib.utils.LogUtils;
+
 /**
  * Java汉字转换为拼音
  */
@@ -85,7 +87,7 @@ public class CharacterParser {
         asc = (256 * highByte + lowByte) - 256 * 256;
       }
     } catch (Exception e) {
-      Logger.e("ERROR:ChineseSpelling.class-getChsAscii(String chs) " + e);
+      LogUtils.e("ERROR:ChineseSpelling.class-getChsAscii(String chs) " + e);
     }
     return asc;
   }

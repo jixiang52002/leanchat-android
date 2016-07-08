@@ -1,6 +1,7 @@
 package com.avoscloud.leanchatlib.controller;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
@@ -44,10 +45,10 @@ public class RoomsTable {
     this.dbHelper = dbHelper;
   }
 
-  public synchronized static RoomsTable getInstanceByUserId(String userId) {
+  public synchronized static RoomsTable getInstanceByUserId(Context context, String userId) {
     RoomsTable roomsTable = roomsTableInstances.get(userId);
     if (roomsTable == null) {
-      roomsTable = new RoomsTable(new DBHelper(ChatManager.getContext(), userId));
+      roomsTable = new RoomsTable(new DBHelper(context.getApplicationContext(), userId));
     }
     return roomsTable;
   }
@@ -78,6 +79,7 @@ public class RoomsTable {
       rooms.add(room);
     }
     c.close();
+    db.close();
     return rooms;
   }
 
@@ -100,11 +102,20 @@ public class RoomsTable {
     db.delete(ROOMS_TABLE, getWhereClause(ROOM_CONVID), new String[]{convid});
   }
 
+  /**
+   * 此处的消息未读数量仅仅指的是本机的未读消息数量，并没有存储到 server 端
+   * 在收到消息时消息未读数量 + 1
+   * @param convid
+   */
   public void increaseUnreadCount(String convid) {
     SQLiteDatabase db = dbHelper.getWritableDatabase();
     db.execSQL(SQL.UPDATE_ROOMS_INCREASE_UNREAD_COUNT_WHERE_CONVID, new String[]{convid});
   }
 
+  /**
+   * 在 ChatItemHolder 中显示时清除未读消息数量
+   * @param convid
+   */
   public void clearUnread(String convid) {
     SQLiteDatabase db = dbHelper.getWritableDatabase();
     ContentValues cv = new ContentValues();

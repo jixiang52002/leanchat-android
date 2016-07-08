@@ -44,6 +44,7 @@
         <item name="android:layout_weight">1.0</item>
         <item name="android:layout_marginLeft">@dimen/register_margin</item>
         <item name="android:background">@color/chat_transparent</item>
+        <item name="android:textColor">@color/chat_LeftText</item>
         <item name="android:singleLine">true</item>
     </style>
 
@@ -118,10 +119,7 @@
         <item name="android:windowExitAnimation">@anim/push_top_out2</item>
     </style>
 
-    <style name="Avatar">
-        <item name="android:layout_width">@dimen/chat_avatarSize</item>
-        <item name="android:layout_height">@dimen/chat_avatarSize</item>
-    </style>
+
 
     <style name="profile_fragment_left_text">
         <item name="android:layout_width">wrap_content</item>
@@ -152,11 +150,5 @@
     <style name="ActionBarStyle" parent="@android:style/Widget.Holo.ActionBar">
         <item name="android:background">@color/chat_common_blue</item>
         <item name="android:titleTextStyle">@style/ActionBarTitleStyle</item>
-    </style>
-
-    <style name="ChatMainTheme" parent="android:Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
-        <item name="android:homeAsUpIndicator">@drawable/chat_common_base_header_back_btn</item>
-        <item name="android:actionMenuTextColor">@color/chat_common_white</item>
     </style>
 </resources>

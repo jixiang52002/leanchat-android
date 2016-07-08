@@ -21,6 +21,7 @@
             android:paddingLeft="5dp"
             android:singleLine="true"
             android:textColorHint="#b3b3b3"
+            android:textColor="@color/chat_LeftText"
             android:textSize="18sp" />
 
         <Button
@@ -35,15 +36,9 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-    <com.avoscloud.chat.ui.view.BaseListView
-        android:id="@+id/searchList"
+    <com.avoscloud.leanchatlib.view.RefreshableRecyclerView
+        android:id="@+id/search_user_rv_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:cacheColorHint="@android:color/transparent"
-        android:divider="@drawable/base_horizontal_line"
-        android:dividerHeight="1dp"
-        android:fadingEdgeLength="0dp"
-        android:fastScrollEnabled="true"
-        android:paddingBottom="10dp" />
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
