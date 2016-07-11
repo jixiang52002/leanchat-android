@@ -12,8 +12,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.yunzhanghu.redpacketsdk.RPCallback;
-import com.yunzhanghu.redpacketsdk.RedPacket;
 
 import org.json.JSONObject;
 
@@ -59,11 +57,14 @@ public class RequestTask {
             @Override
             public void onResponse(String s) {
                 ParseJson(s);
+                //进入主页面
+                mHandler.obtainMessage(HANDLER_LOGIN_SUCCESS).sendToTarget();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-
+                //错误处理
+                mHandler.obtainMessage(HANDLER_LOGIN_FAILURE).sendToTarget();
             }
         });
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(3000, 2, 2));
@@ -83,23 +84,10 @@ public class RequestTask {
                 final String userId = jsonObj.getString("user_id");
                 final String timestamp = jsonObj.getString("timestamp");
                 final String sign = jsonObj.getString("sign");
-                RedPacket.getInstance().initRPAuthToken(partner, userId, timestamp, sign,
-                        new RPCallback() {
-                            @Override
-                            public void onSuccess() {
-                                RedPacketUtils.getInstance().initAuthData(partner, userId, timestamp, sign);
-                                // 进入主页面
-                                Log.e(TAG, "init Red Packet success token: " + RedPacket.getInstance().sToken);
-                                mHandler.obtainMessage(HANDLER_LOGIN_SUCCESS).sendToTarget();
-                            }
-
-                            @Override
-                            public void onError(String code, String message) {
-                                //错误处理
-                                Log.e(TAG, "init Red Packet fail token:" + message);
-                                mHandler.obtainMessage(HANDLER_LOGIN_FAILURE).sendToTarget();
-                            }
-                        });
+                /**
+                 * 零钱页和领取红包和发红包时都需要
+                 */
+                RedPacketUtils.getInstance().initTokenData(partner, userId, timestamp, sign);
             } else {
                 mHandler.obtainMessage(HANDLER_LOGIN_FAILURE).sendToTarget();
             }

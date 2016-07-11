@@ -180,7 +180,7 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
                 /**
                  * 打开红包
                  */
-                RPOpenPacketUtil.getInstance().openRedPacket(redPacketInfo, RedPacketUtils.getInstance().getmAuthData(), (FragmentActivity) context, new RPOpenPacketUtil.RPOpenPacketCallBack() {
+                RPOpenPacketUtil.getInstance().openRedPacket(redPacketInfo, RedPacketUtils.getInstance().getmTokenData(), (FragmentActivity) context, new RPOpenPacketUtil.RPOpenPacketCallBack() {
                     @Override
                     public void onSuccess(String senderId, String senderNickname) {
                         String content = String.format(context.getResources().getString(R.string.money_msg_someone_take_money), fromNickname);

@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 
-import com.yunzhanghu.redpacketsdk.bean.AuthData;
 import com.yunzhanghu.redpacketsdk.bean.RPUserBean;
 import com.yunzhanghu.redpacketsdk.bean.RedPacketInfo;
+import com.yunzhanghu.redpacketsdk.bean.TokenData;
 import com.yunzhanghu.redpacketsdk.constant.RPConstant;
 import com.yunzhanghu.redpacketui.callback.GroupMemberCallback;
 import com.yunzhanghu.redpacketui.callback.NotifyGroupMemberCallback;
@@ -44,7 +44,7 @@ public class RedPacketUtils {
 
     private GetUserInfoCallback mGetUserInfoCallback;
     private GetUserBeanCallback mGetUserBeanCallback;
-    private AuthData mAuthData;//打开红包时需要转登录时获取的数据
+    private TokenData mTokenData;//打开红包时需要转登录时获取的数据
     private String userid;//当前用户id;
     private String userName;//当前用户姓名
     private String userAvatar;//当前用户头像
@@ -153,8 +153,8 @@ public class RedPacketUtils {
         } else {
             return;
         }
-        intent.putExtra(RPConstant.EXTRA_MONEY_INFO, redpacketInfo);
-        intent.putExtra(RPConstant.EXTRA_AUTH_INFO, RedPacketUtils.getInstance().getmAuthData());
+        intent.putExtra(RPConstant.EXTRA_RED_PACKET_INFO, redpacketInfo);
+        intent.putExtra(RPConstant.EXTRA_TOKEN_DATA, RedPacketUtils.getInstance().getmTokenData());
         fragment.startActivityForResult(intent, REQUEST_CODE_SEND_MONEY);
     }
 
@@ -180,20 +180,20 @@ public class RedPacketUtils {
      * @param authTimestamp
      * @param authSign
      */
-    public void initAuthData(String authPartner, String authUserId, String authTimestamp, String authSign) {
-        mAuthData = new AuthData();
-        mAuthData.authPartner = authPartner;
-        mAuthData.authUserId = authUserId;
-        mAuthData.authTimestamp = authTimestamp;
-        mAuthData.authSign = authSign;
+    public void initTokenData(String authPartner, String authUserId, String authTimestamp, String authSign) {
+        mTokenData = new TokenData();
+        mTokenData.authPartner = authPartner;
+        mTokenData.appUserId = authUserId;
+        mTokenData.authTimestamp = authTimestamp;
+        mTokenData.authSign = authSign;
     }
 
-    public AuthData getmAuthData() {
-        return mAuthData;
+    public TokenData getmTokenData() {
+        return mTokenData;
     }
 
-    public void setmAuthData(AuthData mAuthData) {
-        this.mAuthData = mAuthData;
+    public void setmTokenData(TokenData mAuthData) {
+        this.mTokenData = mAuthData;
     }
 
     /**
@@ -208,8 +208,8 @@ public class RedPacketUtils {
         RedPacketInfo redPacketInfo = new RedPacketInfo();
         redPacketInfo.fromNickName = userName;
         redPacketInfo.fromAvatarUrl = userAvatar;
-        intent.putExtra(RPConstant.EXTRA_MONEY_INFO, redPacketInfo);
-        intent.putExtra(RPConstant.EXTRA_AUTH_INFO, getmAuthData());
+        intent.putExtra(RPConstant.EXTRA_RED_PACKET_INFO, redPacketInfo);
+        intent.putExtra(RPConstant.EXTRA_TOKEN_DATA, getmTokenData());
         mContext.startActivity(intent);
     }
 
