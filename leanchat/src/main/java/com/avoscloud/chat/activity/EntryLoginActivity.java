@@ -25,96 +25,96 @@ import butterknife.OnClick;
 
 public class EntryLoginActivity extends AVBaseActivity {
 
-    @Bind(R.id.activity_login_et_username)
-    public EditText userNameView;
+  @Bind(R.id.activity_login_et_username)
+  public EditText userNameView;
 
-    @Bind(R.id.activity_login_et_password)
-    public EditText passwordView;
+  @Bind(R.id.activity_login_et_password)
+  public EditText passwordView;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.entry_login_activity);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    // TODO Auto-generated method stub
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.entry_login_activity);
+  }
+
+  @OnClick(R.id.activity_login_btn_login)
+  public void onLoginClick(View v) {
+    login();
+  }
+
+  @OnClick(R.id.activity_login_btn_register)
+  public void onRegisterClick(View v) {
+    Intent intent = new Intent(this, EntryRegisterActivity.class);
+    startActivity(intent);
+  }
+
+  private void login() {
+    final String name = userNameView.getText().toString().trim();
+    final String password = passwordView.getText().toString().trim();
+
+    if (TextUtils.isEmpty(name)) {
+      Utils.toast(R.string.username_cannot_null);
+      return;
     }
 
-    @OnClick(R.id.activity_login_btn_login)
-    public void onLoginClick(View v) {
-        login();
+    if (TextUtils.isEmpty(password)) {
+      Utils.toast(R.string.password_can_not_null);
+      return;
     }
 
-    @OnClick(R.id.activity_login_btn_register)
-    public void onRegisterClick(View v) {
-        Intent intent = new Intent(this, EntryRegisterActivity.class);
-        startActivity(intent);
-    }
-
-    private void login() {
-        final String name = userNameView.getText().toString().trim();
-        final String password = passwordView.getText().toString().trim();
-
-        if (TextUtils.isEmpty(name)) {
-            Utils.toast(R.string.username_cannot_null);
-            return;
+    final ProgressDialog dialog = showSpinnerDialog();
+    LeanchatUser.logInInBackground(name, password, new LogInCallback<LeanchatUser>() {
+      @Override
+      public void done(LeanchatUser avUser, AVException e) {
+        dialog.dismiss();
+        if (filterException(e)) {
+          imLogin();
+          initUserData();
         }
+      }
+    }, LeanchatUser.class);
+  }
 
-        if (TextUtils.isEmpty(password)) {
-            Utils.toast(R.string.password_can_not_null);
-            return;
+  /**
+   * 因为 leancloud 实时通讯与账户体系是完全解耦的，所以此处需要先 LeanchatUser.logInInBackground
+   * 如果验证账号密码成功，然后再 openClient 进行实时通讯
+   */
+  public void imLogin() {
+    ChatManager.getInstance().openClient(this, LeanchatUser.getCurrentUserId(), new AVIMClientCallback() {
+      @Override
+      public void done(AVIMClient avimClient, AVIMException e) {
+        if (filterException(e)) {
+          RequestTask.getInstance().initRedPacketNet(getApplicationContext(), LeanchatUser.getCurrentUserId());
+          Intent intent = new Intent(EntryLoginActivity.this, MainActivity.class);
+          startActivity(intent);
+          finish();
         }
+      }
+    });
+  }
 
-        final ProgressDialog dialog = showSpinnerDialog();
-        LeanchatUser.logInInBackground(name, password, new LogInCallback<LeanchatUser>() {
-            @Override
-            public void done(LeanchatUser avUser, AVException e) {
-                dialog.dismiss();
-                if (filterException(e)) {
-                    imLogin();
-                    initUserData();
-                }
-            }
-        }, LeanchatUser.class);
+  /**
+   * 初始化登录用户数据
+   */
+  private void initUserData() {
+    LeanchatUser curuser = LeanchatUser.getCurrentUser();
+    if (!TextUtils.isEmpty(LeanchatUser.getCurrentUserId())) {
+      RedPacketUtils.getInstance().setUserid(curuser.getCurrentUserId());
+    } else {
+      RedPacketUtils.getInstance().setUserid("");
     }
-
-    /**
-     * 因为 leancloud 实时通讯与账户体系是完全解耦的，所以此处需要先 LeanchatUser.logInInBackground
-     * 如果验证账号密码成功，然后再 openClient 进行实时通讯
-     */
-    public void imLogin() {
-        ChatManager.getInstance().openClient(this, LeanchatUser.getCurrentUserId(), new AVIMClientCallback() {
-            @Override
-            public void done(AVIMClient avimClient, AVIMException e) {
-                if (filterException(e)) {
-                    RequestTask.getInstance().initRedPacketNet(getApplicationContext(), LeanchatUser.getCurrentUserId());
-                    Intent intent = new Intent(EntryLoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        });
+    if (curuser != null) {
+      if (!TextUtils.isEmpty(curuser.getUsername())) {
+        RedPacketUtils.getInstance().setUserName(curuser.getUsername());
+      } else {
+        RedPacketUtils.getInstance().setUserName("");
+      }
+      if (!TextUtils.isEmpty(curuser.getAvatarUrl())) {
+        RedPacketUtils.getInstance().setUserAvatar(curuser.getAvatarUrl());
+      } else {
+        RedPacketUtils.getInstance().setUserAvatar("none");
+      }
     }
-
-    /**
-     * 初始化登录用户数据
-     */
-    private void initUserData() {
-        LeanchatUser curuser = LeanchatUser.getCurrentUser();
-        if (!TextUtils.isEmpty(LeanchatUser.getCurrentUserId())) {
-            RedPacketUtils.getInstance().setUserid(curuser.getCurrentUserId());
-        } else {
-            RedPacketUtils.getInstance().setUserid("");
-        }
-        if (curuser != null) {
-            if (!TextUtils.isEmpty(curuser.getUsername())) {
-                RedPacketUtils.getInstance().setUserName(curuser.getUsername());
-            } else {
-                RedPacketUtils.getInstance().setUserName("");
-            }
-            if (!TextUtils.isEmpty(curuser.getAvatarUrl())) {
-                RedPacketUtils.getInstance().setUserAvatar(curuser.getAvatarUrl());
-            } else {
-                RedPacketUtils.getInstance().setUserAvatar("none");
-            }
-        }
-    }
+  }
 }
