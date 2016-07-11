@@ -134,7 +134,7 @@ public class Utils {
         } catch (JSONException exception) {
             exception.printStackTrace();
         }
-        return "[LeanCloud 红包]";
+        return "[" + context.getResources().getString(R.string.leancloud_luckymoney) + "]";
     }
 
     private static boolean filterException(Exception e) {
