@@ -17,12 +17,11 @@ import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.util.Utils;
 import com.avoscloud.leanchatlib.activity.AVBaseActivity;
 import com.avoscloud.leanchatlib.controller.ChatManager;
+import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
+import com.avoscloud.leanchatlib.redpacket.RequestTask;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import utils.RedPacketUtils;
-import utils.RequestTask;
-
 
 public class EntryLoginActivity extends AVBaseActivity {
 

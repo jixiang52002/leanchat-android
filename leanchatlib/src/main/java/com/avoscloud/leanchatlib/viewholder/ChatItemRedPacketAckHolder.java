@@ -13,9 +13,8 @@ import com.avoscloud.leanchatlib.R;
 import com.avoscloud.leanchatlib.controller.ChatManager;
 import com.avoscloud.leanchatlib.controller.ConversationHelper;
 import com.avoscloud.leanchatlib.model.ConversationType;
+import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
 import com.yunzhanghu.redpacketsdk.constant.RPConstant;
-
-import utils.RedPacketUtils;
 
 public class ChatItemRedPacketAckHolder extends ChatItemHolder {
 

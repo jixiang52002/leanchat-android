@@ -16,6 +16,7 @@ import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.R;
 import com.avoscloud.leanchatlib.controller.ChatManager;
 import com.avoscloud.leanchatlib.controller.EmotionHelper;
+import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -24,8 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import utils.RedPacketUtils;
 
 /**
  * Created by lzw on 15/4/27.

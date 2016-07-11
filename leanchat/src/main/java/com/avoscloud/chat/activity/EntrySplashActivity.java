@@ -13,9 +13,8 @@ import com.avoscloud.chat.R;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.leanchatlib.activity.AVBaseActivity;
 import com.avoscloud.leanchatlib.controller.ChatManager;
-
-import utils.RedPacketUtils;
-import utils.RequestTask;
+import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
+import com.avoscloud.leanchatlib.redpacket.RequestTask;
 
 public class EntrySplashActivity extends AVBaseActivity {
     public static final int SPLASH_DURATION = 2000;

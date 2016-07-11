@@ -38,6 +38,8 @@ import com.avoscloud.leanchatlib.event.InputBottomBarEvent;
 import com.avoscloud.leanchatlib.event.InputBottomBarRecordEvent;
 import com.avoscloud.leanchatlib.event.InputBottomBarTextEvent;
 import com.avoscloud.leanchatlib.model.ConversationType;
+import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
+import com.avoscloud.leanchatlib.redpacket.UserInfoCallback;
 import com.avoscloud.leanchatlib.utils.NotificationUtils;
 import com.avoscloud.leanchatlib.utils.PathUtils;
 import com.avoscloud.leanchatlib.utils.ProviderPathUtils;
@@ -51,8 +53,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
-import utils.RedPacketUtils;
-import utils.UserInfoCallback;
 
 /**
  * Created by wli on 15/8/27. 将聊天相关的封装到此 Fragment 里边，只需要通过 setConversation 传入 Conversation 即可

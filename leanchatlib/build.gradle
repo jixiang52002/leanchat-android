@@ -39,5 +39,8 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     compile 'com.github.stuxuhai:jpinyin:1.0'
-    compile project(':redpacketlibrary')
+    compile project(':redpacketlibrary-aar')
+    compile files('libs/alipaySdk-20160516.jar')
+    compile files('libs/glide-3.6.1.jar')
+    compile files('libs/volley-1.0.19.jar')
 }

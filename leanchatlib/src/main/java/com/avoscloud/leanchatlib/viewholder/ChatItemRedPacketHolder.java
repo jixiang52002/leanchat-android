@@ -19,6 +19,9 @@ import com.avoscloud.leanchatlib.activity.AVChatActivity;
 import com.avoscloud.leanchatlib.controller.ChatManager;
 import com.avoscloud.leanchatlib.controller.ConversationHelper;
 import com.avoscloud.leanchatlib.model.ConversationType;
+import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
+import com.avoscloud.leanchatlib.redpacket.UserBeanCallback;
+import com.avoscloud.leanchatlib.redpacket.UserUtils;
 import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
 import com.yunzhanghu.redpacketsdk.bean.RPUserBean;
 import com.yunzhanghu.redpacketsdk.bean.RedPacketInfo;
@@ -26,10 +29,6 @@ import com.yunzhanghu.redpacketsdk.constant.RPConstant;
 import com.yunzhanghu.redpacketui.utils.RPOpenPacketUtil;
 
 import java.util.Map;
-
-import utils.RedPacketUtils;
-import utils.UserBeanCallback;
-import utils.UserUtils;
 
 /**
  * 点击红包消息，领取红包或者查看红包详情

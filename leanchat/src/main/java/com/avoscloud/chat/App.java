@@ -16,6 +16,11 @@ import com.avoscloud.chat.util.LeanchatUserProvider;
 import com.avoscloud.chat.util.UserCacheUtils;
 import com.avoscloud.chat.util.Utils;
 import com.avoscloud.leanchatlib.controller.ChatManager;
+import com.avoscloud.leanchatlib.redpacket.GetUserBeanCallback;
+import com.avoscloud.leanchatlib.redpacket.GetUserInfoCallback;
+import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
+import com.avoscloud.leanchatlib.redpacket.UserBeanCallback;
+import com.avoscloud.leanchatlib.redpacket.UserInfoCallback;
 import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
 import com.baidu.mapapi.SDKInitializer;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -26,12 +31,6 @@ import com.yunzhanghu.redpacketsdk.bean.RPUserBean;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import utils.GetUserBeanCallback;
-import utils.GetUserInfoCallback;
-import utils.RedPacketUtils;
-import utils.UserBeanCallback;
-import utils.UserInfoCallback;
 
 
 /**

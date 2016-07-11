@@ -14,10 +14,9 @@ import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.leanchatlib.activity.AVChatActivity;
 import com.avoscloud.leanchatlib.event.InputBottomBarLocationClickEvent;
 import com.avoscloud.leanchatlib.event.LocationItemClickEvent;
+import com.avoscloud.leanchatlib.redpacket.UserUtils;
 import com.avoscloud.leanchatlib.utils.Constants;
 import com.avoscloud.leanchatlib.utils.NotificationUtils;
-
-import utils.UserUtils;
 
 /**
  * Created by lzw on 15/4/24.

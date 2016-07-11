@@ -11,15 +11,16 @@ import com.avos.avoscloud.im.v2.AVIMReservedMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.controller.ChatManager;
+import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
 import com.avoscloud.leanchatlib.viewholder.ChatItemAudioHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemImageHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemLocationHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemRedPacketAckHolder;
+import com.avoscloud.leanchatlib.viewholder.ChatItemRedPacketEmptyHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemRedPacketHolder;
 import com.avoscloud.leanchatlib.viewholder.ChatItemTextHolder;
 import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
-import com.avoscloud.leanchatlib.viewholder.ChatItemRedPacketEmptyHolder;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -27,8 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import utils.RedPacketUtils;
 
 /**
  * Created by wli on 15/8/13.
