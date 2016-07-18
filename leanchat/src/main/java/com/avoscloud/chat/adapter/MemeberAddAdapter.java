@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import cn.leanclud.imkit.adapter.LCIMCommonListAdapter;
-import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
+import cn.leancloud.chatkit.adapter.LCIMCommonListAdapter;
+import cn.leancloud.chatkit.viewholder.LCIMCommonViewHolder;
+
 
 /**
  * Created by wli on 15/12/2.

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.avoscloud.chat.R;
@@ -188,10 +189,10 @@ public class LocationActivity extends AVBaseActivity implements
     ctx.startActivity(intent);
   }
 
-  public static void startToSelectLocationForResult(Activity from, int requestCode) {
-    Intent intent = new Intent(from, LocationActivity.class);
+  public static void startToSelectLocationForResult(Fragment fragment, int requestCode) {
+    Intent intent = new Intent(fragment.getContext(), LocationActivity.class);
     intent.putExtra(LocationActivity.TYPE, LocationActivity.TYPE_SELECT);
-    from.startActivityForResult(intent, requestCode);
+    fragment.startActivityForResult(intent, requestCode);
   }
 
   /**

@@ -13,7 +13,7 @@ import com.avoscloud.chat.R;
 import com.avoscloud.chat.event.GroupItemClickEvent;
 import com.avoscloud.chat.util.ConversationUtils;
 
-import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
+import cn.leancloud.chatkit.viewholder.LCIMCommonViewHolder;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -44,7 +44,7 @@ public class GroupItemHolder extends LCIMCommonViewHolder<AVIMConversation> {
   @Override
   public void bindData(AVIMConversation conversation) {
     this.conversation = conversation;
-    iconView.setImageResource(cn.leanclud.imkit.R.drawable.lcim_group_icon);
+    iconView.setImageResource(R.drawable.lcim_group_icon);
     if (null != conversation) {
       ConversationUtils.getConversationName(conversation, new AVCallback<String>() {
         @Override

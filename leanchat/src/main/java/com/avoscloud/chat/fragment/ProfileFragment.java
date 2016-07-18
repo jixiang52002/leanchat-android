@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +16,11 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.leanclud.imkit.LCIMKit;
+import cn.leancloud.chatkit.LCChatKit;
 
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
-import com.avos.avoscloud.okhttp.internal.Util;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.activity.ProfileNotifySettingActivity;
 import com.avoscloud.chat.service.PushManager;
@@ -29,6 +29,8 @@ import com.avoscloud.chat.activity.EntryLoginActivity;
 import com.avoscloud.chat.util.PathUtils;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.util.Utils;
+import com.easemob.redpacketsdk.constant.RPConstant;
+import com.easemob.redpacketui.ui.activity.RPChangeActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -45,7 +47,6 @@ public class ProfileFragment extends BaseFragment {
 
   @Bind(R.id.profile_username_view)
   TextView userNameView;
-
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,9 +85,25 @@ public class ProfileFragment extends BaseFragment {
     ctx.startActivity(intent);
   }
 
+
+  @OnClick(R.id.profile_redpacket_view)
+  public void onRPClick() {
+    Intent intent = new Intent(getActivity(),RPChangeActivity.class);
+    String fromNickname="";
+    String fromAvatarUrl="";
+    LeanchatUser curUser = LeanchatUser.getCurrentUser();
+    if (curUser != null) {
+      fromAvatarUrl = TextUtils.isEmpty(curUser.getAvatarUrl()) ? "none" : curUser.getAvatarUrl();
+      fromNickname =  curUser.getUsername() ;
+    }
+    intent.putExtra(RPConstant.EXTRA_USER_NAME, fromNickname);
+    intent.putExtra(RPConstant.EXTRA_TO_USER_AVATAR, fromAvatarUrl);
+    startActivity(intent);
+  }
+
   @OnClick(R.id.profile_logout_btn)
   public void onLogoutClick() {
-    LCIMKit.getInstance().close(new AVIMClientCallback() {
+    LCChatKit.getInstance().close(new AVIMClientCallback() {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
       }

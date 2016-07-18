@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 
 import com.avoscloud.chat.R;
 
-import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
+import cn.leancloud.chatkit.viewholder.LCIMCommonViewHolder;
 
 /**
  * Created by wli on 15/11/26.

@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import cn.leanclud.imkit.LCIMKit;
-import cn.leanclud.imkit.utils.LCIMConstants;
+import cn.leancloud.chatkit.LCChatKit;
+import cn.leancloud.chatkit.utils.LCIMConstants;
 
 /**
  * 群聊对话拉人页面
@@ -51,7 +51,7 @@ public class ConversationAddMembersActivity extends AVBaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.conversation_add_members_layout);
     String conversationId = getIntent().getStringExtra(LCIMConstants.CONVERSATION_ID);
-    conversation = LCIMKit.getInstance().getClient().getConversation(conversationId);
+    conversation = LCChatKit.getInstance().getClient().getConversation(conversationId);
 
     layoutManager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(layoutManager);

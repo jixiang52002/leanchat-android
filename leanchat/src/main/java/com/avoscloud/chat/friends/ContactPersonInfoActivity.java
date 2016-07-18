@@ -15,7 +15,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import cn.leanclud.imkit.utils.LCIMConstants;
+import cn.leancloud.chatkit.utils.LCIMConstants;
 
 /**
  * 用户详情页，从对话详情页面和发现页面跳转过来

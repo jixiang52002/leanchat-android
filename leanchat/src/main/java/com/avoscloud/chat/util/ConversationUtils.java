@@ -16,10 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.leanclud.imkit.LCIMKit;
-import cn.leanclud.imkit.LCIMUserProfile;
-import cn.leanclud.imkit.cache.LCIMProfileCache;
-import cn.leanclud.imkit.utils.LCIMConversationUtils;
+import cn.leancloud.chatkit.LCChatKit;
+import cn.leancloud.chatkit.LCChatKitUser;
+import cn.leancloud.chatkit.cache.LCIMProfileCache;
+import cn.leancloud.chatkit.utils.LCIMConversationUtils;
 
 /**
  * Created by wli on 16/3/30.
@@ -38,19 +38,28 @@ public class ConversationUtils extends LCIMConversationUtils {
     }
   }
 
+  public static String getConversationPeerId(AVIMConversation conversation) {
+    if (null != conversation && 2 == conversation.getMembers().size()) {
+      String currentUserId = LCChatKit.getInstance().getCurrentUserId();
+      String firstMemeberId = conversation.getMembers().get(0);
+      return conversation.getMembers().get(firstMemeberId.equals(currentUserId) ? 1 : 0);
+    }
+    return "";
+  }
+
   public static void createGroupConversation(final List<String> memberIds, final AVIMConversationCreatedCallback callback) {
-    LCIMProfileCache.getInstance().getCachedUsers(memberIds, new AVCallback<List<LCIMUserProfile>>() {
+    LCIMProfileCache.getInstance().getCachedUsers(memberIds, new AVCallback<List<LCChatKitUser>>() {
       @Override
-      protected void internalDone0(List<LCIMUserProfile> lcimUserProfiles, AVException e) {
+      protected void internalDone0(List<LCChatKitUser> lcimUserProfiles, AVException e) {
         List<String> nameList = new ArrayList<String>();
-        for (LCIMUserProfile userProfile : lcimUserProfiles) {
+        for (LCChatKitUser userProfile : lcimUserProfiles) {
           nameList.add(userProfile.getUserName());
         }
 
         Map<String, Object> attrs = new HashMap<>();
         attrs.put(ConversationType.TYPE_KEY, ConversationType.Group.getValue());
         attrs.put("name", TextUtils.join(",", nameList));
-        LCIMKit.getInstance().getClient().createConversation(memberIds, "", attrs, false, true, callback);
+        LCChatKit.getInstance().getClient().createConversation(memberIds, "", attrs, false, true, callback);
       }
     });
   }
@@ -58,13 +67,13 @@ public class ConversationUtils extends LCIMConversationUtils {
   public static void createSingleConversation(String memberId, AVIMConversationCreatedCallback callback) {
     Map<String, Object> attrs = new HashMap<>();
     attrs.put(ConversationType.TYPE_KEY, ConversationType.Single.getValue());
-    LCIMKit.getInstance().getClient().createConversation(Arrays.asList(memberId), "", attrs, false, true, callback);
+    LCChatKit.getInstance().getClient().createConversation(Arrays.asList(memberId), "", attrs, false, true, callback);
   }
 
   public static void findGroupConversationsIncludeMe(AVIMConversationQueryCallback callback) {
-    AVIMConversationQuery conversationQuery = LCIMKit.getInstance().getClient().getQuery();
+    AVIMConversationQuery conversationQuery = LCChatKit.getInstance().getClient().getQuery();
     if (null != conversationQuery) {
-      conversationQuery.containsMembers(Arrays.asList(LCIMKit.getInstance().getCurrentUserId()));
+      conversationQuery.containsMembers(Arrays.asList(LCChatKit.getInstance().getCurrentUserId()));
       conversationQuery.whereEqualTo(ConversationType.ATTR_TYPE_KEY, ConversationType.Group.getValue());
       conversationQuery.orderByDescending(Constants.UPDATED_AT);
       conversationQuery.limit(1000);
@@ -92,7 +101,7 @@ public class ConversationUtils extends LCIMConversationUtils {
     int typeInt = (Integer) type;
     if (typeInt == ConversationType.Single.getValue()) {
       if (conversation.getMembers().size() != 2 ||
-        conversation.getMembers().contains(LCIMKit.getInstance().getCurrentUserId()) == false) {
+        conversation.getMembers().contains(LCChatKit.getInstance().getCurrentUserId()) == false) {
 //        LogUtils.d("invalid reason : oneToOne conversation not correct");
         return false;
       }

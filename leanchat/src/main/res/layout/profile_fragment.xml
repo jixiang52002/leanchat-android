@@ -75,6 +75,19 @@
                     android:drawableRight="@drawable/common_view_right_arrow_pic"/>
 
                 <View style="@style/LCIMDividerLine.Horizontal"/>
+
+                <TextView
+                    android:id="@+id/profile_redpacket_view"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_height="@dimen/setting_item_height"
+                    android:text="@string/title_small_change"
+                    android:background="@drawable/btn_selector"
+                    android:paddingLeft="@dimen/common_horizontal_margin"
+                    android:paddingRight="@dimen/common_horizontal_margin"
+                    android:drawableRight="@drawable/common_view_right_arrow_pic"/>
+
+                <View style="@style/LCIMDividerLine.Horizontal"/>
             </LinearLayout>
 
             <TextView

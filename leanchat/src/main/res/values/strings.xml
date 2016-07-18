@@ -108,4 +108,6 @@
 
     <string name="chat_geoIsSame">获取坐标相同</string>
     <string name="chat_reverseGeoCodeResultIs">反编码得到的地址：</string>
+
+    <string name="chat_bottom_redpacket">红包</string>
 </resources>

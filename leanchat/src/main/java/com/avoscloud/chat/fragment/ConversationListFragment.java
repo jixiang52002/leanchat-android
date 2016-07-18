@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.view.HeaderLayout;
-import cn.leanclud.imkit.activity.LCIMConversationListFragment;
+
+import cn.leancloud.chatkit.activity.LCIMConversationListFragment;
 
 /**
  * Created by wli on 16/3/29.

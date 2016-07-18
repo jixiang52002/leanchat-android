@@ -1,7 +1,7 @@
 package com.avoscloud.chat.viewholder;
 
 import android.content.Context;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -13,7 +13,7 @@ import com.avoscloud.chat.event.ContactItemLongClickEvent;
 import com.avoscloud.chat.model.ContactItem;
 import com.squareup.picasso.Picasso;
 
-import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
+import cn.leancloud.chatkit.viewholder.LCIMCommonViewHolder;
 import de.greenrobot.event.EventBus;
 
 /**

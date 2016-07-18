@@ -12,7 +12,8 @@ import com.avoscloud.chat.R;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.squareup.picasso.Picasso;
 
-import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
+import cn.leancloud.chatkit.viewholder.LCIMCommonViewHolder;
+
 
 /**
  * Created by wli on 15/12/2.

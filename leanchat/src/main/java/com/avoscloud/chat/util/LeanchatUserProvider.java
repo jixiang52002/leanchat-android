@@ -5,29 +5,30 @@ import com.avoscloud.chat.model.LeanchatUser;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.leanclud.imkit.LCIMProfileProvider;
-import cn.leanclud.imkit.LCIMProfilesCallBack;
-import cn.leanclud.imkit.LCIMUserProfile;
+import cn.leancloud.chatkit.LCChatKitUser;
+import cn.leancloud.chatkit.LCChatProfileProvider;
+import cn.leancloud.chatkit.LCChatProfilesCallBack;
 
 /**
  * Created by wli on 15/12/4.
  */
-public class LeanchatUserProvider implements LCIMProfileProvider {
+public class LeanchatUserProvider implements LCChatProfileProvider {
 
-  private static LCIMUserProfile getThirdPartUser(LeanchatUser leanchatUser) {
-    return new LCIMUserProfile(leanchatUser.getObjectId(), leanchatUser.getUsername(), leanchatUser.getAvatarUrl());
+  private static LCChatKitUser getThirdPartUser(LeanchatUser leanchatUser) {
+    return new LCChatKitUser(leanchatUser.getObjectId(), leanchatUser.getUsername(), leanchatUser.getAvatarUrl());
   }
 
-  private static List<LCIMUserProfile> getThirdPartUsers(List<LeanchatUser> leanchatUsers) {
-    List<LCIMUserProfile> thirdPartUsers = new ArrayList<>();
+  private static List<LCChatKitUser> getThirdPartUsers(List<LeanchatUser> leanchatUsers) {
+    List<LCChatKitUser> thirdPartUsers = new ArrayList<>();
     for (LeanchatUser user : leanchatUsers) {
       thirdPartUsers.add(getThirdPartUser(user));
     }
     return thirdPartUsers;
   }
 
+
   @Override
-  public void getProfiles(List<String> list, final LCIMProfilesCallBack callBack) {
+  public void fetchProfiles(List<String> list, final LCChatProfilesCallBack callBack) {
     UserCacheUtils.fetchUsers(list, new UserCacheUtils.CacheUserCallback() {
       @Override
       public void done(List<LeanchatUser> userList, Exception e) {

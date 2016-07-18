@@ -1,41 +1,28 @@
 package com.avoscloud.chat.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
-
-import com.avos.avoscloud.AVGeoPoint;
 import com.avos.avoscloud.im.v2.AVIMConversation;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback;
-import com.avos.avoscloud.im.v2.messages.AVIMLocationMessage;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.util.ConversationUtils;
-
-import cn.leanclud.imkit.activity.LCIMConversationActivity;
-import cn.leanclud.imkit.event.LCIMLocationItemClickEvent;
-import cn.leanclud.imkit.utils.LCIMConstants;
+import cn.leancloud.chatkit.activity.LCIMConversationActivity;
+import cn.leancloud.chatkit.utils.LCIMConstants;
 
 /**
  * Created by lzw on 15/4/24.
  */
 public class ChatRoomActivity extends LCIMConversationActivity {
-  public static final int LOCATION_REQUEST = 100;
-  public static final int QUIT_GROUP_REQUEST = 200;
+
   private AVIMConversation conversation;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-  }
+  public static final int QUIT_GROUP_REQUEST = 200;
 
   @Override
   protected void onResume() {
-//    NotificationUtils.cancelNotification(this);
     super.onResume();
   }
 
@@ -75,19 +62,6 @@ public class ChatRoomActivity extends LCIMConversationActivity {
     super.onActivityResult(requestCode, resultCode, intent);
     if (resultCode == RESULT_OK) {
       switch (requestCode) {
-        case LOCATION_REQUEST:
-          final double latitude = intent.getDoubleExtra(LocationActivity.LATITUDE, 0);
-          final double longitude = intent.getDoubleExtra(LocationActivity.LONGITUDE, 0);
-          final String address = intent.getStringExtra(LocationActivity.ADDRESS);
-          if (!TextUtils.isEmpty(address)) {
-            AVIMLocationMessage locationMsg = new AVIMLocationMessage();
-            locationMsg.setLocation(new AVGeoPoint(latitude, longitude));
-            locationMsg.setText(address);
-            conversationFragment.sendMessage(locationMsg);
-          } else {
-            Toast.makeText(this, R.string.chat_cannotGetYourAddressInfo, Toast.LENGTH_SHORT).show();
-          }
-          break;
         case QUIT_GROUP_REQUEST:
           finish();
           break;
@@ -104,17 +78,5 @@ public class ChatRoomActivity extends LCIMConversationActivity {
         updateConversation(avimConversation);
       }
     });
-  }
-
-//  public void onEvent(InputBottomBarLocationClickEvent event) {
-//    LocationActivity.startToSelectLocationForResult(this, LOCATION_REQUEST);
-//  }
-//
-  public void onEvent(LCIMLocationItemClickEvent event) {
-    if (null != event && null != event.message && event.message instanceof AVIMLocationMessage) {
-      AVIMLocationMessage locationMessage = (AVIMLocationMessage) event.message;
-      LocationActivity.startToSeeLocationDetail(this, locationMessage.getLocation().getLatitude(),
-        locationMessage.getLocation().getLongitude());
-    }
   }
 }

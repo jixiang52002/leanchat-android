@@ -6,15 +6,19 @@ import android.os.StrictMode;
 import com.avos.avoscloud.AVAnalytics;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.im.v2.AVIMMessageManager;
 import com.avoscloud.chat.friends.AddRequest;
+import com.avoscloud.chat.model.LCIMRedPacketMessage;
+import com.avoscloud.chat.model.LCIMRedPcketAckMessage;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.model.UpdateInfo;
 import com.avoscloud.chat.service.PushManager;
 import com.avoscloud.chat.util.LeanchatUserProvider;
 import com.avoscloud.chat.util.Utils;
 import com.baidu.mapapi.SDKInitializer;
-import cn.leanclud.imkit.LCIMKit;
 
+import cn.leancloud.chatkit.LCChatKit;
+import com.easemob.redpacketsdk.RedPacket;
 
 /**
  * Created by lzw on 14-5-29.
@@ -39,8 +43,15 @@ public class App extends Application {
     // 节省流量
     AVOSCloud.setLastModifyEnabled(true);
 
-    LCIMKit.getInstance().setProfileProvider(new LeanchatUserProvider());
-    LCIMKit.getInstance().init(this, appId, appKey);
+    AVIMMessageManager.registerAVIMMessageType(LCIMRedPacketMessage.class);
+    AVIMMessageManager.registerAVIMMessageType(LCIMRedPcketAckMessage.class);
+    LCChatKit.getInstance().setProfileProvider(new LeanchatUserProvider());
+    LCChatKit.getInstance().init(this, appId, appKey);
+//    LCChatKit.registedMessage(new LCIMRedPacketMessage());
+//    AVIMMessageManager.registerDefaultMessageHandler(new IMMessageHandler(context));
+
+    // 初始化红包操作
+    RedPacket.getInstance().initContext(ctx);
 
     PushManager.getInstance().init(ctx);
     AVOSCloud.setDebugLogEnabled(debug);

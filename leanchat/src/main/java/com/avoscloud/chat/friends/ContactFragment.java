@@ -34,7 +34,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import cn.leanclud.imkit.utils.LCIMConstants;
+import cn.leancloud.chatkit.utils.LCIMConstants;
 import de.greenrobot.event.EventBus;
 
 /**

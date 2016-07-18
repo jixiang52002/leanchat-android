@@ -16,9 +16,12 @@ import com.avoscloud.chat.util.Constants;
 import com.avoscloud.chat.util.Utils;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.squareup.picasso.Picasso;
+
 import org.ocpsoft.prettytime.PrettyTime;
+
 import java.util.Date;
-import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
+
+import cn.leancloud.chatkit.viewholder.LCIMCommonViewHolder;
 
 /**
  * Created by wli on 15/11/24.

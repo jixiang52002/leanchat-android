@@ -13,7 +13,7 @@ import com.avoscloud.chat.friends.AddRequest;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.squareup.picasso.Picasso;
 
-import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
+import cn.leancloud.chatkit.viewholder.LCIMCommonViewHolder;
 import de.greenrobot.event.EventBus;
 
 /**

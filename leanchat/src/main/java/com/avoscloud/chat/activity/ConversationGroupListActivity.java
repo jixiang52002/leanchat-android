@@ -6,23 +6,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import butterknife.Bind;
-import cn.leanclud.imkit.adapter.LCIMCommonListAdapter;
-import cn.leanclud.imkit.utils.LCIMConstants;
+import cn.leancloud.chatkit.adapter.LCIMCommonListAdapter;
+import cn.leancloud.chatkit.utils.LCIMConstants;
 
 import com.avos.avoscloud.im.v2.AVIMConversation;
-import com.avos.avoscloud.im.v2.AVIMConversationQuery;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationQueryCallback;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.App;
 import com.avoscloud.chat.event.GroupItemClickEvent;
-import com.avoscloud.chat.model.ConversationType;
-import com.avoscloud.chat.util.Constants;
 import com.avoscloud.chat.util.ConversationUtils;
 import com.avoscloud.chat.viewholder.GroupItemHolder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

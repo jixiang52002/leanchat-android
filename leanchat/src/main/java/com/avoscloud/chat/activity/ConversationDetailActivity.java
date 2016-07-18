@@ -32,9 +32,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import butterknife.Bind;
-import cn.leanclud.imkit.LCIMKit;
-import cn.leanclud.imkit.cache.LCIMConversationItemCache;
-import cn.leanclud.imkit.utils.LCIMConstants;
+import cn.leancloud.chatkit.LCChatKit;
+import cn.leancloud.chatkit.cache.LCIMConversationItemCache;
+import cn.leancloud.chatkit.utils.LCIMConstants;
 
 /**
  * Created by lzw on 14-10-11.
@@ -61,7 +61,7 @@ public class ConversationDetailActivity extends AVBaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.conversation_detail_activity);
     String conversationId = getIntent().getStringExtra(LCIMConstants.CONVERSATION_ID);
-    conversation = LCIMKit.getInstance().getClient().getConversation(conversationId);
+    conversation = LCChatKit.getInstance().getClient().getConversation(conversationId);
 
     View footerView = getLayoutInflater().inflate(R.layout.conversation_detail_footer_layout, null);
     nameLayout = footerView.findViewById(R.id.name_layout);

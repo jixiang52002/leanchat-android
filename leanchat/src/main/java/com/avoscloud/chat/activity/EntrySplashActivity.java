@@ -9,9 +9,10 @@ import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.avoscloud.chat.R;
+import com.avoscloud.chat.RequestTask;
 import com.avoscloud.chat.model.LeanchatUser;
 
-import cn.leanclud.imkit.LCIMKit;
+import cn.leancloud.chatkit.LCChatKit;
 
 public class EntrySplashActivity extends AVBaseActivity {
   public static final int SPLASH_DURATION = 2000;
@@ -48,10 +49,11 @@ public class EntrySplashActivity extends AVBaseActivity {
   }
 
   private void imLogin() {
-    LCIMKit.getInstance().open(LeanchatUser.getCurrentUserId(), new AVIMClientCallback() {
+    LCChatKit.getInstance().open(LeanchatUser.getCurrentUserId(), new AVIMClientCallback() {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
         if (filterException(e)) {
+          new RequestTask(getApplicationContext(), LeanchatUser.getCurrentUserId()).execute();
           Intent intent = new Intent(EntrySplashActivity.this, MainActivity.class);
           startActivity(intent);
           finish();

@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import com.avoscloud.chat.R;
 import com.avoscloud.chat.event.InvitationEvent;
 import com.avoscloud.chat.util.Constants;
 import com.avoscloud.chat.util.LogUtils;
@@ -12,7 +11,7 @@ import com.avoscloud.chat.util.LogUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cn.leanclud.imkit.utils.LCIMNotificationUtils;
+import cn.leancloud.chatkit.utils.LCIMNotificationUtils;
 import de.greenrobot.event.EventBus;
 
 /**

@@ -6,8 +6,8 @@ import android.view.ViewGroup;
 import com.avoscloud.chat.viewholder.CommonFooterItemHolder;
 import com.avoscloud.chat.viewholder.CommonHeaderItemHolder;
 
-import cn.leanclud.imkit.adapter.LCIMCommonListAdapter;
-import cn.leanclud.imkit.viewholder.LCIMCommonViewHolder;
+import cn.leancloud.chatkit.adapter.LCIMCommonListAdapter;
+import cn.leancloud.chatkit.viewholder.LCIMCommonViewHolder;
 
 
 /**
@@ -49,10 +49,14 @@ public class HeaderListAdapter<T> extends LCIMCommonListAdapter<T> {
 
   @Override
   public long getItemId(int position) {
-    if (position == 0 && position == getItemCount() - 1) {
+    if (null != headerView && 0 == position) {
       return -1;
     }
-    return super.getItemId(position);
+
+    if (null != footerView && position == getItemCount() - 1) {
+      return -2;
+    }
+    return super.getItemId(position - 1);
   }
 
   @Override
@@ -70,10 +74,19 @@ public class HeaderListAdapter<T> extends LCIMCommonListAdapter<T> {
 
   @Override
   public void onBindViewHolder(LCIMCommonViewHolder holder, int position) {
-    if (position == 0 && position == getItemCount() - 1) {
+    int truePosition = position;
+    if (null != headerView) {
+      if (0 == position) {
+        return;
+      } else {
+        truePosition = position - 1;
+      }
+    }
+
+    if (null != footerView && position == getItemCount() - 1) {
       return;
     }
-    super.onBindViewHolder(holder, position);
+    super.onBindViewHolder(holder, truePosition);
   }
 
   @Override

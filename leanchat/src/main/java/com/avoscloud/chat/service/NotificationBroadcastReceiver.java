@@ -9,8 +9,9 @@ import com.avoscloud.chat.friends.ContactNewFriendActivity;
 import com.avoscloud.chat.activity.EntrySplashActivity;
 import com.avoscloud.chat.util.Constants;
 
-import cn.leanclud.imkit.LCIMKit;
-import cn.leanclud.imkit.utils.LCIMConstants;
+import cn.leancloud.chatkit.LCChatKit;
+import cn.leancloud.chatkit.utils.LCIMConstants;
+
 
 /**
  * Created by wli on 15/9/8.
@@ -22,7 +23,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
-    if (null == LCIMKit.getInstance().getClient()) {
+    if (null == LCChatKit.getInstance().getClient()) {
       gotoLoginActivity(context);
     } else {
       String tag = intent.getStringExtra(Constants.NOTOFICATION_TAG);
