@@ -16,11 +16,12 @@ import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMConversation;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
-import com.avoscloud.chat.App;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.event.ConversationMemberClickEvent;
 import com.avoscloud.chat.friends.ContactPersonInfoActivity;
-import com.avoscloud.leanchatlib.utils.ConversationManager;
+import com.avoscloud.chat.model.LeanchatUser;
+import com.avoscloud.chat.util.UserCacheUtils;
+import com.avoscloud.chat.util.UserCacheUtils.CacheUserCallback;
 import com.avoscloud.chat.util.Utils;
 import com.avoscloud.chat.viewholder.ConversationDetailItemHolder;
 import com.avoscloud.leanchatlib.activity.AVBaseActivity;
@@ -29,16 +30,13 @@ import com.avoscloud.leanchatlib.controller.ChatManager;
 import com.avoscloud.leanchatlib.controller.ConversationHelper;
 import com.avoscloud.leanchatlib.controller.RoomsTable;
 import com.avoscloud.leanchatlib.model.ConversationType;
-import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.chat.util.UserCacheUtils;
-import com.avoscloud.chat.util.UserCacheUtils.CacheUserCallback;
 import com.avoscloud.leanchatlib.utils.Constants;
+import com.avoscloud.leanchatlib.utils.ConversationManager;
 
 import java.util.Arrays;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 
 /**
  * Created by lzw on 14-10-11.
@@ -83,11 +81,11 @@ public class ConversationDetailActivity extends AVBaseActivity {
       }
     });
 
-    layoutManager = new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL,false);
+    layoutManager = new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL, false);
     layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
       @Override
       public int getSpanSize(int position) {
-        return (listAdapter.getItemViewType(position) == HeaderListAdapter.FOOTER_ITEM_TYPE ? layoutManager.getSpanCount(): 1);
+        return (listAdapter.getItemViewType(position) == HeaderListAdapter.FOOTER_ITEM_TYPE ? layoutManager.getSpanCount() : 1);
       }
     });
     listAdapter = new HeaderListAdapter<>(ConversationDetailItemHolder.class);
@@ -176,22 +174,22 @@ public class ConversationDetailActivity extends AVBaseActivity {
     boolean isTheOwner = conversation.getCreator().equals(memberId);
     if (!isTheOwner) {
       new AlertDialog.Builder(this).setMessage(R.string.conversation_kickTips)
-          .setPositiveButton(R.string.common_sure, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-              final ProgressDialog progress = showSpinnerDialog();
-              conversation.kickMembers(Arrays.asList(memberId), new AVIMConversationCallback() {
+              .setPositiveButton(R.string.common_sure, new DialogInterface.OnClickListener() {
                 @Override
-                public void done(AVIMException e) {
-                  progress.dismiss();
-                  if (filterException(e)) {
-                    Utils.toast(R.string.conversation_detail_kickSucceed);
-                    refresh();
-                  }
+                public void onClick(DialogInterface dialog, int which) {
+                  final ProgressDialog progress = showSpinnerDialog();
+                  conversation.kickMembers(Arrays.asList(memberId), new AVIMConversationCallback() {
+                    @Override
+                    public void done(AVIMException e) {
+                      progress.dismiss();
+                      if (filterException(e)) {
+                        Utils.toast(R.string.conversation_detail_kickSucceed);
+                        refresh();
+                      }
+                    }
+                  });
                 }
-              });
-            }
-          }).setNegativeButton(R.string.chat_common_cancel, null).show();
+              }).setNegativeButton(R.string.chat_common_cancel, null).show();
     }
   }
 
@@ -200,24 +198,24 @@ public class ConversationDetailActivity extends AVBaseActivity {
    */
   private void quitGroup() {
     new AlertDialog.Builder(this).setMessage(R.string.conversation_quit_group_tip)
-      .setPositiveButton(R.string.common_sure, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-          final String convid = conversation.getConversationId();
-          conversation.quit(new AVIMConversationCallback() {
-            @Override
-            public void done(AVIMException e) {
-              if (filterException(e)) {
-                RoomsTable roomsTable = ChatManager.getInstance().getRoomsTable();
-                roomsTable.deleteRoom(convid);
-                Utils.toast(R.string.conversation_alreadyQuitConv);
-                setResult(RESULT_OK);
-                finish();
+            .setPositiveButton(R.string.common_sure, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                final String convid = conversation.getConversationId();
+                conversation.quit(new AVIMConversationCallback() {
+                  @Override
+                  public void done(AVIMException e) {
+                    if (filterException(e)) {
+                      RoomsTable roomsTable = ChatManager.getInstance().getRoomsTable();
+                      roomsTable.deleteRoom(convid);
+                      Utils.toast(R.string.conversation_alreadyQuitConv);
+                      setResult(RESULT_OK);
+                      finish();
+                    }
+                  }
+                });
               }
-            }
-          });
-        }
-      }).setNegativeButton(R.string.chat_common_cancel, null).show();
+            }).setNegativeButton(R.string.chat_common_cancel, null).show();
   }
 
   @Override

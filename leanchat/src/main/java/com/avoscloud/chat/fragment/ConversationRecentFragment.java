@@ -22,6 +22,7 @@ import com.avoscloud.chat.util.UserCacheUtils;
 import com.avoscloud.leanchatlib.controller.ConversationHelper;
 import com.avoscloud.leanchatlib.event.ConnectionChangeEvent;
 import com.avoscloud.leanchatlib.event.ConversationItemClickEvent;
+import com.avoscloud.leanchatlib.event.ImMessageEvent;
 import com.avoscloud.leanchatlib.event.ImTypeMessageEvent;
 import com.avoscloud.leanchatlib.model.ConversationType;
 import com.avoscloud.leanchatlib.model.Room;
@@ -148,7 +149,7 @@ public class ConversationRecentFragment extends BaseFragment {
 
   private void cacheRelatedUsers(List<Room> rooms) {
     List<String> needCacheUsers = new ArrayList<String>();
-    for(Room room : rooms) {
+    for (Room room : rooms) {
       AVIMConversation conversation = room.getConversation();
       if (ConversationHelper.typeOfConversation(conversation) == ConversationType.Single) {
         needCacheUsers.add(ConversationHelper.otherIdOfConversation(conversation));
@@ -185,5 +186,14 @@ public class ConversationRecentFragment extends BaseFragment {
 
   public void onEvent(ConnectionChangeEvent event) {
     imClientStateView.setVisibility(event.isConnect ? View.GONE : View.VISIBLE);
+  }
+
+  /**
+   * 红包回执消息为AVIMMessage,无法有接收消息的监听,因此写了针对AVIMMessage的监听事件
+   *
+   * @param event
+   */
+  public void onEvent(ImMessageEvent event) {
+    updateConversationList();
   }
 }

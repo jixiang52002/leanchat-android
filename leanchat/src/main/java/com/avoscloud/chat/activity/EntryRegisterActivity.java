@@ -12,13 +12,14 @@ import com.avos.avoscloud.SignUpCallback;
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
-import com.avoscloud.chat.R;
 import com.avoscloud.chat.App;
-import com.avoscloud.chat.RequestTask;
-import com.avoscloud.chat.util.Utils;
+import com.avoscloud.chat.R;
 import com.avoscloud.chat.model.LeanchatUser;
+import com.avoscloud.chat.util.Utils;
 import com.avoscloud.leanchatlib.activity.AVBaseActivity;
 import com.avoscloud.leanchatlib.controller.ChatManager;
+import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
+import com.avoscloud.leanchatlib.redpacket.RequestTask;
 
 public class EntryRegisterActivity extends AVBaseActivity {
   View registerButton;
@@ -74,6 +75,7 @@ public class EntryRegisterActivity extends AVBaseActivity {
         } else {
           Utils.toast(R.string.registerSucceed);
           imLogin();
+          RedPacketUtils.getInstance().initUserData(LeanchatUser.getCurrentUserId(), LeanchatUser.getCurrentUser().getUsername(), LeanchatUser.getCurrentUser().getAvatarUrl());
         }
       }
     });
@@ -84,7 +86,7 @@ public class EntryRegisterActivity extends AVBaseActivity {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
         if (filterException(e)) {
-          new RequestTask(getApplicationContext(), LeanchatUser.getCurrentUserId()).execute();
+          RequestTask.getInstance().initRedPacketNet(EntryRegisterActivity.this, LeanchatUser.getCurrentUserId());
           Intent intent = new Intent(EntryRegisterActivity.this, MainActivity.class);
           startActivity(intent);
           finish();
@@ -92,4 +94,5 @@ public class EntryRegisterActivity extends AVBaseActivity {
       }
     });
   }
+
 }

@@ -26,23 +26,21 @@ android {
 
 //jar 包请见 ./libs，不是 ./leanchatlib/libs。转 Eclipse 的项目格式的时候可能用到。
 dependencies {
-
-
-    compile project(':redpacketlibrary')
     // local lib
     compile files('libs/prettytime-3.2.5.Final.jar')
-
     // leancloud sdk
     compile 'cn.leancloud.android:avoscloud-sdk:v3.+'
-    compile ('cn.leancloud.android:avoscloud-push:v3.+@aar'){transitive = true}
-
+    compile('cn.leancloud.android:avoscloud-push:v3.+@aar') { transitive = true }
     // support lib
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:recyclerview-v7:23.1.0'
-
     compile 'org.apache.httpcomponents:httpmime:4.2.4'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     compile 'com.github.stuxuhai:jpinyin:1.0'
+    compile project(':redpacketlibrary-aar')
+    compile files('libs/alipaySdk-20160516.jar')
+    compile files('libs/glide-3.6.1.jar')
+    compile files('libs/volley-1.0.19.jar')
 }
