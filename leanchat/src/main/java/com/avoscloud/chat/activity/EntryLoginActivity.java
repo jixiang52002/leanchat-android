@@ -70,7 +70,7 @@ public class EntryLoginActivity extends AVBaseActivity {
         dialog.dismiss();
         if (filterException(e)) {
           imLogin();
-          initUserData();
+          RedPacketUtils.getInstance().initUserData(LeanchatUser.getCurrentUserId(), LeanchatUser.getCurrentUser().getUsername(), LeanchatUser.getCurrentUser().getAvatarUrl());
         }
       }
     }, LeanchatUser.class);
@@ -92,29 +92,5 @@ public class EntryLoginActivity extends AVBaseActivity {
         }
       }
     });
-  }
-
-  /**
-   * 初始化登录用户数据
-   */
-  private void initUserData() {
-    LeanchatUser curuser = LeanchatUser.getCurrentUser();
-    if (!TextUtils.isEmpty(LeanchatUser.getCurrentUserId())) {
-      RedPacketUtils.getInstance().setUserid(curuser.getCurrentUserId());
-    } else {
-      RedPacketUtils.getInstance().setUserid("");
-    }
-    if (curuser != null) {
-      if (!TextUtils.isEmpty(curuser.getUsername())) {
-        RedPacketUtils.getInstance().setUserName(curuser.getUsername());
-      } else {
-        RedPacketUtils.getInstance().setUserName("");
-      }
-      if (!TextUtils.isEmpty(curuser.getAvatarUrl())) {
-        RedPacketUtils.getInstance().setUserAvatar(curuser.getAvatarUrl());
-      } else {
-        RedPacketUtils.getInstance().setUserAvatar("none");
-      }
-    }
   }
 }

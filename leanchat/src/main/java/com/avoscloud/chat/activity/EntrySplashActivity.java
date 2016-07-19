@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMException;
@@ -26,7 +25,7 @@ public class EntrySplashActivity extends AVBaseActivity {
     public void handleMessage(Message msg) {
       switch (msg.what) {
         case GO_MAIN_MSG:
-          initUserData();
+          RedPacketUtils.getInstance().initUserData(LeanchatUser.getCurrentUserId(), LeanchatUser.getCurrentUser().getUsername(), LeanchatUser.getCurrentUser().getAvatarUrl());
           imLogin();
           break;
         case GO_LOGIN_MSG:
@@ -63,29 +62,5 @@ public class EntrySplashActivity extends AVBaseActivity {
         }
       }
     });
-  }
-
-  /**
-   * 初始化登录用户数据
-   */
-  private void initUserData() {
-    LeanchatUser curuser = LeanchatUser.getCurrentUser();
-    if (!TextUtils.isEmpty(LeanchatUser.getCurrentUserId())) {
-      RedPacketUtils.getInstance().setUserid(curuser.getCurrentUserId());
-    } else {
-      RedPacketUtils.getInstance().setUserid("");
-    }
-    if (curuser != null) {
-      if (!TextUtils.isEmpty(curuser.getUsername())) {
-        RedPacketUtils.getInstance().setUserName(curuser.getUsername());
-      } else {
-        RedPacketUtils.getInstance().setUserName("");
-      }
-      if (!TextUtils.isEmpty(curuser.getAvatarUrl())) {
-        RedPacketUtils.getInstance().setUserAvatar(curuser.getAvatarUrl());
-      } else {
-        RedPacketUtils.getInstance().setUserAvatar("");
-      }
-    }
   }
 }

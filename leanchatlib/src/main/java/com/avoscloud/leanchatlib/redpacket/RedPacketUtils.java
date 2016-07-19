@@ -3,6 +3,7 @@ package com.avoscloud.leanchatlib.redpacket;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 
 import com.yunzhanghu.redpacketsdk.bean.RPUserBean;
 import com.yunzhanghu.redpacketsdk.bean.RedPacketInfo;
@@ -45,7 +46,7 @@ public class RedPacketUtils {
   private GetUserInfoCallback mGetUserInfoCallback;
   private GetUserBeanCallback mGetUserBeanCallback;
   private TokenData mTokenData;//打开红包时需要转登录时获取的数据
-  private String userid;//当前用户id;
+  private String userId;//当前用户id;
   private String userName;//当前用户姓名
   private String userAvatar;//当前用户头像
 
@@ -127,7 +128,7 @@ public class RedPacketUtils {
     redPacketInfo.toNickName = fromNickname;
     redPacketInfo.specialNickname = rpUserBean.userNickname;
     redPacketInfo.specialAvatarUrl = rpUserBean.userAvatar;
-    redPacketInfo.toUserId = RedPacketUtils.getInstance().getUserid();
+    redPacketInfo.toUserId = RedPacketUtils.getInstance().getUserId();
     return redPacketInfo;
   }
 
@@ -213,6 +214,27 @@ public class RedPacketUtils {
     mContext.startActivity(intent);
   }
 
+  /**
+   * 初始化登录用户数据
+   */
+  public void initUserData(String id,String username,String userAvatar) {
+    if (!TextUtils.isEmpty(id)) {
+      RedPacketUtils.getInstance().setUserId(id);
+    } else {
+      RedPacketUtils.getInstance().setUserId("");
+    }
+      if (!TextUtils.isEmpty(username)) {
+        RedPacketUtils.getInstance().setUserName(username);
+      } else {
+        RedPacketUtils.getInstance().setUserName("");
+      }
+      if (!TextUtils.isEmpty(userAvatar)) {
+        RedPacketUtils.getInstance().setUserAvatar(userAvatar);
+      } else {
+        RedPacketUtils.getInstance().setUserAvatar("none");
+      }
+  }
+
   public GetUserInfoCallback getmGetUserInfoCallback() {
     return mGetUserInfoCallback;
   }
@@ -229,12 +251,12 @@ public class RedPacketUtils {
     this.mGetUserBeanCallback = mGetUserBeanCallback;
   }
 
-  public String getUserid() {
-    return userid;
+  public String getUserId() {
+    return userId;
   }
 
-  public void setUserid(String userid) {
-    this.userid = userid;
+  public void setUserId(String userId) {
+    this.userId = userId;
   }
 
   public String getUserName() {

@@ -120,7 +120,7 @@ public class Utils {
               @Override
               public void done(List<AVIMMessage> list, AVIMException e) {
                 if (filterException(e)) {
-                  cTemp = checkMsgs(list, context);
+                  cTemp = checkMsg(list, context);
                 }
               }
             });
@@ -144,7 +144,7 @@ public class Utils {
     } else return true;
   }
 
-  private static CharSequence checkMsgs(List<AVIMMessage> list, Context context) {
+  private static CharSequence checkMsg(List<AVIMMessage> list, Context context) {
     CharSequence charSequence = "";
     for (int i = 0; i < list.size(); i++) {
       AVIMMessage message = list.get(list.size() - i - 1);
@@ -190,15 +190,7 @@ public class Utils {
     AVIMReservedMessageType type = AVIMReservedMessageType.getAVIMReservedMessageType(((AVIMTypedMessage) message).getMessageType());
     switch (type) {
       case TextMessageType:
-        Map<String, Object> attrs = ((AVIMTextMessage) message).getAttrs();
-        if (attrs != null && attrs.containsKey(RedPacketUtils.KEY_RED_PACKET)) {
-          JSONObject rpJSON = (JSONObject) attrs.get(RedPacketUtils.KEY_RED_PACKET);
-          if (rpJSON != null && rpJSON.size() != 0) {
-            String money_greeting = rpJSON.getString(RedPacketUtils.EXTRA_RED_PACKET_GREETING);
-            return "[LeanCloud红包]" + money_greeting;
-          }
-        }
-        return EmotionHelper.replace(context, ((AVIMTextMessage) message).getText());
+        getTextMessageTypeShorthand(context, message);
       case ImageMessageType:
         return "[图片]";
       case LocationMessageType:

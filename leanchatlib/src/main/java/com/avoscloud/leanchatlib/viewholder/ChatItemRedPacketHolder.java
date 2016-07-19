@@ -21,7 +21,6 @@ import com.avoscloud.leanchatlib.controller.ConversationHelper;
 import com.avoscloud.leanchatlib.model.ConversationType;
 import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
 import com.avoscloud.leanchatlib.redpacket.UserBeanCallback;
-import com.avoscloud.leanchatlib.redpacket.UserUtils;
 import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
 import com.yunzhanghu.redpacketsdk.bean.RPUserBean;
 import com.yunzhanghu.redpacketsdk.bean.RedPacketInfo;
@@ -81,8 +80,8 @@ public class ChatItemRedPacketHolder extends ChatItemHolder {
       if (rpJSON.size() == 0) {
         return;
       }
-      String fromNickname = UserUtils.getInstance(getContext()).getUserInfo(UserUtils.USER_NICK_NAME);
-      String fromAvatarUrl = UserUtils.getInstance(getContext()).getUserInfo(UserUtils.USER_AVATAR_URL);
+      String fromNickname = RedPacketUtils.getInstance().getUserName();
+      String fromAvatarUrl = RedPacketUtils.getInstance().getUserAvatar();
       if (TextUtils.isEmpty(fromNickname)) {
         fromNickname = getFromNickname();
       }

@@ -253,6 +253,8 @@ public class ChatFragment extends android.support.v4.app.Fragment {
    * 点击红包按钮之后的逻辑处理,分为两个部分,一是单聊发红包,二是,群聊发红包
    */
   public void selectRedPacket() {
+    fromNickname=RedPacketUtils.getInstance().getUserName();
+    fromAvatarUrl=RedPacketUtils.getInstance().getUserAvatar();
     final String toUserId = ConversationHelper.otherIdOfConversation(imConversation); /*接收者Id或者接收的群Id*/
     if (ConversationHelper.typeOfConversation(imConversation) == ConversationType.Single) {
       int chatType = RPConstant.CHATTYPE_SINGLE;
