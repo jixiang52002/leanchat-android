@@ -4,9 +4,10 @@ import com.avos.avoscloud.im.v2.AVIMMessageCreator;
 import com.avos.avoscloud.im.v2.AVIMMessageField;
 import com.avos.avoscloud.im.v2.AVIMMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
+import com.avoscloud.chat.redpacket.RedPacketUtils;
+import com.yunzhanghu.redpacketsdk.constant.RPConstant;
 
 import cn.leancloud.chatkit.LCChatMessageInterface;
-import utils.RedPacketUtils;
 
 /**
  * Created by wli on 16/7/14.
@@ -45,11 +46,8 @@ public class LCIMRedPcketAckMessage extends AVIMTypedMessage implements LCChatMe
   @AVIMMessageField(name = "recipient_name")
   private String recipientName;
 
-  /**
-   * 消息发送时是否是单聊
-   */
-  @AVIMMessageField(name = "isSingle")
-  private boolean isSingle;
+  @AVIMMessageField(name = RPConstant.EXTRA_RED_PACKET_TYPE)
+  private String redPacketType;
 
   @Override
   public String getShorthand() {
@@ -88,11 +86,11 @@ public class LCIMRedPcketAckMessage extends AVIMTypedMessage implements LCChatMe
     this.recipientName = recipientName;
   }
 
-  public boolean isSingle() {
-    return isSingle;
+  public String getRedPacketType() {
+    return redPacketType;
   }
 
-  public void setSingle(boolean single) {
-    isSingle = single;
+  public void setRedPacketType(String redPacketType) {
+    this.redPacketType = redPacketType;
   }
 }

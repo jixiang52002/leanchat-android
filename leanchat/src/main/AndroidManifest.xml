@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
     package="com.avoscloud.chat"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:versionCode="19"
     android:versionName="1.0.3">
 
@@ -45,7 +44,6 @@
         android:theme="@style/LCIMKitTheme">
 
         <activity android:name=".activity.ChatRoomActivity"
-                  tools:node="replace"
                   android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="cn.leanclud.imkit.conversation_item_click_action"/>
@@ -82,12 +80,12 @@
             android:launchMode="singleTask"
             android:theme="@style/LCIMActivity.NoActionBar">
             <intent-filter>
-                <action android:name="com.avos.leanchart.MAIN_ACTIVITY"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.avos.leanchart.MAIN_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.UpdateContentActivity"/>
+        <activity android:name=".activity.UpdateContentActivity" />
 
         <activity
             android:name=".activity.EntrySplashActivity"
@@ -106,59 +104,69 @@
         <activity android:name=".activity.EntryRegisterActivity"
                   android:theme="@style/LCIMActivity.NoActionBar"/>
 
-        <activity android:name=".friends.ContactNewFriendActivity"/>
+        <activity android:name=".friends.ContactNewFriendActivity" />
 
-        <activity android:name=".friends.ContactAddFriendActivity"/>
+        <activity android:name=".friends.ContactAddFriendActivity" />
 
-        <activity android:name=".friends.ContactPersonInfoActivity"/>
+        <activity android:name=".friends.ContactPersonInfoActivity" />
 
-        <activity android:name=".activity.ProfileNotifySettingActivity"/>
+        <activity android:name=".activity.ProfileNotifySettingActivity" />
 
         <activity
             android:name=".activity.ConversationGroupListActivity"
-            android:label="@string/conversation_group"/>
+            android:label="@string/conversation_group" />
 
-        <activity android:name=".activity.ConversationDetailActivity"/>
+        <activity android:name=".activity.ConversationDetailActivity" />
 
         <activity
             android:name=".activity.ConversationAddMembersActivity"
-            android:label="@string/conversation_inviteMembers"/>
+            android:label="@string/conversation_inviteMembers" />
 
         <!--红包相关界面-->
         <activity
-            android:name="com.easemob.redpacketui.ui.activity.RPRedPacketActivity"
+            android:name="com.yunzhanghu.redpacketui.ui.activity.RPRedPacketActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"
             android:windowSoftInputMode="adjustPan|stateVisible" />
         <activity
 
-            android:name="com.easemob.redpacketui.ui.activity.RPDetailActivity"
+            android:name="com.yunzhanghu.redpacketui.ui.activity.RPDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name="com.easemob.redpacketui.ui.activity.RPRecordActivity"
+            android:name="com.yunzhanghu.redpacketui.ui.activity.RPRecordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name="com.easemob.redpacketui.ui.activity.RPWebViewActivity"
+            android:name="com.yunzhanghu.redpacketui.ui.activity.RPWebViewActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name="com.easemob.redpacketui.ui.activity.RPChangeActivity"
+            android:name="com.yunzhanghu.redpacketui.ui.activity.RPChangeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name="com.easemob.redpacketui.ui.activity.RPBankCardActivity"
+            android:name="com.yunzhanghu.redpacketui.ui.activity.RPBankCardActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"
-            android:windowSoftInputMode="adjustPan|stateHidden"></activity>
-
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name="com.yunzhanghu.redpacketui.ui.activity.RPGroupMemberActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/horizontal_slide"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name="com.alipay.sdk.app.H5PayActivity"
+            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+            android:exported="false"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <service
             android:name="com.baidu.location.f"

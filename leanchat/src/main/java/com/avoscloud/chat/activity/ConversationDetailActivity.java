@@ -79,11 +79,11 @@ public class ConversationDetailActivity extends AVBaseActivity {
       }
     });
 
-    layoutManager = new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL,false);
+    layoutManager = new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL, false);
     layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
       @Override
       public int getSpanSize(int position) {
-        return (listAdapter.getItemViewType(position) == HeaderListAdapter.FOOTER_ITEM_TYPE ? layoutManager.getSpanCount(): 1);
+        return (listAdapter.getItemViewType(position) == HeaderListAdapter.FOOTER_ITEM_TYPE ? layoutManager.getSpanCount() : 1);
       }
     });
     listAdapter = new HeaderListAdapter<>(ConversationDetailItemHolder.class);
@@ -166,22 +166,22 @@ public class ConversationDetailActivity extends AVBaseActivity {
     boolean isTheOwner = conversation.getCreator().equals(memberId);
     if (!isTheOwner) {
       new AlertDialog.Builder(this).setMessage(R.string.conversation_kickTips)
-          .setPositiveButton(R.string.common_sure, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-              final ProgressDialog progress = showSpinnerDialog();
-              conversation.kickMembers(Arrays.asList(memberId), new AVIMConversationCallback() {
-                @Override
-                public void done(AVIMException e) {
-                  progress.dismiss();
-                  if (filterException(e)) {
-                    Utils.toast(R.string.conversation_detail_kickSucceed);
-                    refresh();
-                  }
+        .setPositiveButton(R.string.common_sure, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            final ProgressDialog progress = showSpinnerDialog();
+            conversation.kickMembers(Arrays.asList(memberId), new AVIMConversationCallback() {
+              @Override
+              public void done(AVIMException e) {
+                progress.dismiss();
+                if (filterException(e)) {
+                  Utils.toast(R.string.conversation_detail_kickSucceed);
+                  refresh();
                 }
-              });
-            }
-          }).setNegativeButton(R.string.chat_common_cancel, null).show();
+              }
+            });
+          }
+        }).setNegativeButton(R.string.chat_common_cancel, null).show();
     }
   }
 

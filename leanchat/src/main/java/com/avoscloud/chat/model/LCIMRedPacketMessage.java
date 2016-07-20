@@ -4,9 +4,9 @@ import com.avos.avoscloud.im.v2.AVIMMessageCreator;
 import com.avos.avoscloud.im.v2.AVIMMessageField;
 import com.avos.avoscloud.im.v2.AVIMMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
+import com.yunzhanghu.redpacketsdk.constant.RPConstant;
 
 import cn.leancloud.chatkit.LCChatMessageInterface;
-import utils.RedPacketUtils;
 
 /**
  * Created by wli on 16/7/11.
@@ -19,20 +19,20 @@ public class LCIMRedPacketMessage extends AVIMTypedMessage implements LCChatMess
 
   public LCIMRedPacketMessage() {}
 
-  @AVIMMessageField(name = RedPacketUtils.EXTRA_RED_PACKET_ID)
+  @AVIMMessageField(name = RPConstant.EXTRA_RED_PACKET_ID)
   private String readPacketId;
 
-  @AVIMMessageField(name = RedPacketUtils.EXTRA_RED_PACKET_GREETING)
+  @AVIMMessageField(name = RPConstant.EXTRA_RED_PACKET_GREETING)
   private String greeting;
 
-  @AVIMMessageField(name = RedPacketUtils.EXTRA_SPONSOR_NAME)
+  @AVIMMessageField(name = RPConstant.EXTRA_SPONSOR_NAME)
   private String sponsorName;
 
-  /**
-   * 消息发送时是否是单聊
-   */
-  @AVIMMessageField(name = "isSingle")
-  private boolean isSingle;
+  @AVIMMessageField(name = RPConstant.EXTRA_RED_PACKET_TYPE)
+  private String redPacketType;
+
+  @AVIMMessageField(name = RPConstant.EXTRA_RED_PACKET_RECEIVER_ID)
+  private String receiverId;
 
   public static final Creator<LCIMRedPacketMessage> CREATOR = new AVIMMessageCreator<LCIMRedPacketMessage>(LCIMRedPacketMessage.class);
 
@@ -65,11 +65,19 @@ public class LCIMRedPacketMessage extends AVIMTypedMessage implements LCChatMess
     this.greeting = greeting;
   }
 
-  public boolean isSingle() {
-    return isSingle;
+  public String getRedPacketType() {
+    return redPacketType;
   }
 
-  public void setSingle(boolean single) {
-    isSingle = single;
+  public void setRedPacketType(String redPacketType) {
+    this.redPacketType = redPacketType;
+  }
+
+  public String getReceiverId() {
+    return receiverId;
+  }
+
+  public void setReceiverId(String receiverId) {
+    this.receiverId = receiverId;
   }
 }

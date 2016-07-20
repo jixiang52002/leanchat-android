@@ -1,6 +1,7 @@
 package com.avoscloud.chat.viewholder;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -36,7 +37,7 @@ public class ChatItemRedPacketAckHolder extends LCIMChatItemHolder {
       initRedPacketAckChatItem(ackMessage.getSenderName(), ackMessage.getRecipientName(),
         LeanchatUser.getCurrentUserId().equals(ackMessage.getSenderId()),
         LeanchatUser.getCurrentUserId().equals(ackMessage.getFrom()),
-        ackMessage.isSingle());
+        TextUtils.isEmpty(ackMessage.getRedPacketType()));
     }
   }
 

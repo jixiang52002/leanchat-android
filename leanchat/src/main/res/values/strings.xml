@@ -110,4 +110,10 @@
     <string name="chat_reverseGeoCodeResultIs">反编码得到的地址：</string>
 
     <string name="chat_bottom_redpacket">红包</string>
+    <string name="money_msg_take_money">你领取了自己的红包</string>
+    <string name="money_msg_take_someone_money">你领取了%1$s的红包</string>
+    <string name="money_msg_someone_take_money">%1$s领取了你的红包</string>
+    <string name="money_msg_someone_take_money_same">%1$s领取了%2$s的红包</string>
+    <string name="leancloud_luckymoney">云账户红包</string>
+    <string name="exclusive_red_envelope">专属红包</string>
 </resources>

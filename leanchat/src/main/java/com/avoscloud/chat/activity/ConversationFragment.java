@@ -21,8 +21,13 @@ import com.avoscloud.chat.event.RedPacketAckEvent;
 import com.avoscloud.chat.model.ConversationType;
 import com.avoscloud.chat.model.LCIMRedPacketMessage;
 import com.avoscloud.chat.model.LeanchatUser;
+import com.avoscloud.chat.redpacket.RedPacketUtils;
+import com.avoscloud.chat.redpacket.UserInfoCallback;
 import com.avoscloud.chat.util.ConversationUtils;
-import com.easemob.redpacketsdk.constant.RPConstant;
+import com.yunzhanghu.redpacketsdk.bean.RPUserBean;
+import com.yunzhanghu.redpacketsdk.constant.RPConstant;
+
+import java.util.List;
 
 import cn.leancloud.chatkit.activity.LCIMConversationFragment;
 import cn.leancloud.chatkit.adapter.LCIMChatAdapter;
@@ -30,7 +35,6 @@ import cn.leancloud.chatkit.event.LCIMInputBottomBarEvent;
 import cn.leancloud.chatkit.event.LCIMInputBottomBarLocationClickEvent;
 import cn.leancloud.chatkit.event.LCIMLocationItemClickEvent;
 import de.greenrobot.event.EventBus;
-import utils.RedPacketUtils;
 
 /**
  * Created by wli on 16/7/11.
@@ -98,7 +102,6 @@ public class ConversationFragment extends LCIMConversationFragment {
     }
   }
 
-
   /**
    * 点击红包按钮之后的逻辑处理,分为两个部分,一是单聊发红包,二是,群聊发红包
    */
@@ -122,6 +125,19 @@ public class ConversationFragment extends LCIMConversationFragment {
   private void gotoGroupRedPacket() {
     final String fromNickname = LeanchatUser.getCurrentUser().getUsername();
     final String fromAvatarUrl = LeanchatUser.getCurrentUserId();
+
+    /**
+     * 发送专属红包用的,获取群组成员
+     */
+    RedPacketUtils.getInstance().getmGetUserInfoCallback().done(imConversation.getMembers(), new UserInfoCallback() {
+      @Override
+      public void getUserInfo(List<RPUserBean> rpuserlist) {
+        /**
+         * 发专属红包,把群组成员信息传给红包SDK
+         */
+        RedPacketUtils.getInstance().initRpGroupMember(rpuserlist);
+      }
+    });
 
     imConversation.getMemberCount(new AVIMConversationMemberCountCallback() {
       @Override
@@ -168,15 +184,18 @@ public class ConversationFragment extends LCIMConversationFragment {
 
   private void processReadPack(Intent data) {
     if (data != null) {
-      final String greetings = data.getStringExtra(RPConstant.EXTRA_MONEY_GREETING);
-      final String moneyID = data.getStringExtra(RPConstant.EXTRA_CHECK_MONEY_ID);
-      final String sponsorName = getResources().getString(R.string.leancloud_luckymoney);
+      String greetings = data.getStringExtra(RPConstant.EXTRA_RED_PACKET_GREETING);
+      String moneyID = data.getStringExtra(RPConstant.EXTRA_RED_PACKET_ID);
+      String sponsorName = getResources().getString(R.string.leancloud_luckymoney);
+      String redPacketType = data.getStringExtra(RPConstant.EXTRA_RED_PACKET_TYPE);//群红包类型
+      String specialReceiveId = data.getStringExtra(RPConstant.EXTRA_RED_PACKET_RECEIVER_ID);//专属红包接受者ID
 
       LCIMRedPacketMessage redPacketMessage = new LCIMRedPacketMessage();
       redPacketMessage.setGreeting(greetings);
       redPacketMessage.setReadPacketId(moneyID);
       redPacketMessage.setSponsorName(sponsorName);
-      redPacketMessage.setSingle(ConversationUtils.typeOfConversation(imConversation) == ConversationType.Single);
+      redPacketMessage.setRedPacketType(redPacketType);
+      redPacketMessage.setReceiverId(specialReceiveId);
       sendMessage(redPacketMessage);
     }
   }

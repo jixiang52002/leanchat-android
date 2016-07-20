@@ -6,20 +6,21 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.LogInCallback;
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.avoscloud.chat.R;
-import com.avoscloud.chat.RequestTask;
-import com.avoscloud.chat.util.Utils;
 import com.avoscloud.chat.model.LeanchatUser;
+import com.avoscloud.chat.redpacket.RedPacketUtils;
+import com.avoscloud.chat.redpacket.RequestTask;
+import com.avoscloud.chat.util.Utils;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import cn.leancloud.chatkit.LCChatKit;
-
 
 public class EntryLoginActivity extends AVBaseActivity {
 
@@ -38,7 +39,7 @@ public class EntryLoginActivity extends AVBaseActivity {
 
   @OnClick(R.id.activity_login_btn_login)
   public void onLoginClick(View v) {
-      login();
+    login();
   }
 
   @OnClick(R.id.activity_login_btn_register)
@@ -68,6 +69,7 @@ public class EntryLoginActivity extends AVBaseActivity {
         dialog.dismiss();
         if (filterException(e)) {
           imLogin();
+          RedPacketUtils.getInstance().initUserData(LeanchatUser.getCurrentUserId(), LeanchatUser.getCurrentUser().getUsername(), LeanchatUser.getCurrentUser().getAvatarUrl());
         }
       }
     }, LeanchatUser.class);
@@ -82,7 +84,7 @@ public class EntryLoginActivity extends AVBaseActivity {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
         if (filterException(e)) {
-           new RequestTask(getApplicationContext(), LeanchatUser.getCurrentUserId()).execute();
+          RequestTask.getInstance().initRedPacketNet(getApplicationContext(), LeanchatUser.getCurrentUserId());
           Intent intent = new Intent(EntryLoginActivity.this, MainActivity.class);
           startActivity(intent);
           finish();
