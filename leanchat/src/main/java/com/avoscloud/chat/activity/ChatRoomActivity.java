@@ -1,38 +1,29 @@
 package com.avoscloud.chat.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.avos.avoscloud.AVGeoPoint;
-import com.avos.avoscloud.im.v2.messages.AVIMLocationMessage;
+import com.avos.avoscloud.im.v2.AVIMConversation;
+import com.avos.avoscloud.im.v2.AVIMException;
+import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback;
 import com.avoscloud.chat.R;
-import com.avoscloud.leanchatlib.activity.AVChatActivity;
-import com.avoscloud.leanchatlib.event.InputBottomBarLocationClickEvent;
-import com.avoscloud.leanchatlib.event.LocationItemClickEvent;
-import com.avoscloud.leanchatlib.utils.Constants;
-import com.avoscloud.leanchatlib.utils.NotificationUtils;
+import com.avoscloud.chat.util.ConversationUtils;
+import cn.leancloud.chatkit.activity.LCIMConversationActivity;
+import cn.leancloud.chatkit.utils.LCIMConstants;
 
 /**
  * Created by lzw on 15/4/24.
  */
-public class ChatRoomActivity extends AVChatActivity {
+public class ChatRoomActivity extends LCIMConversationActivity {
 
-  public static final int LOCATION_REQUEST = 100;
+  private AVIMConversation conversation;
 
   public static final int QUIT_GROUP_REQUEST = 200;
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-  }
-
-  @Override
   protected void onResume() {
-    NotificationUtils.cancelNotification(this);
     super.onResume();
   }
 
@@ -40,8 +31,18 @@ public class ChatRoomActivity extends AVChatActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.chat_ativity_menu, menu);
-    alwaysShowMenuItem(menu);
+    if (null != menu && menu.size() > 0) {
+      MenuItem item = menu.getItem(0);
+      item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
+        | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+    }
     return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  protected void updateConversation(AVIMConversation conversation) {
+    super.updateConversation(conversation);
+    this.conversation = conversation;
   }
 
   @Override
@@ -50,7 +51,7 @@ public class ChatRoomActivity extends AVChatActivity {
     if (menuId == R.id.people) {
       if (null != conversation) {
         Intent intent = new Intent(ChatRoomActivity.this, ConversationDetailActivity.class);
-        intent.putExtra(Constants.CONVERSATION_ID, conversation.getConversationId());
+        intent.putExtra(LCIMConstants.CONVERSATION_ID, conversation.getConversationId());
         startActivityForResult(intent, QUIT_GROUP_REQUEST);
       }
     }
@@ -62,19 +63,6 @@ public class ChatRoomActivity extends AVChatActivity {
     super.onActivityResult(requestCode, resultCode, intent);
     if (resultCode == RESULT_OK) {
       switch (requestCode) {
-        case LOCATION_REQUEST:
-          final double latitude = intent.getDoubleExtra(LocationActivity.LATITUDE, 0);
-          final double longitude = intent.getDoubleExtra(LocationActivity.LONGITUDE, 0);
-          final String address = intent.getStringExtra(LocationActivity.ADDRESS);
-          if (!TextUtils.isEmpty(address)) {
-            AVIMLocationMessage locationMsg = new AVIMLocationMessage();
-            locationMsg.setLocation(new AVGeoPoint(latitude, longitude));
-            locationMsg.setText(address);
-            chatFragment.sendMessage(locationMsg);
-          } else {
-            showToast(R.string.chat_cannotGetYourAddressInfo);
-          }
-          break;
         case QUIT_GROUP_REQUEST:
           finish();
           break;
@@ -82,15 +70,14 @@ public class ChatRoomActivity extends AVChatActivity {
     }
   }
 
-  public void onEvent(InputBottomBarLocationClickEvent event) {
-    LocationActivity.startToSelectLocationForResult(this, LOCATION_REQUEST);
-  }
-
-  public void onEvent(LocationItemClickEvent event) {
-    if (null != event && null != event.message && event.message instanceof AVIMLocationMessage) {
-      AVIMLocationMessage locationMessage = (AVIMLocationMessage) event.message;
-      LocationActivity.startToSeeLocationDetail(this, locationMessage.getLocation().getLatitude(),
-              locationMessage.getLocation().getLongitude());
-    }
+  @Override
+  protected void getConversation(String memberId) {
+    super.getConversation(memberId);
+    ConversationUtils.createSingleConversation(memberId, new AVIMConversationCreatedCallback() {
+      @Override
+      public void done(AVIMConversation avimConversation, AVIMException e) {
+        updateConversation(avimConversation);
+      }
+    });
   }
 }

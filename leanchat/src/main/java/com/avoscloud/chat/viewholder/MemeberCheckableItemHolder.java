@@ -10,19 +10,20 @@ import android.widget.TextView;
 
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.PhotoUtils;
-import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
+
+import cn.leancloud.chatkit.viewholder.LCIMCommonViewHolder;
+
 
 /**
  * Created by wli on 15/12/2.
  */
-public class MemeberCheckableItemHolder extends CommonViewHolder<LeanchatUser> {
+public class MemeberCheckableItemHolder extends LCIMCommonViewHolder<LeanchatUser> {
 
-  ImageView avatarView;
-  TextView nameView;
-  CheckBox checkBox;
-  OnItemHolderCheckedChangeListener checkedChangeListener;
+  private ImageView avatarView;
+  private TextView nameView;
+  private CheckBox checkBox;
+  private OnItemHolderCheckedChangeListener checkedChangeListener;
 
   public MemeberCheckableItemHolder(Context context, ViewGroup root) {
     super(context, root, R.layout.conversation_add_members_item);
@@ -52,9 +53,10 @@ public class MemeberCheckableItemHolder extends CommonViewHolder<LeanchatUser> {
   @Override
   public void bindData(LeanchatUser user) {
     if (null != user) {
-      ImageLoader.getInstance().displayImage(user.getAvatarUrl(), avatarView, PhotoUtils.avatarImageOptions);
+      Picasso.with(getContext()).load(user.getAvatarUrl()).into(avatarView);
       nameView.setText(user.getUsername());
     } else {
+      avatarView.setImageResource(0);
       nameView.setText("");
     }
   }

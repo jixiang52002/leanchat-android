@@ -12,31 +12,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMConversation;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
 import com.avoscloud.chat.R;
+import com.avoscloud.chat.adapter.HeaderListAdapter;
 import com.avoscloud.chat.event.ConversationMemberClickEvent;
 import com.avoscloud.chat.friends.ContactPersonInfoActivity;
+import com.avoscloud.chat.model.ConversationType;
+import com.avoscloud.chat.util.Constants;
+import com.avoscloud.chat.util.ConversationUtils;
+import com.avoscloud.chat.util.Utils;
+import com.avoscloud.chat.viewholder.ConversationDetailItemHolder;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.util.UserCacheUtils;
 import com.avoscloud.chat.util.UserCacheUtils.CacheUserCallback;
-import com.avoscloud.chat.util.Utils;
-import com.avoscloud.chat.viewholder.ConversationDetailItemHolder;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
-import com.avoscloud.leanchatlib.adapter.HeaderListAdapter;
-import com.avoscloud.leanchatlib.controller.ChatManager;
-import com.avoscloud.leanchatlib.controller.ConversationHelper;
-import com.avoscloud.leanchatlib.controller.RoomsTable;
-import com.avoscloud.leanchatlib.model.ConversationType;
-import com.avoscloud.leanchatlib.utils.Constants;
-import com.avoscloud.leanchatlib.utils.ConversationManager;
 
 import java.util.Arrays;
 import java.util.List;
 
 import butterknife.Bind;
+import cn.leancloud.chatkit.LCChatKit;
+import cn.leancloud.chatkit.cache.LCIMConversationItemCache;
+import cn.leancloud.chatkit.utils.LCIMConstants;
 
 /**
  * Created by lzw on 14-10-11.
@@ -54,16 +52,16 @@ public class ConversationDetailActivity extends AVBaseActivity {
   View nameLayout;
   View quitLayout;
 
+  ConversationType conversationType;
+
   private AVIMConversation conversation;
-  private ConversationType conversationType;
-  private ConversationManager conversationManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.conversation_detail_activity);
-    String conversationId = getIntent().getStringExtra(Constants.CONVERSATION_ID);
-    conversation = AVIMClient.getInstance(ChatManager.getInstance().getSelfId()).getConversation(conversationId);
+    String conversationId = getIntent().getStringExtra(LCIMConstants.CONVERSATION_ID);
+    conversation = LCChatKit.getInstance().getClient().getConversation(conversationId);
 
     View footerView = getLayoutInflater().inflate(R.layout.conversation_detail_footer_layout, null);
     nameLayout = footerView.findViewById(R.id.name_layout);
@@ -93,9 +91,8 @@ public class ConversationDetailActivity extends AVBaseActivity {
 
     recyclerView.setLayoutManager(layoutManager);
     recyclerView.setAdapter(listAdapter);
-
-    initData();
     setTitle(R.string.conversation_detail_title);
+    conversationType = ConversationUtils.typeOfConversation(conversation);
     setViewByConvType(conversationType);
   }
 
@@ -126,7 +123,7 @@ public class ConversationDetailActivity extends AVBaseActivity {
     int menuId = item.getItemId();
     if (menuId == ADD_MEMBERS) {
       Intent intent = new Intent(this, ConversationAddMembersActivity.class);
-      intent.putExtra(Constants.CONVERSATION_ID, conversation.getConversationId());
+      intent.putExtra(LCIMConstants.CONVERSATION_ID, conversation.getConversationId());
       startActivityForResult(intent, ADD_MEMBERS);
     }
     return super.onOptionsItemSelected(item);
@@ -140,11 +137,6 @@ public class ConversationDetailActivity extends AVBaseActivity {
         listAdapter.notifyDataSetChanged();
       }
     });
-  }
-
-  private void initData() {
-    conversationManager = ConversationManager.getInstance();
-    conversationType = ConversationHelper.typeOfConversation(conversation);
   }
 
   public void onEvent(ConversationMemberClickEvent clickEvent) {
@@ -174,22 +166,22 @@ public class ConversationDetailActivity extends AVBaseActivity {
     boolean isTheOwner = conversation.getCreator().equals(memberId);
     if (!isTheOwner) {
       new AlertDialog.Builder(this).setMessage(R.string.conversation_kickTips)
-              .setPositiveButton(R.string.common_sure, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                  final ProgressDialog progress = showSpinnerDialog();
-                  conversation.kickMembers(Arrays.asList(memberId), new AVIMConversationCallback() {
-                    @Override
-                    public void done(AVIMException e) {
-                      progress.dismiss();
-                      if (filterException(e)) {
-                        Utils.toast(R.string.conversation_detail_kickSucceed);
-                        refresh();
-                      }
-                    }
-                  });
+        .setPositiveButton(R.string.common_sure, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            final ProgressDialog progress = showSpinnerDialog();
+            conversation.kickMembers(Arrays.asList(memberId), new AVIMConversationCallback() {
+              @Override
+              public void done(AVIMException e) {
+                progress.dismiss();
+                if (filterException(e)) {
+                  Utils.toast(R.string.conversation_detail_kickSucceed);
+                  refresh();
                 }
-              }).setNegativeButton(R.string.chat_common_cancel, null).show();
+              }
+            });
+          }
+        }).setNegativeButton(R.string.chat_common_cancel, null).show();
     }
   }
 
@@ -198,24 +190,23 @@ public class ConversationDetailActivity extends AVBaseActivity {
    */
   private void quitGroup() {
     new AlertDialog.Builder(this).setMessage(R.string.conversation_quit_group_tip)
-            .setPositiveButton(R.string.common_sure, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                final String convid = conversation.getConversationId();
-                conversation.quit(new AVIMConversationCallback() {
-                  @Override
-                  public void done(AVIMException e) {
-                    if (filterException(e)) {
-                      RoomsTable roomsTable = ChatManager.getInstance().getRoomsTable();
-                      roomsTable.deleteRoom(convid);
-                      Utils.toast(R.string.conversation_alreadyQuitConv);
-                      setResult(RESULT_OK);
-                      finish();
-                    }
-                  }
-                });
+      .setPositiveButton(R.string.common_sure, new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+          final String convid = conversation.getConversationId();
+          conversation.quit(new AVIMConversationCallback() {
+            @Override
+            public void done(AVIMException e) {
+              if (filterException(e)) {
+                LCIMConversationItemCache.getInstance().deleteConversation(convid);
+                Utils.toast(R.string.conversation_alreadyQuitConv);
+                setResult(RESULT_OK);
+                finish();
               }
-            }).setNegativeButton(R.string.chat_common_cancel, null).show();
+            }
+          });
+        }
+      }).setNegativeButton(R.string.chat_common_cancel, null).show();
   }
 
   @Override
@@ -223,7 +214,7 @@ public class ConversationDetailActivity extends AVBaseActivity {
     if (resultCode == RESULT_OK) {
       if (requestCode == INTENT_NAME) {
         String newName = data.getStringExtra(Constants.INTENT_VALUE);
-        conversationManager.updateName(conversation, newName, new AVIMConversationCallback() {
+        updateName(conversation, newName, new AVIMConversationCallback() {
           @Override
           public void done(AVIMException e) {
             if (filterException(e)) {
@@ -236,5 +227,23 @@ public class ConversationDetailActivity extends AVBaseActivity {
       }
     }
     super.onActivityResult(requestCode, resultCode, data);
+  }
+
+  public void updateName(final AVIMConversation conv, String newName, final AVIMConversationCallback callback) {
+    conv.setName(newName);
+    conv.updateInfoInBackground(new AVIMConversationCallback() {
+      @Override
+      public void done(AVIMException e) {
+        if (e != null) {
+          if (callback != null) {
+            callback.done(e);
+          }
+        } else {
+          if (callback != null) {
+            callback.done(null);
+          }
+        }
+      }
+    });
   }
 }

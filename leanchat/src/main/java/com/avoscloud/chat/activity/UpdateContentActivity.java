@@ -7,8 +7,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.avoscloud.chat.R;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
-import com.avoscloud.leanchatlib.utils.Constants;
+import com.avoscloud.chat.util.Constants;
 
 /**
  * Created by lzw on 14-9-17.

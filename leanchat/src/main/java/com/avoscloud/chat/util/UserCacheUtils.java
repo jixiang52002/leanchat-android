@@ -6,7 +6,6 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

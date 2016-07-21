@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import com.avoscloud.leanchatlib.utils.LogUtils;
 
 /**
  * Created by lzw on 14-6-7.
@@ -46,7 +45,6 @@ public abstract class NetAsyncTask extends AsyncTask<Void, Void, Void> {
     try {
       doInBack();
     } catch (Exception e) {
-      LogUtils.logException(e);
       exception = e;
     }
     return null;

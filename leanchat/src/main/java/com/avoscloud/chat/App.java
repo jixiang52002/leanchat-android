@@ -1,37 +1,35 @@
 package com.avoscloud.chat;
 
 import android.app.Application;
-import android.content.Context;
 import android.os.StrictMode;
 import android.text.TextUtils;
 
 import com.avos.avoscloud.AVAnalytics;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.im.v2.AVIMMessageManager;
 import com.avoscloud.chat.friends.AddRequest;
+import com.avoscloud.chat.model.LCIMRedPacketMessage;
+import com.avoscloud.chat.model.LCIMRedPcketAckMessage;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.model.UpdateInfo;
+import com.avoscloud.chat.redpacket.GetUserBeanCallback;
+import com.avoscloud.chat.redpacket.GetUserInfoCallback;
+import com.avoscloud.chat.redpacket.RedPacketUtils;
+import com.avoscloud.chat.redpacket.UserBeanCallback;
+import com.avoscloud.chat.redpacket.UserInfoCallback;
 import com.avoscloud.chat.service.PushManager;
 import com.avoscloud.chat.util.LeanchatUserProvider;
 import com.avoscloud.chat.util.UserCacheUtils;
 import com.avoscloud.chat.util.Utils;
-import com.avoscloud.leanchatlib.controller.ChatManager;
-import com.avoscloud.leanchatlib.redpacket.GetUserBeanCallback;
-import com.avoscloud.leanchatlib.redpacket.GetUserInfoCallback;
-import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
-import com.avoscloud.leanchatlib.redpacket.UserBeanCallback;
-import com.avoscloud.leanchatlib.redpacket.UserInfoCallback;
-import com.avoscloud.leanchatlib.utils.ThirdPartUserUtils;
 import com.baidu.mapapi.SDKInitializer;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.yunzhanghu.redpacketsdk.RedPacket;
 import com.yunzhanghu.redpacketsdk.bean.RPUserBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.leancloud.chatkit.LCChatKit;
 
 /**
  * Created by lzw on 14-5-29.
@@ -54,24 +52,25 @@ public class App extends Application {
     AVObject.registerSubclass(AddRequest.class);
     AVObject.registerSubclass(UpdateInfo.class);
 
-    AVOSCloud.initialize(this, appId, appKey);
-
     // 节省流量
     AVOSCloud.setLastModifyEnabled(true);
+
+    AVIMMessageManager.registerAVIMMessageType(LCIMRedPacketMessage.class);
+    AVIMMessageManager.registerAVIMMessageType(LCIMRedPcketAckMessage.class);
+    LCChatKit.getInstance().setProfileProvider(new LeanchatUserProvider());
+    LCChatKit.getInstance().init(this, appId, appKey);
+
+    // 初始化红包操作
+    initRedData();
+    RedPacket.getInstance().initContext(ctx);
 
     PushManager.getInstance().init(ctx);
     AVOSCloud.setDebugLogEnabled(debug);
     AVAnalytics.enableCrashReport(this, !debug);
-    initImageLoader(ctx);
     initBaiduMap();
     if (App.debug) {
       openStrictMode();
     }
-    initRedData();
-    ThirdPartUserUtils.setThirdPartUserProvider(new LeanchatUserProvider());
-    ChatManager.getInstance().init(this);
-    ChatManager.getInstance().setDebugEnabled(App.debug);
-    RedPacket.getInstance().initContext(ctx);
   }
 
   /**
@@ -157,20 +156,6 @@ public class App extends Application {
             .penaltyLog()
             //.penaltyDeath()
             .build());
-  }
-
-  /**
-   * 初始化ImageLoader
-   */
-  public static void initImageLoader(Context context) {
-    ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-            context)
-            .threadPoolSize(3).threadPriority(Thread.NORM_PRIORITY - 2)
-            //.memoryCache(new WeakMemoryCache())
-            .denyCacheImageMultipleSizesInMemory()
-            .tasksProcessingOrder(QueueProcessingType.LIFO)
-            .build();
-    ImageLoader.getInstance().init(config);
   }
 
   private void initBaiduMap() {

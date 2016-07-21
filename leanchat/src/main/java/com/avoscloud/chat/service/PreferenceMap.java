@@ -6,9 +6,9 @@ import android.preference.PreferenceManager;
 import com.avos.avoscloud.AVGeoPoint;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.App;
-import com.avoscloud.leanchatlib.utils.LogUtils;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.Constants;
+import com.avoscloud.chat.util.Constants;
+import com.avoscloud.chat.util.LogUtils;
 
 /**
  * Created by lzw on 14-6-19.

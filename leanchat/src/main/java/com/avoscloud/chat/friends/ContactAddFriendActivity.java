@@ -13,13 +13,13 @@ import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.App;
-import com.avoscloud.chat.viewholder.SearchUserItemHolder;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
-import com.avoscloud.leanchatlib.adapter.HeaderListAdapter;
+import com.avoscloud.chat.activity.AVBaseActivity;
+import com.avoscloud.chat.adapter.HeaderListAdapter;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.Constants;
+import com.avoscloud.chat.util.Constants;
 import com.avoscloud.chat.util.UserCacheUtils;
-import com.avoscloud.leanchatlib.view.RefreshableRecyclerView;
+import com.avoscloud.chat.view.RefreshableRecyclerView;
+import com.avoscloud.chat.viewholder.SearchUserItemHolder;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
+
 import com.avoscloud.chat.R;
 
 /**
@@ -72,14 +73,6 @@ public class HeaderLayout extends LinearLayout {
     View imageViewLayout = mInflater.inflate(R.layout.chat_common_base_header_right_image_btn, null, false);
     ImageButton rightButton = (ImageButton) imageViewLayout.findViewById(R.id.imageBtn);
     rightButton.setImageResource(rightResId);
-    rightButton.setOnClickListener(listener);
-    rightContainer.addView(imageViewLayout);
-  }
-
-  public void showRightTextButton(int rightResId, OnClickListener listener) {
-    View imageViewLayout = mInflater.inflate(R.layout.chat_common_base_header_right_btn, null, false);
-    Button rightButton = (Button) imageViewLayout.findViewById(R.id.textBtn);
-    rightButton.setText(rightResId);
     rightButton.setOnClickListener(listener);
     rightContainer.addView(imageViewLayout);
   }

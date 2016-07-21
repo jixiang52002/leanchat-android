@@ -14,14 +14,13 @@ import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.model.LeanchatUser;
+import com.avoscloud.chat.redpacket.RedPacketUtils;
+import com.avoscloud.chat.redpacket.RequestTask;
 import com.avoscloud.chat.util.Utils;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
-import com.avoscloud.leanchatlib.controller.ChatManager;
-import com.avoscloud.leanchatlib.redpacket.RedPacketUtils;
-import com.avoscloud.leanchatlib.redpacket.RequestTask;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import cn.leancloud.chatkit.LCChatKit;
 
 public class EntryLoginActivity extends AVBaseActivity {
 
@@ -81,7 +80,7 @@ public class EntryLoginActivity extends AVBaseActivity {
    * 如果验证账号密码成功，然后再 openClient 进行实时通讯
    */
   public void imLogin() {
-    ChatManager.getInstance().openClient(this, LeanchatUser.getCurrentUserId(), new AVIMClientCallback() {
+    LCChatKit.getInstance().open(LeanchatUser.getCurrentUserId(), new AVIMClientCallback() {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
         if (filterException(e)) {

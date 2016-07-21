@@ -20,7 +20,8 @@
 
         <EditText
             android:id="@+id/activity_login_et_username"
-            style="@style/EditText.UserName"
+            android:singleLine="true"
+            android:maxLength="30"
             android:layout_width="match_parent"
             android:layout_height="@dimen/base_action_bar_height"
             android:layout_marginTop="40dp"
@@ -35,13 +36,13 @@
 
         <EditText
             android:id="@+id/activity_login_et_password"
-            style="@style/EditText.Password"
+            android:singleLine="true"
+            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="@dimen/base_action_bar_height"
             android:drawableLeft="@drawable/login_icon_password"
             android:drawablePadding="25dip"
             android:hint="@string/login_password_hint"
-            android:inputType="textPassword"
             android:paddingLeft="15dip"
             android:textColorHint="#ffdddddd"/>
 
@@ -53,7 +54,7 @@
             android:background="@drawable/common_btn"
             android:gravity="center"
             android:text="@string/login"
-            android:textColor="@color/chat_base_color_text_white"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/text_size_large"/>
 
         <LinearLayout
