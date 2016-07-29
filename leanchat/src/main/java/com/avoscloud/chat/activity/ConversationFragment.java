@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -21,11 +22,14 @@ import com.avoscloud.chat.event.RedPacketAckEvent;
 import com.avoscloud.chat.model.ConversationType;
 import com.avoscloud.chat.model.LCIMRedPacketMessage;
 import com.avoscloud.chat.model.LeanchatUser;
+import com.avoscloud.chat.redpacket.GetGroupMemberCallback;
 import com.avoscloud.chat.redpacket.RedPacketUtils;
-import com.avoscloud.chat.redpacket.UserInfoCallback;
 import com.avoscloud.chat.util.ConversationUtils;
 import com.yunzhanghu.redpacketsdk.bean.RPUserBean;
 import com.yunzhanghu.redpacketsdk.constant.RPConstant;
+import com.yunzhanghu.redpacketui.callback.GroupMemberCallback;
+import com.yunzhanghu.redpacketui.callback.NotifyGroupMemberCallback;
+import com.yunzhanghu.redpacketui.utils.RPGroupMemberUtil;
 
 import java.util.List;
 
@@ -114,6 +118,7 @@ public class ConversationFragment extends LCIMConversationFragment {
   }
 
   private void gotoSingleRedPacket(final String peerId) {
+    Log.e("msg","======sign touserid=====>"+peerId+LeanchatUser.getCurrentUserId());
     int chatType = RPConstant.CHATTYPE_SINGLE;
     int membersNum = 0;
     String tpGroupId = "";
@@ -124,18 +129,29 @@ public class ConversationFragment extends LCIMConversationFragment {
 
   private void gotoGroupRedPacket() {
     final String fromNickname = LeanchatUser.getCurrentUser().getUsername();
-    final String fromAvatarUrl = LeanchatUser.getCurrentUserId();
-
+    final String fromAvatarUrl = LeanchatUser.getCurrentUser().getAvatarUrl();
+    final String toUserId=LeanchatUser.getCurrentUserId();
+    Log.e("msg","======Group touserid=====>"+toUserId+LeanchatUser.getCurrentUserId());
     /**
      * 发送专属红包用的,获取群组成员
      */
-    RedPacketUtils.getInstance().getmGetUserInfoCallback().done(imConversation.getMembers(), new UserInfoCallback() {
+    RedPacketUtils.getInstance().initRpGroupMember(imConversation.getMembers(), new GetGroupMemberCallback() {
       @Override
-      public void getUserInfo(List<RPUserBean> rpuserlist) {
+      public void groupInfoSuccess(final List<RPUserBean> rpUserList) {
         /**
-         * 发专属红包,把群组成员信息传给红包SDK
+         * 获取群成员消息成功调用
          */
-        RedPacketUtils.getInstance().initRpGroupMember(rpuserlist);
+        RPGroupMemberUtil.getInstance().setGroupMemberListener(new NotifyGroupMemberCallback() {
+          @Override
+          public void getGroupMember(String s, GroupMemberCallback groupMemberCallback) {
+            groupMemberCallback.setGroupMember(rpUserList);
+          }
+        });
+      }
+
+      @Override
+      public void groupInfoError() {
+
       }
     });
 
@@ -145,7 +161,7 @@ public class ConversationFragment extends LCIMConversationFragment {
         int chatType = RPConstant.CHATTYPE_GROUP;
         String tpGroupId = imConversation.getConversationId();
         int membersNum = integer;
-        RedPacketUtils.selectRedPacket(ConversationFragment.this, "", fromNickname, fromAvatarUrl, chatType, tpGroupId, membersNum, REQUEST_CODE_SEND_RED_PACKET);
+        RedPacketUtils.selectRedPacket(ConversationFragment.this, toUserId, fromNickname, fromAvatarUrl, chatType, tpGroupId, membersNum, REQUEST_CODE_SEND_RED_PACKET);
       }
     });
   }

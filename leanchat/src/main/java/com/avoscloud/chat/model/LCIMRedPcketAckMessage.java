@@ -15,8 +15,8 @@ import cn.leancloud.chatkit.LCChatMessageInterface;
  */
 @AVIMMessageType(type = LCIMRedPcketAckMessage.RED_PACKET_ACK_MESSAGE_TYPE)
 public class LCIMRedPcketAckMessage extends AVIMTypedMessage implements LCChatMessageInterface {
-
-  public LCIMRedPcketAckMessage() {}
+  public LCIMRedPcketAckMessage() {
+  }
 
   public static final Creator<LCIMRedPcketAckMessage> CREATOR = new AVIMMessageCreator<LCIMRedPcketAckMessage>(LCIMRedPcketAckMessage.class);
 
@@ -51,6 +51,20 @@ public class LCIMRedPcketAckMessage extends AVIMTypedMessage implements LCChatMe
 
   @Override
   public String getShorthand() {
+    String userId=LeanchatUser.getCurrentUserId();
+    if (userId.equals(senderId)&&userId.equals(recipientId)){
+      return "你领取了自己的红包";
+    }else if (userId.equals(senderId)&&!userId.equals(recipientId)){
+      return recipientName+"领取了你的红包";
+    }else if (!userId.equals(senderId)&&userId.equals(recipientId)){
+      return "你领取了"+senderName+"的红包";
+    }else if (!userId.equals(senderId)&&!userId.equals(recipientId)){
+      if (senderId.equals(recipientId)){
+        return recipientName+"领取了自己的红包";
+      }else {
+        return recipientName+"领取了"+senderName+"的红包";
+      }
+    }
     return null;
   }
 

@@ -38,7 +38,7 @@ public class LCIMRedPacketMessage extends AVIMTypedMessage implements LCChatMess
 
   @Override
   public String getShorthand() {
-    return "[LeanCloud红包]" + greeting;
+    return "[云账户红包]" + greeting;
   }
 
   public String getReadPacketId() {

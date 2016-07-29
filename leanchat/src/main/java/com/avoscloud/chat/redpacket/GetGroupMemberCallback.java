@@ -7,6 +7,8 @@ import java.util.List;
 /**
  * Created by hhx on 16/6/29.
  */
-public interface UserInfoCallback {
-  void getUserInfo(List<RPUserBean> userlist);
+public interface GetGroupMemberCallback {
+  void groupInfoSuccess(List<RPUserBean> rpUserList);
+
+  void groupInfoError();
 }

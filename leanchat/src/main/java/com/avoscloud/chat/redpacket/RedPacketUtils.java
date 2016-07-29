@@ -5,16 +5,24 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.avoscloud.chat.model.LeanchatUser;
+import com.avoscloud.chat.util.UserCacheUtils;
 import com.yunzhanghu.redpacketsdk.bean.RPUserBean;
 import com.yunzhanghu.redpacketsdk.bean.RedPacketInfo;
 import com.yunzhanghu.redpacketsdk.bean.TokenData;
 import com.yunzhanghu.redpacketsdk.constant.RPConstant;
-import com.yunzhanghu.redpacketui.callback.GroupMemberCallback;
-import com.yunzhanghu.redpacketui.callback.NotifyGroupMemberCallback;
 import com.yunzhanghu.redpacketui.ui.activity.RPChangeActivity;
 import com.yunzhanghu.redpacketui.ui.activity.RPRedPacketActivity;
-import com.yunzhanghu.redpacketui.utils.RPGroupMemberUtil;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,32 +31,16 @@ import java.util.List;
 public class RedPacketUtils {
 
   public static final String EXTRA_RED_PACKET_SENDER_ID = "money_sender_id";
-  public static final String MESSAGE_ATTR_IS_RED_PACKET_ACK_MESSAGE = "is_open_money_msg";
-  public static final String MESSAGE_ATTR_IS_RED_PACKET_MESSAGE = "is_money_msg";
   public static final String EXTRA_RED_PACKET_SENDER_NAME = "money_sender";
-  public static final String EXTRA_RED_PACKET_RECEIVER_NAME = "money_receiver";
-  public static final String EXTRA_RED_PACKET_RECEIVER_ID = "money_receiver_id";
-  public static final String EXTRA_SPONSOR_NAME = "money_sponsor_name";
-  public static final String EXTRA_RED_PACKET_GREETING = "money_greeting";
-  public static final String EXTRA_RED_PACKET_ID = "ID";
   public static final String MESSAGE_DIRECT_SEND = "SEND";
   public static final String MESSAGE_DIRECT_RECEIVE = "RECEIVE";
-  public static final String KEY_USER_ID = "id";
-  public static final String KEY_USER_NAME = "username";
-  public static final String KEY_RED_PACKET = "redpacket";
-  public static final String KEY_RED_PACKET_USER = "redpacket_user";
-  public static final String KEY_TYPE = "type";
-  public static final String VALUE_TYPE = "redpacket_taken";
-  public static final String KEY_RED_PACKET_TYPE = "red_packet_type";
-  public static final String KEY_RED_PACKET_SPECIAL_RECEIVEID = "special_money_receiver_id";
   private static RedPacketUtils mRedPacketUtil;
 
-  private GetUserInfoCallback mGetUserInfoCallback;
-  private GetUserBeanCallback mGetUserBeanCallback;
+  private GetGroupMemberCallback mGetGroupMemberCallback;//获取群组成员的回调,可以根据自己的需要选择需不需要
+  private GetUserInfoCallback mGetUserInfoCallback;//获取个人信息的回调,打开专属红包时需要,可以根据自己需要进行选择
+  private GetSignInfoCallback mGetSignInfoCallback;//获取sign的回调
+  private RequestQueue mQueue;
   private TokenData mTokenData;//打开红包时需要转登录时获取的数据
-  private String userId;//当前用户id;
-  private String userName;//当前用户姓名
-  private String userAvatar;//当前用户头像
 
   private RedPacketUtils() {
 
@@ -84,7 +76,6 @@ public class RedPacketUtils {
     redPacketInfo.chatType = chatType;//判断是否是单聊
     redPacketInfo.toGroupId = toGroupId;//群id
     redPacketInfo.groupMemberCount = groupMemberCount;//群成员数量
-//        redPacketInfo.chatType = chatType;
     return redPacketInfo;
   }
 
@@ -105,30 +96,6 @@ public class RedPacketUtils {
     redPacketInfo.moneyID = moneyId;
     redPacketInfo.toAvatarUrl = fromAvatarUrl;
     redPacketInfo.toNickName = fromNickname;
-    return redPacketInfo;
-  }
-
-  /**
-   * 打开专属红包用
-   *
-   * @param rpUserBean
-   * @param fromNickname
-   * @param fromAvatarUrl
-   * @param moneyMsgDirect
-   * @param chatType
-   * @param moneyId
-   * @return
-   */
-  public static RedPacketInfo initRedPacketInfo_received(RPUserBean rpUserBean, String fromNickname, String fromAvatarUrl, String moneyMsgDirect, int chatType, String moneyId) {
-    RedPacketInfo redPacketInfo = new RedPacketInfo();
-    redPacketInfo.moneyMsgDirect = moneyMsgDirect;
-    redPacketInfo.chatType = chatType;
-    redPacketInfo.moneyID = moneyId;
-    redPacketInfo.toAvatarUrl = fromAvatarUrl;
-    redPacketInfo.toNickName = fromNickname;
-    redPacketInfo.specialNickname = rpUserBean.userNickname;
-    redPacketInfo.specialAvatarUrl = rpUserBean.userAvatar;
-    redPacketInfo.toUserId = RedPacketUtils.getInstance().getUserId();
     return redPacketInfo;
   }
 
@@ -155,22 +122,121 @@ public class RedPacketUtils {
       return;
     }
     intent.putExtra(RPConstant.EXTRA_RED_PACKET_INFO, redpacketInfo);
-    intent.putExtra(RPConstant.EXTRA_TOKEN_DATA, RedPacketUtils.getInstance().getmTokenData());
+    intent.putExtra(RPConstant.EXTRA_TOKEN_DATA, RedPacketUtils.getInstance().getTokenData());
     fragment.startActivityForResult(intent, REQUEST_CODE_SEND_MONEY);
   }
 
   /**
    * 群红包中发专属红包用的
-   *
-   * @param rpUserlist
+   * 根据一个群成员的id集合,查出群成员的具体信息,发专属红包时需要传群成员信息
    */
-  public void initRpGroupMember(final List<RPUserBean> rpUserlist) {
-    RPGroupMemberUtil.getInstance().setGroupMemberListener(new NotifyGroupMemberCallback() {
+
+  public void initRpGroupMember(List<String> ids,GetGroupMemberCallback callback) {
+    mGetGroupMemberCallback=callback;
+    final List<RPUserBean> rpUserList = new ArrayList<RPUserBean>();
+
+    UserCacheUtils.fetchUsers(ids, new UserCacheUtils.CacheUserCallback() {
+      RPUserBean rpUserBean;
+
       @Override
-      public void getGroupMember(String s, GroupMemberCallback groupMemberCallback) {
-        groupMemberCallback.setGroupMember(rpUserlist);
+      public void done(List<LeanchatUser> userList, Exception e) {
+        if (userList != null) {
+          for (int i = 0; i < userList.size(); i++) {
+            rpUserBean = new RPUserBean();
+            if (!LeanchatUser.getCurrentUserId().equals(userList.get(i).getObjectId())) {
+
+              rpUserBean.userId = userList.get(i).getObjectId();
+              rpUserBean.userNickname = userList.get(i).getUsername();
+              if (!TextUtils.isEmpty(userList.get(i).getAvatarUrl())) {
+                rpUserBean.userAvatar = userList.get(i).getAvatarUrl();
+              } else {
+                rpUserBean.userAvatar = "none";
+              }
+              rpUserList.add(rpUserBean);
+            }
+          }
+        }
+        /**
+         * 查到数据进行回调
+         */
+        if (rpUserList!=null&&rpUserList.size()>0){
+          mGetGroupMemberCallback.groupInfoSuccess(rpUserList);
+        }else {
+          mGetGroupMemberCallback.groupInfoError();
+        }
       }
     });
+
+  }
+
+  /**
+   * 根据用户id,获取接收专属红包人的用户信息
+   * @param id
+   * @param callback
+   */
+  public void getReceiveInfo(String id,GetUserInfoCallback callback){
+    mGetUserInfoCallback=callback;
+    RPUserBean rpUserBean = new RPUserBean();
+    if (!TextUtils.isEmpty(id)) {
+      rpUserBean.userId = id;
+    }
+    if (UserCacheUtils.getCachedUser(id) != null) {
+      if (!TextUtils.isEmpty(UserCacheUtils.getCachedUser(id).getUsername())) {
+
+        rpUserBean.userNickname = UserCacheUtils.getCachedUser(id).getUsername();
+      }
+      if (!TextUtils.isEmpty(UserCacheUtils.getCachedUser(id).getAvatarUrl())) {
+
+        rpUserBean.userAvatar = UserCacheUtils.getCachedUser(id).getAvatarUrl();
+      } else {
+        rpUserBean.userAvatar = "none";
+      }
+    }
+    if (rpUserBean!=null){
+      mGetUserInfoCallback.userInfoSuccess(rpUserBean);
+    }else {
+      mGetUserInfoCallback.userInfoError();
+    }
+
+  }
+
+  /**
+   * 获取sign
+   * @param context
+   */
+  public void initRedPacketNet(Context context,String mockUrl,GetSignInfoCallback callback) {
+    mGetSignInfoCallback=callback;
+//    String mockUrl = "http://rpv2.yunzhanghu.com/api/sign?duid=" + userID;
+    mQueue = Volley.newRequestQueue(context);
+    StringRequest stringRequest = new StringRequest(mockUrl, new Response.Listener<String>() {
+      @Override
+      public void onResponse(String s) {
+        try {
+          if (s != null) {
+            JSONObject jsonObj = new JSONObject(s);
+            final String partner = jsonObj.getString("partner");
+            final String userId = jsonObj.getString("user_id");
+            final String timestamp = jsonObj.getString("timestamp");
+            final String sign = jsonObj.getString("sign");
+            /**
+             * 零钱页和领取红包和发红包时都需要
+             */
+            initTokenData(partner, userId, timestamp, sign);
+            mGetSignInfoCallback.signInfoSuccess(getTokenData());
+          }
+
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }, new Response.ErrorListener() {
+      @Override
+      public void onErrorResponse(VolleyError volleyError) {
+        mGetSignInfoCallback.signInfoError(volleyError.toString());
+      }
+    });
+    stringRequest.setRetryPolicy(new DefaultRetryPolicy(3000, 2, 2));
+    mQueue.add(stringRequest);
   }
 
   /**
@@ -189,12 +255,8 @@ public class RedPacketUtils {
     mTokenData.authSign = authSign;
   }
 
-  public TokenData getmTokenData() {
+  public TokenData getTokenData() {
     return mTokenData;
-  }
-
-  public void setmTokenData(TokenData mAuthData) {
-    this.mTokenData = mAuthData;
   }
 
   /**
@@ -202,76 +264,14 @@ public class RedPacketUtils {
    *
    * @param mContext
    */
-  public void toChangeActivity(Context mContext) {
+  public void toChangeActivity(Context mContext,String userName,String userAvatar) {
     Intent intent = new Intent(mContext, RPChangeActivity.class);
-    // intent.putExtra(RPConstant.EXTRA_USER_NAME, userName);
-    // intent.putExtra(RPConstant.EXTRA_TO_USER_AVATAR, userAvatar);
     RedPacketInfo redPacketInfo = new RedPacketInfo();
     redPacketInfo.fromNickName = userName;
     redPacketInfo.fromAvatarUrl = userAvatar;
     intent.putExtra(RPConstant.EXTRA_RED_PACKET_INFO, redPacketInfo);
-    intent.putExtra(RPConstant.EXTRA_TOKEN_DATA, getmTokenData());
+    intent.putExtra(RPConstant.EXTRA_TOKEN_DATA, getTokenData());
     mContext.startActivity(intent);
   }
 
-  /**
-   * 初始化登录用户数据
-   */
-  public void initUserData(String id,String username,String userAvatar) {
-    if (!TextUtils.isEmpty(id)) {
-      RedPacketUtils.getInstance().setUserId(id);
-    } else {
-      RedPacketUtils.getInstance().setUserId("");
-    }
-      if (!TextUtils.isEmpty(username)) {
-        RedPacketUtils.getInstance().setUserName(username);
-      } else {
-        RedPacketUtils.getInstance().setUserName("");
-      }
-      if (!TextUtils.isEmpty(userAvatar)) {
-        RedPacketUtils.getInstance().setUserAvatar(userAvatar);
-      } else {
-        RedPacketUtils.getInstance().setUserAvatar("none");
-      }
-  }
-
-  public GetUserInfoCallback getmGetUserInfoCallback() {
-    return mGetUserInfoCallback;
-  }
-
-  public void setmGetUserInfoCallback(GetUserInfoCallback mGetUserInfoCallback) {
-    this.mGetUserInfoCallback = mGetUserInfoCallback;
-  }
-
-  public GetUserBeanCallback getmGetUserBeanCallback() {
-    return mGetUserBeanCallback;
-  }
-
-  public void setmGetUserBeanCallback(GetUserBeanCallback mGetUserBeanCallback) {
-    this.mGetUserBeanCallback = mGetUserBeanCallback;
-  }
-
-  public String getUserId() {
-    return userId;
-  }
-
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
-
-  public String getUserAvatar() {
-    return userAvatar;
-  }
-
-  public void setUserAvatar(String userAvatar) {
-    this.userAvatar = userAvatar;
-  }
 }
