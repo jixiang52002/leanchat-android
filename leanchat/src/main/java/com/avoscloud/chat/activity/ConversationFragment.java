@@ -198,6 +198,10 @@ public class ConversationFragment extends LCIMConversationFragment {
     }
   }
 
+  /**
+   * 发送红包之后设置红包消息的数据
+   * @param data
+   */
   private void processReadPack(Intent data) {
     if (data != null) {
       String greetings = data.getStringExtra(RPConstant.EXTRA_RED_PACKET_GREETING);

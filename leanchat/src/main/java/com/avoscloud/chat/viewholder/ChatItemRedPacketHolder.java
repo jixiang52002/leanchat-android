@@ -150,6 +150,9 @@ public class ChatItemRedPacketHolder extends LCIMChatItemHolder {
       new RPOpenPacketUtil.RPOpenPacketCallBack() {
         @Override
         public void onSuccess(String senderId, String senderNickname) {
+          /**
+           * 打开红包之后消息回执处理
+           */
           LCIMRedPcketAckMessage ackMessage = new LCIMRedPcketAckMessage();
           ackMessage.setSenderId(senderId);
           ackMessage.setSenderName(senderNickname);
