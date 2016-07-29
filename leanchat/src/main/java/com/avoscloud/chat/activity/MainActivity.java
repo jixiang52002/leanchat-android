@@ -75,7 +75,7 @@ public class MainActivity extends AVBaseActivity {
   }
 
   private void initRedPacketSign(){
-    final String mockUrl = "http://rpv2.yunzhanghu.com/api/sign?duid=" + LeanchatUser.getCurrentUserId();
+    String mockUrl = "http://rpv2.yunzhanghu.com/api/sign?duid=" + LeanchatUser.getCurrentUserId();
     RedPacketUtils.getInstance().initRedPacketNet(getApplicationContext(), mockUrl, new GetSignInfoCallback() {
       @Override
       public void signInfoSuccess(TokenData tokenData) {
