@@ -123,9 +123,9 @@ public class ChatItemRedPacketHolder extends LCIMChatItemHolder {
     final String selfId = LeanchatUser.getCurrentUserId();
     String moneyMsgDirect; /*判断发送还是接收*/
     if (message.getFrom() != null && message.getFrom().equals(selfId)) {
-      moneyMsgDirect = RedPacketUtils.MESSAGE_DIRECT_SEND;
+      moneyMsgDirect = RPConstant.MESSAGE_DIRECT_SEND;
     } else {
-      moneyMsgDirect = RedPacketUtils.MESSAGE_DIRECT_RECEIVE;
+      moneyMsgDirect = RPConstant.MESSAGE_DIRECT_RECEIVE;
     }
     int chatType=1;
     if (!TextUtils.isEmpty(message.getRedPacketType())){

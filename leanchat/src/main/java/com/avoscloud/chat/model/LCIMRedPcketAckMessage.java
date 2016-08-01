@@ -4,7 +4,6 @@ import com.avos.avoscloud.im.v2.AVIMMessageCreator;
 import com.avos.avoscloud.im.v2.AVIMMessageField;
 import com.avos.avoscloud.im.v2.AVIMMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
-import com.avoscloud.chat.redpacket.RedPacketUtils;
 import com.yunzhanghu.redpacketsdk.constant.RPConstant;
 
 import cn.leancloud.chatkit.LCChatMessageInterface;
@@ -25,13 +24,13 @@ public class LCIMRedPcketAckMessage extends AVIMTypedMessage implements LCChatMe
   /**
    * 红包的发送者 id
    */
-  @AVIMMessageField(name = RedPacketUtils.EXTRA_RED_PACKET_SENDER_ID)
+  @AVIMMessageField(name = RPConstant.EXTRA_RED_PACKET_SENDER_ID)
   private String senderId;
 
   /**
    * 红包的发送者 name
    */
-  @AVIMMessageField(name = RedPacketUtils.EXTRA_RED_PACKET_SENDER_NAME)
+  @AVIMMessageField(name = RPConstant.EXTRA_RED_PACKET_SENDER_NAME)
   private String senderName;
 
   /**

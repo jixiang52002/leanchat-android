@@ -30,10 +30,6 @@ import java.util.List;
  */
 public class RedPacketUtils {
 
-  public static final String EXTRA_RED_PACKET_SENDER_ID = "money_sender_id";
-  public static final String EXTRA_RED_PACKET_SENDER_NAME = "money_sender";
-  public static final String MESSAGE_DIRECT_SEND = "SEND";
-  public static final String MESSAGE_DIRECT_RECEIVE = "RECEIVE";
   private static RedPacketUtils mRedPacketUtil;
 
   private GetGroupMemberCallback mGetGroupMemberCallback;//获取群组成员的回调,可以根据自己的需要选择需不需要
