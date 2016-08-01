@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -118,7 +117,6 @@ public class ConversationFragment extends LCIMConversationFragment {
   }
 
   private void gotoSingleRedPacket(final String peerId) {
-    Log.e("msg","======sign touserid=====>"+peerId+LeanchatUser.getCurrentUserId());
     int chatType = RPConstant.CHATTYPE_SINGLE;
     int membersNum = 0;
     String tpGroupId = "";
@@ -130,8 +128,6 @@ public class ConversationFragment extends LCIMConversationFragment {
   private void gotoGroupRedPacket() {
     final String fromNickname = LeanchatUser.getCurrentUser().getUsername();
     final String fromAvatarUrl = LeanchatUser.getCurrentUser().getAvatarUrl();
-    final String toUserId=LeanchatUser.getCurrentUserId();
-    Log.e("msg","======Group touserid=====>"+toUserId+LeanchatUser.getCurrentUserId());
     /**
      * 发送专属红包用的,获取群组成员
      */
@@ -161,7 +157,7 @@ public class ConversationFragment extends LCIMConversationFragment {
         int chatType = RPConstant.CHATTYPE_GROUP;
         String tpGroupId = imConversation.getConversationId();
         int membersNum = integer;
-        RedPacketUtils.selectRedPacket(ConversationFragment.this, toUserId, fromNickname, fromAvatarUrl, chatType, tpGroupId, membersNum, REQUEST_CODE_SEND_RED_PACKET);
+        RedPacketUtils.selectRedPacket(ConversationFragment.this, "", fromNickname, fromAvatarUrl, chatType, tpGroupId, membersNum, REQUEST_CODE_SEND_RED_PACKET);
       }
     });
   }
