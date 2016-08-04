@@ -48,6 +48,9 @@ public class LCIMRedPcketAckMessage extends AVIMTypedMessage implements LCChatMe
   @AVIMMessageField(name = RPConstant.EXTRA_RED_PACKET_TYPE)
   private String redPacketType;
 
+  @AVIMMessageField(name = RPConstant.EXTRA_RED_PACKET_GREETING)
+  private String greeting;
+
   @Override
   public String getShorthand() {
     String userId=LeanchatUser.getCurrentUserId();
@@ -58,11 +61,7 @@ public class LCIMRedPcketAckMessage extends AVIMTypedMessage implements LCChatMe
     }else if (!userId.equals(senderId)&&userId.equals(recipientId)){
       return "你领取了"+senderName+"的红包";
     }else if (!userId.equals(senderId)&&!userId.equals(recipientId)){
-      if (senderId.equals(recipientId)){
-        return recipientName+"领取了自己的红包";
-      }else {
-        return recipientName+"领取了"+senderName+"的红包";
-      }
+      return greeting;
     }
     return null;
   }
@@ -105,5 +104,13 @@ public class LCIMRedPcketAckMessage extends AVIMTypedMessage implements LCChatMe
 
   public void setRedPacketType(String redPacketType) {
     this.redPacketType = redPacketType;
+  }
+
+  public String getGreeting() {
+    return greeting;
+  }
+
+  public void setGreeting(String greeting) {
+    this.greeting = greeting;
   }
 }

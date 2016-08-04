@@ -159,6 +159,7 @@ public class ChatItemRedPacketHolder extends LCIMChatItemHolder {
           ackMessage.setRecipientId(selfId);
           ackMessage.setRecipientName(selfName);
           ackMessage.setRedPacketType(message.getRedPacketType());
+          ackMessage.setGreeting("["+message.getSponsorName()+"]"+message.getGreeting());
           EventBus.getDefault().post(new RedPacketAckEvent(ackMessage));
         }
 
