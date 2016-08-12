@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
@@ -13,6 +14,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.util.UserCacheUtils;
+import com.yunzhanghu.redpacketsdk.RPRefreshSignListener;
+import com.yunzhanghu.redpacketsdk.RPValueCallback;
+import com.yunzhanghu.redpacketsdk.RedPacket;
 import com.yunzhanghu.redpacketsdk.bean.RPUserBean;
 import com.yunzhanghu.redpacketsdk.bean.RedPacketInfo;
 import com.yunzhanghu.redpacketsdk.bean.TokenData;
@@ -54,24 +58,27 @@ public class RedPacketUtils {
     return mRedPacketUtil;
   }
 
-
-  public static RedPacketInfo initRedPacketInfo_single(String fromNickname, String fromAvatarUrl, String toUserId, int chatType) {
-    RedPacketInfo redPacketInfo = new RedPacketInfo();
-    redPacketInfo.fromAvatarUrl = fromAvatarUrl;
-    redPacketInfo.fromNickName = fromNickname;
-    redPacketInfo.toUserId = toUserId;
-    redPacketInfo.chatType = chatType;
-    return redPacketInfo;
-  }
-
-  public static RedPacketInfo initRedPacketInfo_group(String fromNickname, String fromAvatarUrl, String toUserId, int chatType, String toGroupId, int groupMemberCount) {
+  /**
+   * 打开发送红包页面使用
+   * @param fromNickname
+   * @param fromAvatarUrl
+   * @param toUserId
+   * @param chatType
+   * @param toGroupId
+   * @param groupMemberCount
+   * @return
+   */
+  public static RedPacketInfo initRedPacketInfo(String fromNickname, String fromAvatarUrl, String toUserId, int chatType, String toGroupId, int groupMemberCount) {
     RedPacketInfo redPacketInfo = new RedPacketInfo();
     redPacketInfo.fromAvatarUrl = fromAvatarUrl;//发送人的头像
     redPacketInfo.fromNickName = fromNickname;//发送人的名字
-    redPacketInfo.toUserId = toUserId;
     redPacketInfo.chatType = chatType;//判断是否是单聊
-    redPacketInfo.toGroupId = toGroupId;//群id
-    redPacketInfo.groupMemberCount = groupMemberCount;//群成员数量
+    if (chatType==1){
+      redPacketInfo.toUserId = toUserId;
+    }else if (chatType==2){
+      redPacketInfo.toGroupId = toGroupId;//群id
+      redPacketInfo.groupMemberCount = groupMemberCount;//群成员数量
+    }
     return redPacketInfo;
   }
 
@@ -89,7 +96,7 @@ public class RedPacketUtils {
     RedPacketInfo redPacketInfo = new RedPacketInfo();
     redPacketInfo.moneyMsgDirect = moneyMsgDirect;
     redPacketInfo.chatType = chatType;
-    redPacketInfo.moneyID = moneyId;
+    redPacketInfo.redPacketId = moneyId;
     redPacketInfo.toAvatarUrl = fromAvatarUrl;
     redPacketInfo.toNickName = fromNickname;
     return redPacketInfo;
@@ -111,9 +118,9 @@ public class RedPacketUtils {
     Intent intent = new Intent(fragment.getActivity(), RPRedPacketActivity.class); /*接收者Id或者接收的群Id*/
     RedPacketInfo redpacketInfo;
     if (chatType == RPConstant.CHATTYPE_SINGLE) {
-      redpacketInfo = initRedPacketInfo_single(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_SINGLE);
+      redpacketInfo = initRedPacketInfo(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_SINGLE,tpGroupId,membersNum);
     } else if (chatType == RPConstant.CHATTYPE_GROUP) {
-      redpacketInfo = initRedPacketInfo_group(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_GROUP, tpGroupId, membersNum);
+      redpacketInfo = initRedPacketInfo(fromNickname, fromAvatarUrl, toUserId, RPConstant.CHATTYPE_GROUP, tpGroupId, membersNum);
     } else {
       return;
     }
@@ -197,12 +204,38 @@ public class RedPacketUtils {
   }
 
   /**
+   * 刷新sign
+   * @param context
+   * @param url
+   */
+  public void setRefreshSign(final Context context, final String url){
+    RedPacket.getInstance().setRefreshSignListener(new RPRefreshSignListener() {
+      @Override
+      public void onRefreshSign(final RPValueCallback<TokenData> rpValueCallback) {
+
+        getRedPacketSign(context, url, new GetSignInfoCallback() {
+          @Override
+          public void signInfoSuccess(TokenData tokenData) {
+            Log.e("msg", "----->红包SDK登录成功");
+            rpValueCallback.onSuccess(tokenData);
+          }
+
+          @Override
+          public void signInfoError(String errorMsg) {
+            Log.e("msg", "----->红包SDK登录失败"+errorMsg);
+          }
+        });
+      }
+    });
+
+  }
+
+  /**
    * 获取sign
    * @param context
    */
-  public void initRedPacketNet(Context context,String mockUrl,GetSignInfoCallback callback) {
+  public void getRedPacketSign(Context context,String mockUrl,GetSignInfoCallback callback) {
     mGetSignInfoCallback=callback;
-//    String mockUrl = "http://rpv2.yunzhanghu.com/api/sign?duid=" + userID;
     mQueue = Volley.newRequestQueue(context);
     StringRequest stringRequest = new StringRequest(mockUrl, new Response.Listener<String>() {
       @Override
@@ -252,6 +285,17 @@ public class RedPacketUtils {
   }
 
   public TokenData getTokenData() {
+    if (mTokenData==null){
+      mTokenData=new TokenData();
+      mTokenData.authSign="A7890";
+      mTokenData.appUserId=LeanchatUser.getCurrentUserId();
+    }else {
+      if (!LeanchatUser.getCurrentUserId().equals(mTokenData.appUserId)){//切换账号的时候
+        mTokenData=new TokenData();
+        mTokenData.authSign="A7891";
+        mTokenData.appUserId=LeanchatUser.getCurrentUserId();
+      }
+    }
     return mTokenData;
   }
 

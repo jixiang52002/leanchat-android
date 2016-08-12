@@ -5,32 +5,29 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVGeoPoint;
 import com.avos.avoscloud.SaveCallback;
-import com.avoscloud.chat.R;
 import com.avoscloud.chat.App;
+import com.avoscloud.chat.R;
 import com.avoscloud.chat.fragment.ConversationListFragment;
-import com.avoscloud.chat.redpacket.GetSignInfoCallback;
+import com.avoscloud.chat.fragment.DiscoverFragment;
+import com.avoscloud.chat.fragment.ProfileFragment;
+import com.avoscloud.chat.friends.ContactFragment;
+import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.redpacket.RedPacketUtils;
 import com.avoscloud.chat.service.PreferenceMap;
 import com.avoscloud.chat.service.UpdateService;
-import com.avoscloud.chat.friends.ContactFragment;
-import com.avoscloud.chat.fragment.DiscoverFragment;
-import com.avoscloud.chat.fragment.ProfileFragment;
 import com.avoscloud.chat.util.LogUtils;
-import com.avoscloud.chat.util.Utils;
-import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.util.UserCacheUtils;
+import com.avoscloud.chat.util.Utils;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.yunzhanghu.redpacketsdk.bean.TokenData;
 
 
 /**
@@ -60,6 +57,7 @@ public class MainActivity extends AVBaseActivity {
   ProfileFragment profileFragment;
   Button[] tabs;
   View recentTips, contactTips;
+  String mockUrl = "http://rpv2.yunzhanghu.com/api/sign?duid=" + LeanchatUser.getCurrentUserId();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -67,26 +65,12 @@ public class MainActivity extends AVBaseActivity {
     setContentView(R.layout.main_activity);
     findView();
     init();
-    initRedPacketSign();
+    RedPacketUtils.getInstance().setRefreshSign(MainActivity.this,mockUrl);
+
     conversationBtn.performClick();
     initBaiduLocClient();
     updateUserLocation();
     UserCacheUtils.cacheUser(LeanchatUser.getCurrentUser());
-  }
-
-  private void initRedPacketSign(){
-    String mockUrl = "http://rpv2.yunzhanghu.com/api/sign?duid=" + LeanchatUser.getCurrentUserId();
-    RedPacketUtils.getInstance().initRedPacketNet(getApplicationContext(), mockUrl, new GetSignInfoCallback() {
-      @Override
-      public void signInfoSuccess(TokenData tokenData) {
-        Log.e("msg", "----->红包SDK登录成功");
-      }
-
-      @Override
-      public void signInfoError(String errorMsg) {
-        Log.e("msg", "----->红包SDK登录失败");
-      }
-    });
   }
 
   @Override
