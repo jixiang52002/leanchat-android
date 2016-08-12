@@ -135,24 +135,9 @@ include ':leanchat', ':redpacketlibrary-aar'
 
 ```
     import com.yunzhanghu.redpacketui.RedPacketUtil;
-    import com.yunzhanghu.redpacketui.callback.GetSignInfoCallback;
     
-    private void initRedPacketSign(){
-    String mockUrl = "http://rpv2.yunzhanghu.com/api/sign?duid=" + LeanchatUser.getCurrentUserId();
-    RedPacketUtils.getInstance().initRedPacketNet(getApplicationContext(), mockUrl, new GetSignInfoCallback() {
-      @Override
-      public void signInfoSuccess(TokenData tokenData) {
-        Log.e("msg", "----->红包SDK登录成功");
-      }
+RedPacketUtils.getInstance().setRefreshSign(MainActivity.this,mockUrl);                         
 
-      @Override
-      public void signInfoError(String errorMsg) {
-        Log.e("msg", "----->红包SDK登录失败");
-      }
-    });
-  }
-                         
-**这个回调可以根据自己需要选择**
 ```
 
 ###3.5 ProfileFragment添加零钱页的入口
@@ -420,7 +405,37 @@ include ':leanchat', ':redpacketlibrary-aar'
     
 ``` 
 
+###4.3 ChatAdapter中处理是哪种红包消息
 
+```
+   /**
+   * 判断是什么红包类型的消息
+   * @param position
+   * @return
+   */
+
+  @Override
+  public int getItemViewType(int position) {
+    AVIMMessage message = messageList.get(position);
+    if (null != message && message instanceof AVIMTypedMessage) {
+      AVIMTypedMessage typedMessage = (AVIMTypedMessage) message;
+      boolean isMe = fromMe(typedMessage);
+      if (typedMessage.getMessageType() == LCIMRedPacketMessage.PACKMESSAGE_TYPE) {
+        return isMe ? ITEM_RIGHT_TEXT_REDPACKET : ITEM_LEFT_TEXT_REDPACKET;
+      } else if (typedMessage.getMessageType() == LCIMRedPcketAckMessage.RED_PACKET_ACK_MESSAGE_TYPE) {
+        String selfId = LCChatKit.getInstance().getCurrentUserId();
+        LCIMRedPcketAckMessage ackMessage = (LCIMRedPcketAckMessage) typedMessage;
+        if (!TextUtils.isEmpty(ackMessage.getSenderId()) && !TextUtils.isEmpty(ackMessage.getRecipientId())) {
+          return ackMessage.getSenderId().equals(selfId) || ackMessage.getRecipientId().equals(selfId)
+            ? ITEM_TEXT_REDPACKET_NOTIFY : ITEM_TEXT_REDPACKET_NOTIFY_MEMBER;
+        } else {
+          return ITEM_TEXT_REDPACKET_NOTIFY_MEMBER;
+        }
+      }
+    }
+    return super.getItemViewType(position);
+  }    
+``` 
 
 
 
