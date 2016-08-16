@@ -142,13 +142,13 @@ RedPacketUtils.getInstance().setRefreshSign(MainActivity.this,mockUrl);
 
 ###3.5 ProfileFragment添加零钱页的入口
 
-* 在需要添加零钱的页面调用下面的方法* 
+* 在需要添加零钱的页面调用下面的方法
    
 ```
-    @OnClick(R.id.profile_redpacket_view)
-  public void onRPClick() {
-    RedPacketUtils.getInstance().toChangeActivity(getActivity(),LeanchatUser.getCurrentUser().getUsername(),LeanchatUser.getCurrentUser().getAvatarUrl());
-  }
+
+  RPChangeActivity（零钱页面），跳转到零钱页面需要用户头像和用户名。具体的形式在RedPacketUtils
+  的toChangeActivity方法中有展示。
+
 
 ```
 
@@ -183,9 +183,11 @@ RedPacketUtils.getInstance().setRefreshSign(MainActivity.this,mockUrl);
 * 添加单聊红包入口
 
 ```
+单聊发红包页面RPRedPacketActivity（chatType为1），需要参数有发送人头像，发送人的用户名，单聊的chatType值，接收者id。
+实例如下所示
 
-      private void gotoSingleRedPacket(final String peerId) {
-    Log.e("msg","======sign touserid=====>"+peerId+LeanchatUser.getCurrentUserId());
+ private void gotoSingleRedPacket(final String peerId) {
+    
     int chatType = RPConstant.CHATTYPE_SINGLE;
     int membersNum = 0;
     String tpGroupId = "";
@@ -198,6 +200,9 @@ RedPacketUtils.getInstance().setRefreshSign(MainActivity.this,mockUrl);
 * 添加群聊红包入口
 
 ```
+群聊发红包页面为RPRedPacketActivity（chatType为2），需要参数有发送人头像，发送人的用户名，chatType值，群id,群成员数量。
+实例如下所示：
+
    private void gotoGroupRedPacket() {
     final String fromNickname = LeanchatUser.getCurrentUser().getUsername();
     final String fromAvatarUrl = LeanchatUser.getCurrentUser().getAvatarUrl();
@@ -280,11 +285,13 @@ RedPacketUtils.getInstance().setRefreshSign(MainActivity.this,mockUrl);
 * 接受红包消息打开红包
 
 ```
+
+打开红包需要调用RPOpenPacketUtil.getInstance().openRedPacket()方法，需要传的参数为用户名，头像，是发送者还是接收者，是单聊还是群聊；要是专属红包需要再多加3个字段，接收者的用户名和头像，以及发送者的id。
+实例如下：
+
    /**
   * Method name:openRedPacket
   * Describe: 打开红包
-  * Create person：侯洪旭
-  * Create time：16/7/29 下午3:27
   * Remarks：
   */
   private void openRedPacket(final Context context, final LCIMRedPacketMessage message) {
