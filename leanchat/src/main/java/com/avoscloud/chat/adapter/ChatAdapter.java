@@ -42,9 +42,7 @@ public class ChatAdapter extends LCIMChatAdapter {
   }
 
   /**
-   * 判断是什么红包类型的消息
-   * @param position
-   * @return
+   * 判断是什么消息类型
    */
 
   @Override
