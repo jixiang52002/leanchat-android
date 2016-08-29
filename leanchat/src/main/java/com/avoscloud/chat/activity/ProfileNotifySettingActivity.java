@@ -2,7 +2,6 @@ package com.avoscloud.chat.activity;
 
 import android.os.Bundle;
 import com.avoscloud.chat.R;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
 
 /**
  * Created by lzw on 14-9-24.

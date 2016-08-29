@@ -35,7 +35,7 @@
     </style>
 
     <style name="My.TextView._White">
-        <item name="android:textColor">@color/chat_base_color_text_white</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="Register_Edit">
@@ -44,7 +44,7 @@
         <item name="android:layout_weight">1.0</item>
         <item name="android:layout_marginLeft">@dimen/register_margin</item>
         <item name="android:background">@color/chat_transparent</item>
-        <item name="android:textColor">@color/chat_LeftText</item>
+        <item name="android:textColor">@android:color/black</item>
         <item name="android:singleLine">true</item>
     </style>
 
@@ -120,7 +120,6 @@
     </style>
 
 
-
     <style name="profile_fragment_left_text">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -142,13 +141,8 @@
         <item name="android:background">@drawable/group_detail_btn</item>
     </style>
 
-
-    <style name="ActionBarTitleStyle">
-        <item name="android:textColor">#fff</item>
-    </style>
-
-    <style name="ActionBarStyle" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:background">@color/chat_common_blue</item>
-        <item name="android:titleTextStyle">@style/ActionBarTitleStyle</item>
+    <!-- activity -->
+    <style name="LCIMActivity.FullScreen" >
+        <item name="android:windowFullscreen">true</item>
     </style>
 </resources>

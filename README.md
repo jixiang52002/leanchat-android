@@ -17,9 +17,9 @@ LeanChat 是 [LeanCloud](http://leancloud.cn) [实时通信](https://leancloud.c
 
 ## LeanChat Android 项目构成
 
-* leanchatlib，核心的聊天逻辑和聊天界面库。有了它，可以快速集成聊天功能，支持文字、音频、图片、表情消息，消息通知。同时也有相应的 [iOS版本](https://github.com/leancloud/leanchat-ios/tree/master/LeanChatLib) 。
-* leancahtlib-demo，leanchatlib 最简单的使用例子。可以看到配置一下 AndroidManifest，以及额外配置一下 user 信息，即可集成聊天，不管是用 LeanCloud 的用户系统还是自己的用户系统。
-* leanchat ，为整个聊天应用。它包含好友管理、群组管理、地理消息、附近的人、个人页面、登录注册的功能，完全基于 LeanCloud 的存储和通信功能。
+* leanchat，为整个聊天应用。它包含好友管理、群组管理、地理消息、附近的人、个人页面、登录注册的功能，完全基于 LeanCloud 的存储和通信功能。
+
+注：新的版本已经删除了 leanchatlib、leanchatlib-demo，其相关的功能已经转移到 ChatKit，LeanChat 的核心页面会话列表页面及聊天页面均来自于 ChatKit，如果仅仅是要集成 LeanCloud 实时通讯可以使用 ChatKit，关于 ChatKit 可以参考 [ChatKit 文档](https://leancloud.cn/docs/chatkit-android.html)、[ChatKit 代码](https://github.com/leancloud/LeanCloudChatKit-Android)。
 
 ## LeanChat 项目构成
 
@@ -32,11 +32,6 @@ LeanChat 是 [LeanCloud](http://leancloud.cn) [实时通信](https://leancloud.c
 1. 请装相应的 Gradle 插件
 1. Intellij IDEA 用户建议装 Android Studio，AS 是基于 IDEA 的，不仅有和 IDEA 一样的体验，还是官方推荐的 IDE。
 1. 用到了 [ButterKnife](https://github.com/JakeWharton/butterknife) 开源库，Eclipse需要设置一下来支持 ButterKnife 的注解，具体如何设置见 http://jakewharton.github.io/butterknife/ide-eclipse.html 。否则会因为 view 没有绑定上，导致崩溃。
-1. 如果不装 Gradle 插件，非要转换成 Ant 格式，注意项目存在依赖关系，leanchat 依赖 leanchatlib，leanchatlib-demo 也依赖 leanchatlib，建议，先转换 leanchatlib 为 Ant 格式，再转换 leanchat 和 leanchatlib-demo，同时手工修复一下依赖和编译错误。
-
-## 如何集成 leanchatlib
-1. 请运行 leanchatlib-demo ，看[这段代码](https://github.com/leancloud/leanchat-android/blob/master/leanchatlib-demo/src/main/java/com/avoscloud/leanchatlib_demo/App.java#L40-L60)配置，提供一个UserInfo对象即可，完全不需要AVUser。
-
 
 ## 相关文档
 

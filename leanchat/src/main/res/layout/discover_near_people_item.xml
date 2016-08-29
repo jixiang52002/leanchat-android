@@ -12,7 +12,7 @@
         <ImageView
             android:id="@+id/avatar_view"
             style="@style/My.ImageView.Photo_Avatar"
-            android:src="@drawable/chat_default_user_avatar" />
+            android:src="@drawable/lcim_default_avatar_icon" />
 
         <RelativeLayout
             android:layout_width="0dp"

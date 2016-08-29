@@ -53,10 +53,8 @@
 
     <View
         android:id="@+id/line"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/base_line_width_1"
-        android:layout_below="@id/layout_new"
-        android:background="@drawable/base_horizontal_line" />
+        style="@style/LCIMDividerLine.Horizontal"
+        android:layout_below="@id/layout_new"/>
 
     <LinearLayout
         android:id="@+id/layout_group"
@@ -96,9 +94,6 @@
 
     <View
         android:id="@+id/group_line"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/base_line_width_1"
-        android:layout_below="@id/layout_group"
-        android:background="@drawable/base_horizontal_line"></View>
-
+        style="@style/LCIMDividerLine.Horizontal"
+        android:layout_below="@id/layout_group"/>
 </RelativeLayout>

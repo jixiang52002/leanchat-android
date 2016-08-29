@@ -5,6 +5,8 @@
     <color name="color_bottom_text_press">#4f9ef6</color>
     <color name="theme_bg_color">#f0f2f5</color>
     <color name="base_color_text_gray">#9fa0a0</color>
-    <color name="contact_base_actionbar_bg">#f5f5f5</color>
     <color name="contact_base_bg">#f4f6f6</color>
+    <color name="chat_transparent">#ffff</color>
+    <color name="chat_base_color_text_black">#3e3e39</color>
+    <color name="chat_common_guide_color">#898989</color>
 </resources>

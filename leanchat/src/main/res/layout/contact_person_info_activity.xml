@@ -34,7 +34,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:padding="10dp"
-                android:src="@drawable/chat_default_user_avatar" />
+                android:src="@drawable/lcim_default_avatar_icon" />
 
             <ImageView
                 android:id="@+id/avatar_arrow"

@@ -10,7 +10,6 @@ import android.view.MenuItem;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.FindCallback;
-import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMConversation;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
@@ -18,19 +17,19 @@ import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback;
 import com.avoscloud.chat.R;
 import com.avoscloud.chat.adapter.MemeberAddAdapter;
 import com.avoscloud.chat.friends.FriendsManager;
+import com.avoscloud.chat.model.ConversationType;
+import com.avoscloud.chat.util.ConversationUtils;
 import com.avoscloud.chat.util.Utils;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
-import com.avoscloud.leanchatlib.controller.ChatManager;
-import com.avoscloud.leanchatlib.controller.ConversationHelper;
-import com.avoscloud.leanchatlib.model.ConversationType;
 import com.avoscloud.chat.model.LeanchatUser;
 import com.avoscloud.chat.util.UserCacheUtils;
-import com.avoscloud.leanchatlib.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import cn.leancloud.chatkit.LCChatKit;
+import cn.leancloud.chatkit.utils.LCIMConstants;
+
 /**
  * 群聊对话拉人页面
  * Created by lzw on 14-10-11.
@@ -51,8 +50,8 @@ public class ConversationAddMembersActivity extends AVBaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.conversation_add_members_layout);
-    String conversationId = getIntent().getStringExtra(Constants.CONVERSATION_ID);
-    conversation = AVIMClient.getInstance(ChatManager.getInstance().getSelfId()).getConversation(conversationId);
+    String conversationId = getIntent().getStringExtra(LCIMConstants.CONVERSATION_ID);
+    conversation = LCChatKit.getInstance().getClient().getConversation(conversationId);
 
     layoutManager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(layoutManager);
@@ -106,16 +105,16 @@ public class ConversationAddMembersActivity extends AVBaseActivity {
     if (checkedUsers.size() == 0) {
       finish();
     } else {
-      if (ConversationHelper.typeOfConversation(conversation) == ConversationType.Single) {
+      if (ConversationUtils.typeOfConversation(conversation) == ConversationType.Single) {
         List<String> members = new ArrayList<String>();
         members.addAll(checkedUsers);
         members.addAll(conversation.getMembers());
-        ChatManager.getInstance().createGroupConversation(members, new AVIMConversationCreatedCallback() {
+        ConversationUtils.createGroupConversation(members, new AVIMConversationCreatedCallback() {
           @Override
           public void done(final AVIMConversation conversation, AVIMException e) {
             if (filterException(e)) {
               Intent intent = new Intent(ConversationAddMembersActivity.this, ChatRoomActivity.class);
-              intent.putExtra(Constants.CONVERSATION_ID, conversation.getConversationId());
+              intent.putExtra(LCIMConstants.CONVERSATION_ID, conversation.getConversationId());
               startActivity(intent);
               finish();
             }

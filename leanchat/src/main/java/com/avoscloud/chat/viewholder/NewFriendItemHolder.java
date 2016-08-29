@@ -11,21 +11,20 @@ import com.avoscloud.chat.R;
 import com.avoscloud.chat.event.NewFriendItemClickEvent;
 import com.avoscloud.chat.friends.AddRequest;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.PhotoUtils;
-import com.avoscloud.leanchatlib.viewholder.CommonViewHolder;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
+import cn.leancloud.chatkit.viewholder.LCIMCommonViewHolder;
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by wli on 15/12/3.
  */
-public class NewFriendItemHolder extends CommonViewHolder<AddRequest> {
+public class NewFriendItemHolder extends LCIMCommonViewHolder<AddRequest> {
 
-  TextView nameView;
-  ImageView avatarView;
-  Button addBtn;
-  View agreedView;
+  private TextView nameView;
+  private ImageView avatarView;
+  private Button addBtn;
+  private View agreedView;
   private AddRequest addRequest;
 
   public NewFriendItemHolder(Context context, ViewGroup root) {
@@ -57,7 +56,7 @@ public class NewFriendItemHolder extends CommonViewHolder<AddRequest> {
   public void bindData(final AddRequest addRequest) {
     this.addRequest = addRequest;
     LeanchatUser from = addRequest.getFromUser();
-    ImageLoader.getInstance().displayImage(from.getAvatarUrl(), avatarView, PhotoUtils.avatarImageOptions);
+    Picasso.with(getContext()).load(from.getAvatarUrl()).into(avatarView);
     if (from != null) {
       nameView.setText(from.getUsername());
     }

@@ -1,27 +1,26 @@
 package com.avoscloud.chat.friends;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.*;
 import com.avoscloud.chat.R;
+import com.avoscloud.chat.activity.AVBaseActivity;
 import com.avoscloud.chat.activity.ChatRoomActivity;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
-import com.avoscloud.leanchatlib.utils.Constants;
-import com.avoscloud.leanchatlib.utils.PhotoUtils;
+import com.avoscloud.chat.util.Constants;
 import com.avoscloud.chat.util.UserCacheUtils;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import cn.leancloud.chatkit.utils.LCIMConstants;
 
 /**
  * 用户详情页，从对话详情页面和发现页面跳转过来
  */
 public class ContactPersonInfoActivity extends AVBaseActivity implements OnClickListener {
-  public static final String USER_ID = "userId";
   TextView usernameView, genderView;
   ImageView avatarView, avatarArrowView;
   LinearLayout allLayout;
@@ -87,7 +86,7 @@ public class ContactPersonInfoActivity extends AVBaseActivity implements OnClick
   }
 
   private void updateView(LeanchatUser user) {
-    ImageLoader.getInstance().displayImage(user.getAvatarUrl(), avatarView, PhotoUtils.avatarImageOptions);
+    Picasso.with(this).load(user.getAvatarUrl()).into(avatarView);
     usernameView.setText(user.getUsername());
   }
 
@@ -97,7 +96,7 @@ public class ContactPersonInfoActivity extends AVBaseActivity implements OnClick
     switch (v.getId()) {
       case R.id.chatBtn:// 发起聊天
         Intent intent = new Intent(ContactPersonInfoActivity.this, ChatRoomActivity.class);
-        intent.putExtra(Constants.MEMBER_ID, userId);
+        intent.putExtra(LCIMConstants.PEER_ID, userId);
         startActivity(intent);
         finish();
         break;

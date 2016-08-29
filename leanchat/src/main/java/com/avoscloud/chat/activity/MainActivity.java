@@ -11,23 +11,24 @@ import android.widget.Button;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVGeoPoint;
 import com.avos.avoscloud.SaveCallback;
-import com.avoscloud.chat.R;
 import com.avoscloud.chat.App;
-import com.avoscloud.chat.service.PreferenceMap;
-import com.avoscloud.chat.service.UpdateService;
-import com.avoscloud.chat.friends.ContactFragment;
-import com.avoscloud.chat.fragment.ConversationRecentFragment;
+import com.avoscloud.chat.R;
+import com.avoscloud.chat.fragment.ConversationListFragment;
 import com.avoscloud.chat.fragment.DiscoverFragment;
 import com.avoscloud.chat.fragment.ProfileFragment;
-import com.avoscloud.leanchatlib.activity.AVBaseActivity;
-import com.avoscloud.chat.util.Utils;
+import com.avoscloud.chat.friends.ContactFragment;
 import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.LogUtils;
+import com.avoscloud.chat.redpacket.RedPacketUtils;
+import com.avoscloud.chat.service.PreferenceMap;
+import com.avoscloud.chat.service.UpdateService;
+import com.avoscloud.chat.util.LogUtils;
 import com.avoscloud.chat.util.UserCacheUtils;
+import com.avoscloud.chat.util.Utils;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+
 
 /**
  * Created by lzw on 14-9-17.
@@ -52,10 +53,11 @@ public class MainActivity extends AVBaseActivity {
   View fragmentContainer;
   ContactFragment contactFragment;
   DiscoverFragment discoverFragment;
-  ConversationRecentFragment conversationRecentFragment;
+  ConversationListFragment conversationListFragment;
   ProfileFragment profileFragment;
   Button[] tabs;
   View recentTips, contactTips;
+  String mockUrl = "http://rpv2.yunzhanghu.com/api/sign?duid=" + LeanchatUser.getCurrentUserId();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +65,9 @@ public class MainActivity extends AVBaseActivity {
     setContentView(R.layout.main_activity);
     findView();
     init();
+    RedPacketUtils.getInstance().setRefreshSign(MainActivity.this,mockUrl);
 
-    //mySpaceBtn.performClick();
-    //contactBtn.performClick();
     conversationBtn.performClick();
-    //discoverBtn.performClick();
     initBaiduLocClient();
     updateUserLocation();
     UserCacheUtils.cacheUser(LeanchatUser.getCurrentUser());
@@ -117,11 +117,11 @@ public class MainActivity extends AVBaseActivity {
     hideFragments(manager, transaction);
     setNormalBackgrounds();
     if (id == R.id.btn_message) {
-      if (conversationRecentFragment == null) {
-        conversationRecentFragment = new ConversationRecentFragment();
-        transaction.add(R.id.fragment_container, conversationRecentFragment, FRAGMENT_TAG_CONVERSATION);
+      if (conversationListFragment == null) {
+        conversationListFragment = new ConversationListFragment();
+        transaction.add(R.id.fragment_container, conversationListFragment, FRAGMENT_TAG_CONVERSATION);
       }
-      transaction.show(conversationRecentFragment);
+      transaction.show(conversationListFragment);
     } else if (id == R.id.btn_contact) {
       if (contactFragment == null) {
         contactFragment = new ContactFragment();

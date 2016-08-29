@@ -6,33 +6,33 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.avoscloud.chat.R;
+import com.avoscloud.chat.activity.EntryLoginActivity;
 import com.avoscloud.chat.activity.ProfileNotifySettingActivity;
+import com.avoscloud.chat.model.LeanchatUser;
+import com.avoscloud.chat.redpacket.RedPacketUtils;
 import com.avoscloud.chat.service.PushManager;
 import com.avoscloud.chat.service.UpdateService;
-import com.avoscloud.chat.activity.EntryLoginActivity;
 import com.avoscloud.chat.util.PathUtils;
-import com.avoscloud.leanchatlib.controller.ChatManager;
-import com.avoscloud.chat.model.LeanchatUser;
-import com.avoscloud.leanchatlib.utils.PhotoUtils;
-import com.easemob.redpacketsdk.constant.RPConstant;
-import com.easemob.redpacketui.ui.activity.RPChangeActivity;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.avoscloud.chat.util.Utils;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import cn.leancloud.chatkit.LCChatKit;
 
 /**
  * Created by lzw on 14-9-17.
@@ -47,12 +47,6 @@ public class ProfileFragment extends BaseFragment {
   @Bind(R.id.profile_username_view)
   TextView userNameView;
 
-  @Bind(R.id.profile_redpacket_view)
-  TextView redPacketView;
-
-
-  ChatManager chatManager;
-
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.profile_fragment, container, false);
@@ -64,7 +58,6 @@ public class ProfileFragment extends BaseFragment {
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     headerLayout.showTitle(R.string.profile_title);
-    chatManager = ChatManager.getInstance();
   }
 
   @Override
@@ -76,7 +69,7 @@ public class ProfileFragment extends BaseFragment {
   private void refresh() {
     LeanchatUser curUser = LeanchatUser.getCurrentUser();
     userNameView.setText(curUser.getUsername());
-    ImageLoader.getInstance().displayImage(curUser.getAvatarUrl(), avatarView, com.avoscloud.leanchatlib.utils.PhotoUtils.avatarImageOptions);
+    Picasso.with(getContext()).load(curUser.getAvatarUrl()).into(avatarView);
   }
 
   @OnClick(R.id.profile_checkupdate_view)
@@ -94,22 +87,12 @@ public class ProfileFragment extends BaseFragment {
 
   @OnClick(R.id.profile_redpacket_view)
   public void onRPClick() {
-    Intent intent = new Intent(getActivity(),RPChangeActivity.class);
-    String fromNickname="";
-    String fromAvatarUrl="";
-    LeanchatUser curUser = LeanchatUser.getCurrentUser();
-    if (curUser != null) {
-      fromAvatarUrl = TextUtils.isEmpty(curUser.getAvatarUrl()) ? "none" : curUser.getAvatarUrl();
-      fromNickname =  curUser.getUsername() ;
-    }
-    intent.putExtra(RPConstant.EXTRA_USER_NAME, fromNickname);
-    intent.putExtra(RPConstant.EXTRA_TO_USER_AVATAR, fromAvatarUrl);
-    startActivity(intent);
+    RedPacketUtils.getInstance().toChangeActivity(getActivity(),LeanchatUser.getCurrentUser().getUsername(),LeanchatUser.getCurrentUser().getAvatarUrl());
   }
 
   @OnClick(R.id.profile_logout_btn)
   public void onLogoutClick() {
-    chatManager.closeWithCallback(new AVIMClientCallback() {
+    LCChatKit.getInstance().close(new AVIMClientCallback() {
       @Override
       public void done(AVIMClient avimClient, AVIMException e) {
       }
@@ -143,10 +126,8 @@ public class ProfileFragment extends BaseFragment {
     }
   }
 
-  public Uri startImageCrop(Uri uri, int outputX, int outputY,
-                            int requestCode) {
-    Intent intent = null;
-    intent = new Intent("com.android.camera.action.CROP");
+  public Uri startImageCrop(Uri uri, int outputX, int outputY, int requestCode) {
+    Intent intent = new Intent("com.android.camera.action.CROP");
     intent.setDataAndType(uri, "image/*");
     intent.putExtra("crop", "true");
     intent.putExtra("aspectX", 1);
@@ -170,9 +151,8 @@ public class ProfileFragment extends BaseFragment {
     if (extras != null) {
       Bitmap bitmap = extras.getParcelable("data");
       if (bitmap != null) {
-        bitmap = PhotoUtils.toRoundCorner(bitmap, 10);
         path = PathUtils.getAvatarCropPath();
-        PhotoUtils.saveBitmap(path, bitmap);
+        Utils.saveBitmap(path, bitmap);
         if (bitmap != null && bitmap.isRecycled() == false) {
           bitmap.recycle();
         }
